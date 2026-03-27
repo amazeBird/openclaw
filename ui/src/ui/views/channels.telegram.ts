@@ -1,4 +1,5 @@
 import { html, nothing } from "lit";
+import { t } from "../../i18n/index.ts";
 import { formatRelativeTimestamp } from "../format.ts";
 import type { ChannelAccountSnapshot, TelegramStatus } from "../types.ts";
 import { renderChannelConfigSection } from "./channels.config.ts";
@@ -33,16 +34,16 @@ export function renderTelegramCard(params: {
         </div>
         <div class="status-list account-card-status">
           <div>
-            <span class="label">Running</span>
-            <span>${account.running ? "Yes" : "No"}</span>
+            <span class="label">${t("channels.status.running")}</span>
+            <span>${account.running ? t("channels.status.yes") : t("channels.status.no")}</span>
           </div>
           <div>
-            <span class="label">Configured</span>
-            <span>${account.configured ? "Yes" : "No"}</span>
+            <span class="label">${t("channels.status.configured")}</span>
+            <span>${account.configured ? t("channels.status.yes") : t("channels.status.no")}</span>
           </div>
           <div>
-            <span class="label">Last inbound</span>
-            <span>${account.lastInboundAt ? formatRelativeTimestamp(account.lastInboundAt) : "n/a"}</span>
+            <span class="label">${t("channels.status.lastInbound")}</span>
+            <span>${account.lastInboundAt ? formatRelativeTimestamp(account.lastInboundAt) : t("common.na")}</span>
           </div>
           ${
             account.lastError
@@ -62,7 +63,7 @@ export function renderTelegramCard(params: {
     return html`
       <div class="card">
         <div class="card-title">Telegram</div>
-        <div class="card-sub">Bot status and channel configuration.</div>
+        <div class="card-sub">${t("channels.card.subtitle")}</div>
         ${accountCountLabel}
 
         <div class="account-card-list">

@@ -45,7 +45,7 @@
       "minHostVersion": ">=2026.3.22"
     },
     "bundle": {
-      "stageRuntimeDependencies": true
+      "stageRuntimeDependencies": false
     },
     "release": {
       "publishToNpm": true

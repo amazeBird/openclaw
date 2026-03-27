@@ -1,4 +1,5 @@
 import { html, nothing, type TemplateResult } from "lit";
+import { i18n, t } from "../../i18n/index.ts";
 import { icons as sharedIcons } from "../icons.ts";
 import type { ConfigUiHints } from "../types.ts";
 import {
@@ -154,16 +155,16 @@ function renderSensitiveToggleButton(params: {
       title=${
         state.canReveal
           ? state.isRevealed
-            ? "Hide value"
-            : "Reveal value"
-          : "Disable stream mode to reveal value"
+            ? t("config.hideValue")
+            : t("config.revealValue")
+          : t("config.revealValueStreamHint")
       }
       aria-label=${
         state.canReveal
           ? state.isRevealed
-            ? "Hide value"
-            : "Reveal value"
-          : "Disable stream mode to reveal value"
+            ? t("config.hideValue")
+            : t("config.revealValue")
+          : t("config.revealValueStreamHint")
       }
       aria-pressed=${state.isRevealed}
       ?disabled=${params.disabled || !state.canReveal}
@@ -226,8 +227,23 @@ function resolveFieldMeta(
   hints: ConfigUiHints,
 ): FieldMeta {
   const hint = hintForPath(path, hints);
-  const label = hint?.label ?? schema.title ?? humanize(String(path.at(-1)));
-  const help = hint?.help ?? schema.description;
+  let label = hint?.label ?? schema.title ?? humanize(String(path.at(-1)));
+  let help = hint?.help ?? schema.description;
+  if (i18n.getLocale() === "zh-CN") {
+    const pk = pathKey(path);
+    if (pk) {
+      const lk = `config.fieldMeta.${pk}.label`;
+      const hk = `config.fieldMeta.${pk}.help`;
+      const tl = t(lk);
+      const th = t(hk);
+      if (tl !== lk) {
+        label = tl;
+      }
+      if (th !== hk) {
+        help = th;
+      }
+    }
+  }
   const schemaTags = normalizeTags(schema["x-tags"] ?? schema.tags);
   const hintTags = normalizeTags(hint?.tags);
   return {
@@ -703,7 +719,7 @@ function renderTextInput(params: {
           <button
             type="button"
             class="cfg-input__reset"
-            title="Reset to default"
+            title=${t("config.form.resetToDefault")}
             ?disabled=${disabled || sensitiveState.isRedacted}
             @click=${() => onPatch(path, schema.default)}
           >↺</button>
@@ -1049,7 +1065,7 @@ function renderArray(params: {
     return html`
       <div class="cfg-field cfg-field--error">
         <div class="cfg-field__label">${label}</div>
-        <div class="cfg-field__error">Unsupported array schema. Use Raw mode.</div>
+        <div class="cfg-field__error">${t("config.form.unsupportedArraySchema")}</div>
       </div>
     `;
   }
@@ -1063,7 +1079,7 @@ function renderArray(params: {
           ${showLabel ? html`<span class="cfg-array__label">${label}</span>` : nothing}
           ${renderTags(tags)}
         </div>
-        <span class="cfg-array__count">${arr.length} item${arr.length !== 1 ? "s" : ""}</span>
+        <span class="cfg-array__count">${arr.length === 1 ? t("config.form.itemCount", { count: String(arr.length) }) : t("config.form.itemCountPlural", { count: String(arr.length) })}</span>
         <button
           type="button"
           class="cfg-array__add"
@@ -1074,7 +1090,7 @@ function renderArray(params: {
           }}
         >
           <span class="cfg-array__add-icon">${icons.plus}</span>
-          Add
+          ${t("config.form.add")}
         </button>
       </div>
       ${help ? html`<div class="cfg-array__help">${help}</div>` : nothing}
@@ -1082,7 +1098,7 @@ function renderArray(params: {
       ${
         arr.length === 0
           ? html`
-              <div class="cfg-array__empty">No items yet. Click "Add" to create one.</div>
+              <div class="cfg-array__empty">${t("config.form.noItemsYet")}</div>
             `
           : html`
         <div class="cfg-array__items">
@@ -1094,7 +1110,7 @@ function renderArray(params: {
                 <button
                   type="button"
                   class="cfg-array__item-remove"
-                  title="Remove item"
+                  title=${t("config.form.removeItem")}
                   ?disabled=${disabled}
                   @click=${() => {
                     const next = [...arr];
@@ -1177,7 +1193,7 @@ function renderMapField(params: {
   return html`
     <div class="cfg-map">
       <div class="cfg-map__header">
-        <span class="cfg-map__label">Custom entries</span>
+        <span class="cfg-map__label">${t("config.form.customEntries")}</span>
         <button
           type="button"
           class="cfg-map__add"
@@ -1195,14 +1211,14 @@ function renderMapField(params: {
           }}
         >
           <span class="cfg-map__add-icon">${icons.plus}</span>
-          Add Entry
+          ${t("config.form.addEntry")}
         </button>
       </div>
 
       ${
         visibleEntries.length === 0
           ? html`
-              <div class="cfg-map__empty">No custom entries.</div>
+              <div class="cfg-map__empty">${t("config.form.noCustomEntries")}</div>
             `
           : html`
         <div class="cfg-map__items">
@@ -1223,7 +1239,7 @@ function renderMapField(params: {
                     <input
                       type="text"
                       class="cfg-input cfg-input--sm"
-                      placeholder="Key"
+                      placeholder=${t("config.form.keyPlaceholder")}
                       .value=${key}
                       ?disabled=${disabled}
                       @change=${(e: Event) => {
@@ -1244,7 +1260,7 @@ function renderMapField(params: {
                   <button
                     type="button"
                     class="cfg-map__item-remove"
-                    title="Remove entry"
+                    title=${t("config.form.removeEntry")}
                     ?disabled=${disabled}
                     @click=${() => {
                       const next = { ...value };
@@ -1263,7 +1279,9 @@ function renderMapField(params: {
                           <textarea
                             class="cfg-textarea cfg-textarea--sm${sensitiveState.isRedacted ? " cfg-textarea--redacted" : ""}"
                             placeholder=${
-                              sensitiveState.isRedacted ? REDACTED_PLACEHOLDER : "JSON value"
+                              sensitiveState.isRedacted
+                                ? REDACTED_PLACEHOLDER
+                                : t("config.form.jsonValuePlaceholder")
                             }
                             rows="2"
                             .value=${sensitiveState.isRedacted ? "" : fallback}

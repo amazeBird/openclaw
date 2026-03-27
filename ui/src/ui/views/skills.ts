@@ -1,4 +1,5 @@
 import { html, nothing } from "lit";
+import { t } from "../../i18n/index.ts";
 import type { SkillMessageMap } from "../controllers/skills.ts";
 import { clampText } from "../format.ts";
 import { resolveSafeExternalUrl } from "../open-external-url.ts";
@@ -43,12 +44,14 @@ export type SkillsProps = {
 
 type StatusTabDef = { id: SkillsStatusFilter; label: string };
 
-const STATUS_TABS: StatusTabDef[] = [
-  { id: "all", label: "All" },
-  { id: "ready", label: "Ready" },
-  { id: "needs-setup", label: "Needs Setup" },
-  { id: "disabled", label: "Disabled" },
-];
+function getStatusTabs(): StatusTabDef[] {
+  return [
+    { id: "all", label: t("skillsPage.tabs.all") },
+    { id: "ready", label: t("skillsPage.tabs.ready") },
+    { id: "needs-setup", label: t("skillsPage.tabs.needsSetup") },
+    { id: "disabled", label: t("skillsPage.tabs.disabled") },
+  ];
+}
 
 function skillMatchesStatus(skill: SkillStatusEntry, status: SkillsStatusFilter): boolean {
   switch (status) {
@@ -72,6 +75,7 @@ function skillStatusClass(skill: SkillStatusEntry): string {
 
 export function renderSkills(props: SkillsProps) {
   const skills = props.report?.skills ?? [];
+  const statusTabs = getStatusTabs();
 
   const statusCounts: Record<SkillsStatusFilter, number> = {
     all: skills.length,
@@ -110,16 +114,16 @@ export function renderSkills(props: SkillsProps) {
     <section class="card">
       <div class="row" style="justify-content: space-between;">
         <div>
-          <div class="card-title">Skills</div>
-          <div class="card-sub">Installed skills and their status.</div>
+          <div class="card-title">${t("skillsPage.title")}</div>
+          <div class="card-sub">${t("skillsPage.sub")}</div>
         </div>
         <button class="btn" ?disabled=${props.loading || !props.connected} @click=${props.onRefresh}>
-          ${props.loading ? "Loading\u2026" : "Refresh"}
+          ${props.loading ? t("skillsPage.loading") : t("skillsPage.refresh")}
         </button>
       </div>
 
       <div class="agent-tabs" style="margin-top: 14px;">
-        ${STATUS_TABS.map(
+        ${statusTabs.map(
           (tab) => html`
             <button
               class="agent-tab ${props.statusFilter === tab.id ? "active" : ""}"
@@ -137,18 +141,18 @@ export function renderSkills(props: SkillsProps) {
           href="https://clawhub.com"
           target="_blank"
           rel="noreferrer"
-          title="Browse skills on ClawHub"
-        >Browse Skills Store</a>
+          title=${t("skillsPage.browseStore")}
+        >${t("skillsPage.browseStore")}</a>
         <label class="field" style="flex: 1; min-width: 180px;">
           <input
             .value=${props.filter}
             @input=${(e: Event) => props.onFilterChange((e.target as HTMLInputElement).value)}
-            placeholder="Search skills"
+            placeholder=${t("skillsPage.searchPlaceholder")}
             autocomplete="off"
             name="skills-filter"
           />
         </label>
-        <div class="muted">${filtered.length} shown</div>
+        <div class="muted">${t("skillsPage.shown", { count: String(filtered.length) })}</div>
       </div>
 
       ${
@@ -163,8 +167,8 @@ export function renderSkills(props: SkillsProps) {
               <div class="muted" style="margin-top: 16px">
                 ${
                   !props.connected && !props.report
-                    ? "Not connected to gateway."
-                    : "No skills found."
+                    ? t("common.notConnected")
+                    : t("skillsPage.noSkills")
                 }
               </div>
             `

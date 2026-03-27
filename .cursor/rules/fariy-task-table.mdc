@@ -1,0 +1,21 @@
+---
+description: Default context — load project task table for task-driven questions (fariy)
+alwaysApply: true
+---
+
+# Task table as default context (fariy)
+
+In this workspace, the maintainer drives work from the **task table**. Treat it as the first source of truth for task status, IDs (e.g. L001, L002, D001), and links to plans.
+
+1. **Canonical file**: `my-docs/TASKS.md` — full task list, status, and detailed notes.
+2. **Entry point**: `TASKS.md` (repo root) — short overview; follow links into `my-docs/`.
+3. **Plans**: `my-docs/PLANS.md` — execution plans; open when TASKS.md points to an anchor.
+
+**When to read `my-docs/TASKS.md`**
+
+- At the **start of a turn** if the user message is about tasks, 任务, 计划, status, TODO, roadmap, or mentions task IDs / `PLANS.md` / `my-docs/`.
+- **Before** answering when the user says their question is based on or continues from the task table.
+
+If you have not yet loaded `my-docs/TASKS.md` in this conversation and the topic is plausibly task-related, read it (or ask to confirm) rather than guessing task state.
+
+Personal/dev notes: `FARIY.md` (optional).

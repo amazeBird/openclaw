@@ -25,7 +25,7 @@
       "systemImage": "paperplane"
     },
     "bundle": {
-      "stageRuntimeDependencies": true
+      "stageRuntimeDependencies": false
     }
   }
 }

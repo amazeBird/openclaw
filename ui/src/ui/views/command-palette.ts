@@ -22,64 +22,68 @@ const SLASH_PALETTE_ITEMS: PaletteItem[] = SLASH_COMMANDS.map((command) => ({
   description: command.description,
 }));
 
-const PALETTE_ITEMS: PaletteItem[] = [
-  ...SLASH_PALETTE_ITEMS,
-  {
-    id: "nav-overview",
-    label: "Overview",
-    icon: "barChart",
-    category: "navigation",
-    action: "nav:overview",
-  },
-  {
-    id: "nav-sessions",
-    label: "Sessions",
-    icon: "fileText",
-    category: "navigation",
-    action: "nav:sessions",
-  },
-  {
-    id: "nav-cron",
-    label: "Scheduled",
-    icon: "scrollText",
-    category: "navigation",
-    action: "nav:cron",
-  },
-  { id: "nav-skills", label: "Skills", icon: "zap", category: "navigation", action: "nav:skills" },
-  {
-    id: "nav-config",
-    label: "Settings",
-    icon: "settings",
-    category: "navigation",
-    action: "nav:config",
-  },
-  {
-    id: "nav-agents",
-    label: "Agents",
-    icon: "folder",
-    category: "navigation",
-    action: "nav:agents",
-  },
-  {
-    id: "skill-shell",
-    label: "Shell Command",
-    icon: "monitor",
-    category: "skills",
-    action: "/skill shell",
-    description: "Run shell",
-  },
-  {
-    id: "skill-debug",
-    label: "Debug Mode",
-    icon: "bug",
-    category: "skills",
-    action: "/verbose full",
-    description: "Toggle debug",
-  },
-];
-
-export function getPaletteItems(): readonly PaletteItem[] {
-  return PALETTE_ITEMS;
+export function getPaletteItems(): PaletteItem[] {
+  return [
+    ...SLASH_PALETTE_ITEMS,
+    {
+      id: "nav-overview",
+      label: t("palette.navOverview"),
+      icon: "barChart",
+      category: "navigation",
+      action: "nav:overview",
+    },
+    {
+      id: "nav-sessions",
+      label: t("palette.navSessions"),
+      icon: "fileText",
+      category: "navigation",
+      action: "nav:sessions",
+    },
+    {
+      id: "nav-cron",
+      label: t("palette.navScheduled"),
+      icon: "scrollText",
+      category: "navigation",
+      action: "nav:cron",
+    },
+    {
+      id: "nav-skills",
+      label: t("palette.navSkills"),
+      icon: "zap",
+      category: "navigation",
+      action: "nav:skills",
+    },
+    {
+      id: "nav-config",
+      label: t("palette.navSettings"),
+      icon: "settings",
+      category: "navigation",
+      action: "nav:config",
+    },
+    {
+      id: "nav-agents",
+      label: t("palette.navAgents"),
+      icon: "folder",
+      category: "navigation",
+      action: "nav:agents",
+    },
+    {
+      id: "skill-shell",
+      label: t("palette.skillShell"),
+      icon: "monitor",
+      category: "skills",
+      action: "/skill shell",
+      description: t("palette.skillShellDesc"),
+    },
+    {
+      id: "skill-debug",
+      label: t("palette.skillDebug"),
+      icon: "bug",
+      category: "skills",
+      action: "/verbose full",
+      description: t("palette.skillDebugDesc"),
+    },
+  ];
 }
 
 export type CommandPaletteProps = {
@@ -94,11 +98,12 @@ export type CommandPaletteProps = {
 };
 
 function filteredItems(query: string): PaletteItem[] {
+  const items = getPaletteItems();
   if (!query) {
-    return PALETTE_ITEMS;
+    return items;
   }
   const q = query.toLowerCase();
-  return PALETTE_ITEMS.filter(
+  return items.filter(
     (item) =>
       item.label.toLowerCase().includes(q) ||
       (item.description?.toLowerCase().includes(q) ?? false),
@@ -175,11 +180,14 @@ function handleKeydown(e: KeyboardEvent, props: CommandPaletteProps) {
   }
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  search: "Search",
-  navigation: "Navigation",
-  skills: "Skills",
-};
+function getCategoryLabel(category: string): string {
+  const labels: Record<string, () => string> = {
+    search: () => t("palette.categorySearch"),
+    navigation: () => t("palette.categoryNavigation"),
+    skills: () => t("palette.categorySkills"),
+  };
+  return labels[category]?.() ?? category;
+}
 
 function focusInput(el: Element | undefined) {
   if (el) {
@@ -225,7 +233,7 @@ export function renderCommandPalette(props: CommandPaletteProps) {
                 </div>`
               : grouped.map(
                   ([category, groupedItems]) => html`
-                <div class="cmd-palette__group-label">${CATEGORY_LABELS[category] ?? category}</div>
+                <div class="cmd-palette__group-label">${getCategoryLabel(category)}</div>
                 ${groupedItems.map((item) => {
                   const globalIndex = items.indexOf(item);
                   const isActive = globalIndex === props.activeIndex;

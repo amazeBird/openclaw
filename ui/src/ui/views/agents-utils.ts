@@ -4,6 +4,7 @@ import {
   normalizeToolName,
   resolveToolProfilePolicy,
 } from "../../../../src/agents/tool-policy-shared.js";
+import { t } from "../../i18n/index.ts";
 import type {
   AgentIdentityResult,
   AgentsFilesListResult,
@@ -339,7 +340,9 @@ export function buildAgentContext(
     agent.name?.trim() ||
     config.entry?.name ||
     agent.id;
-  const identityAvatar = resolveAgentAvatarUrl(agent, agentIdentity) ? "custom" : "—";
+  const identityAvatar = resolveAgentAvatarUrl(agent, agentIdentity)
+    ? t("agentsPage.kv.avatarCustom")
+    : "—";
   const skillFilter = Array.isArray(config.entry?.skills) ? config.entry?.skills : null;
   const skillCount = skillFilter?.length ?? null;
   return {
@@ -347,7 +350,9 @@ export function buildAgentContext(
     model: modelLabel,
     identityName,
     identityAvatar,
-    skillsLabel: skillFilter ? `${skillCount} selected` : "all skills",
+    skillsLabel: skillFilter
+      ? t("agentsPage.overview.skillsSelected", { count: String(skillCount ?? 0) })
+      : t("agentsPage.overview.allSkills"),
     isDefault: Boolean(defaultId && agent.id === defaultId),
   };
 }

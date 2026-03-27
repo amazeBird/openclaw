@@ -1,4 +1,5 @@
 import { html, nothing } from "lit";
+import { t } from "../../i18n/index.ts";
 import { icons } from "../icons.ts";
 import type { ConfigUiHints } from "../types.ts";
 import { matchesNodeSearch, parseConfigSearchQuery, renderNode } from "./config-form.node.ts";
@@ -273,54 +274,19 @@ const sectionIcons = {
   `,
 };
 
-// Section metadata
-export const SECTION_META: Record<string, { label: string; description: string }> = {
-  env: {
-    label: "Environment Variables",
-    description: "Environment variables passed to the gateway process",
-  },
-  update: { label: "Updates", description: "Auto-update settings and release channel" },
-  agents: { label: "Agents", description: "Agent configurations, models, and identities" },
-  auth: { label: "Authentication", description: "API keys and authentication profiles" },
-  channels: {
-    label: "Channels",
-    description: "Messaging channels (Telegram, Discord, Slack, etc.)",
-  },
-  messages: { label: "Messages", description: "Message handling and routing settings" },
-  commands: { label: "Commands", description: "Custom slash commands" },
-  hooks: { label: "Hooks", description: "Webhooks and event hooks" },
-  skills: { label: "Skills", description: "Skill packs and capabilities" },
-  tools: { label: "Tools", description: "Tool configurations (browser, search, etc.)" },
-  gateway: { label: "Gateway", description: "Gateway server settings (port, auth, binding)" },
-  wizard: { label: "Setup Wizard", description: "Setup wizard state and history" },
-  // Additional sections
-  meta: { label: "Metadata", description: "Gateway metadata and version information" },
-  logging: { label: "Logging", description: "Log levels and output configuration" },
-  browser: { label: "Browser", description: "Browser automation settings" },
-  ui: { label: "UI", description: "User interface preferences" },
-  models: { label: "Models", description: "AI model configurations and providers" },
-  bindings: { label: "Bindings", description: "Key bindings and shortcuts" },
-  broadcast: { label: "Broadcast", description: "Broadcast and notification settings" },
-  audio: { label: "Audio", description: "Audio input/output settings" },
-  session: { label: "Session", description: "Session management and persistence" },
-  cron: { label: "Cron", description: "Scheduled tasks and automation" },
-  web: { label: "Web", description: "Web server and API settings" },
-  discovery: { label: "Discovery", description: "Service discovery and networking" },
-  canvasHost: { label: "Canvas Host", description: "Canvas rendering and display" },
-  talk: { label: "Talk", description: "Voice and speech settings" },
-  plugins: { label: "Plugins", description: "Plugin management and extensions" },
-  diagnostics: {
-    label: "Diagnostics",
-    description: "Instrumentation, OpenTelemetry, and cache-trace settings",
-  },
-  cli: { label: "CLI", description: "CLI banner and startup behavior" },
-  secrets: { label: "Secrets", description: "Secret provider configuration" },
-  acp: {
-    label: "ACP",
-    description: "Agent Communication Protocol runtime and streaming settings",
-  },
-  mcp: { label: "MCP", description: "Model Context Protocol server definitions" },
-};
+/** Localized section card title + description (falls back to schema title/description). */
+export function getConfigSectionMeta(
+  key: string,
+  node?: JsonSchema,
+): { label: string; description: string } {
+  const lk = `config.sections.${key}.label`;
+  const dk = `config.sections.${key}.description`;
+  const labelT = t(lk);
+  const descT = t(dk);
+  const label = labelT !== lk ? labelT : (node?.title ?? humanize(key));
+  const description = descT !== dk ? descT : (node?.description ?? "");
+  return { label, description };
+}
 
 function getSectionIcon(key: string) {
   return sectionIcons[key as keyof typeof sectionIcons] ?? sectionIcons.default;
@@ -338,12 +304,12 @@ function matchesSearch(params: {
   }
   const criteria = parseConfigSearchQuery(params.query);
   const q = criteria.text;
-  const meta = SECTION_META[params.key];
+  const meta = getConfigSectionMeta(params.key, params.schema);
   const sectionMetaMatches =
     q &&
     (params.key.toLowerCase().includes(q) ||
-      (meta?.label ? meta.label.toLowerCase().includes(q) : false) ||
-      (meta?.description ? meta.description.toLowerCase().includes(q) : false));
+      meta.label.toLowerCase().includes(q) ||
+      meta.description.toLowerCase().includes(q));
 
   if (sectionMetaMatches && criteria.tags.length === 0) {
     return true;
@@ -361,14 +327,14 @@ function matchesSearch(params: {
 export function renderConfigForm(props: ConfigFormProps) {
   if (!props.schema) {
     return html`
-      <div class="muted">Schema unavailable.</div>
+      <div class="muted">${t("config.schemaUnavailable")}</div>
     `;
   }
   const schema = props.schema;
   const value = props.value ?? {};
   if (schemaType(schema) !== "object" || !schema.properties) {
     return html`
-      <div class="callout danger">Unsupported schema. Use Raw.</div>
+      <div class="callout danger">${t("config.unsupportedSchema")}</div>
     `;
   }
   const unsupported = new Set(props.unsupportedPaths ?? []);
@@ -429,7 +395,11 @@ export function renderConfigForm(props: ConfigFormProps) {
       <div class="config-empty">
         <div class="config-empty__icon">${icons.search}</div>
         <div class="config-empty__text">
-          ${searchQuery ? `No settings match "${searchQuery}"` : "No settings in this section"}
+          ${
+            searchQuery
+              ? t("config.noSettingsMatch", { query: searchQuery })
+              : t("config.noSettingsInSection")
+          }
         </div>
       </div>
     `;
@@ -483,10 +453,7 @@ export function renderConfigForm(props: ConfigFormProps) {
             `;
             })()
           : filteredEntries.map(([key, node]) => {
-              const meta = SECTION_META[key] ?? {
-                label: key.charAt(0).toUpperCase() + key.slice(1),
-                description: node.description ?? "",
-              };
+              const meta = getConfigSectionMeta(key, node);
 
               return html`
               <section class="config-section-card" id="config-section-${key}">

@@ -1,4 +1,5 @@
 import { html, nothing } from "lit";
+import { t } from "../../i18n/index.ts";
 import type {
   AgentIdentityResult,
   AgentsFilesListResult,
@@ -157,12 +158,12 @@ export function renderAgents(props: AgentsProps) {
               ${
                 agents.length === 0
                   ? html`
-                      <option value="">No agents</option>
+                      <option value="">${t("agentsPage.toolbar.noAgents")}</option>
                     `
                   : agents.map(
                       (agent) => html`
                         <option value=${agent.id} ?selected=${agent.id === selectedId}>
-                          ${normalizeAgentLabel(agent)}${agentBadgeText(agent.id, defaultId) ? ` (${agentBadgeText(agent.id, defaultId)})` : ""}
+                          ${normalizeAgentLabel(agent)}${agentBadgeText(agent.id, defaultId) ? ` (${t("agentsPage.badgeDefault")})` : ""}
                         </option>
                       `,
                     )
@@ -177,20 +178,28 @@ export function renderAgents(props: AgentsProps) {
                       type="button"
                       class="btn btn--sm btn--ghost"
                       @click=${() => void navigator.clipboard.writeText(selectedAgent.id)}
-                      title="Copy agent ID to clipboard"
-                    >Copy ID</button>
+                      title=${t("agentsPage.toolbar.copyIdTitle")}
+                    >${t("agentsPage.toolbar.copyId")}</button>
                     <button
                       type="button"
                       class="btn btn--sm btn--ghost"
                       ?disabled=${Boolean(defaultId && selectedAgent.id === defaultId)}
                       @click=${() => props.onSetDefault(selectedAgent.id)}
-                      title=${defaultId && selectedAgent.id === defaultId ? "Already the default agent" : "Set as the default agent"}
-                    >${defaultId && selectedAgent.id === defaultId ? "Default" : "Set Default"}</button>
+                      title=${
+                        defaultId && selectedAgent.id === defaultId
+                          ? t("agentsPage.toolbar.alreadyDefaultTitle")
+                          : t("agentsPage.toolbar.setDefaultTitle")
+                      }
+                    >${
+                      defaultId && selectedAgent.id === defaultId
+                        ? t("agentsPage.toolbar.defaultBtn")
+                        : t("agentsPage.toolbar.setDefault")
+                    }</button>
                   `
                 : nothing
             }
             <button class="btn btn--sm agents-refresh-btn" ?disabled=${props.loading} @click=${props.onRefresh}>
-              ${props.loading ? "Loading…" : "Refresh"}
+              ${props.loading ? t("agentsPage.toolbar.loading") : t("agentsPage.toolbar.refresh")}
             </button>
           </div>
         </div>
@@ -205,8 +214,8 @@ export function renderAgents(props: AgentsProps) {
           !selectedAgent
             ? html`
                 <div class="card">
-                  <div class="card-title">Select an agent</div>
-                  <div class="card-sub">Pick an agent to inspect its workspace and tools.</div>
+                  <div class="card-title">${t("agentsPage.emptySelect.title")}</div>
+                  <div class="card-sub">${t("agentsPage.emptySelect.sub")}</div>
                 </div>
               `
             : html`
@@ -354,12 +363,12 @@ function renderAgentTabs(
   counts: Record<string, number | null>,
 ) {
   const tabs: Array<{ id: AgentsPanel; label: string }> = [
-    { id: "overview", label: "Overview" },
-    { id: "files", label: "Files" },
-    { id: "tools", label: "Tools" },
-    { id: "skills", label: "Skills" },
-    { id: "channels", label: "Channels" },
-    { id: "cron", label: "Cron Jobs" },
+    { id: "overview", label: t("agentsPage.tabs.overview") },
+    { id: "files", label: t("agentsPage.tabs.files") },
+    { id: "tools", label: t("agentsPage.tabs.tools") },
+    { id: "skills", label: t("agentsPage.tabs.skills") },
+    { id: "channels", label: t("agentsPage.tabs.channels") },
+    { id: "cron", label: t("agentsPage.tabs.cron") },
   ];
   return html`
     <div class="agent-tabs">

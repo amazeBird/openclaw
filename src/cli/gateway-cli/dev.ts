@@ -5,6 +5,7 @@ import { resolveWorkspaceTemplateDir } from "../../agents/workspace-templates.js
 import { resolveDefaultAgentWorkspaceDir } from "../../agents/workspace.js";
 import { handleReset } from "../../commands/onboard-helpers.js";
 import { createConfigIO, writeConfigFile } from "../../config/config.js";
+import type { OpenClawConfig } from "../../config/types.js";
 import { defaultRuntime } from "../../runtime.js";
 import { resolveUserPath, shortenHomePath } from "../../utils.js";
 
@@ -53,6 +54,42 @@ async function writeFileIfMissing(filePath: string, content: string) {
   }
 }
 
+/**
+ * Dev profile: prefer loopback without gateway token. Respect explicit password /
+ * trusted-proxy auth if the user already configured it.
+ */
+async function ensureDevProfileGatewayAuthNone(
+  io: ReturnType<typeof createConfigIO>,
+): Promise<void> {
+  const { snapshot, writeOptions } = await io.readConfigFileSnapshotForWrite();
+  if (!snapshot.valid) {
+    return;
+  }
+  const cfg = snapshot.config;
+  const mode = cfg.gateway?.auth?.mode;
+  if (mode === "password" || mode === "trusted-proxy") {
+    return;
+  }
+  if (mode === "none") {
+    return;
+  }
+
+  const next: OpenClawConfig = {
+    ...cfg,
+    gateway: {
+      ...cfg.gateway,
+      auth: {
+        ...cfg.gateway?.auth,
+        mode: "none",
+      },
+    },
+  };
+  await io.writeConfigFile(next, writeOptions);
+  defaultRuntime.log(
+    "Dev: gateway.auth.mode=none (Control UI can connect without token on loopback).",
+  );
+}
+
 async function ensureDevWorkspace(dir: string) {
   const resolvedDir = resolveUserPath(dir);
   await fs.promises.mkdir(resolvedDir, { recursive: true });
@@ -97,6 +134,7 @@ export async function ensureDevGatewayConfig(opts: { reset?: boolean }) {
   const configPath = io.configPath;
   const configExists = fs.existsSync(configPath);
   if (!opts.reset && configExists) {
+    await ensureDevProfileGatewayAuthNone(io);
     return;
   }
 
@@ -104,6 +142,8 @@ export async function ensureDevGatewayConfig(opts: { reset?: boolean }) {
     gateway: {
       mode: "local",
       bind: "loopback",
+      // Personal/dev: no token/password on loopback. Do not use auth.mode=none on LAN/Tailscale.
+      auth: { mode: "none" },
     },
     agents: {
       defaults: {

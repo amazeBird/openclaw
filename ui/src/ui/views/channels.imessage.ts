@@ -1,4 +1,5 @@
 import { html, nothing } from "lit";
+import { t } from "../../i18n/index.ts";
 import { formatRelativeTimestamp } from "../format.ts";
 import type { IMessageStatus } from "../types.ts";
 import { renderChannelConfigSection } from "./channels.config.ts";
@@ -18,32 +19,39 @@ export function renderIMessageCard(params: {
   const configured = resolveChannelConfigured("imessage", props);
 
   return renderSingleAccountChannelCard({
-    title: "iMessage",
-    subtitle: "macOS bridge status and channel configuration.",
+    title: t("channels.imessage.title"),
+    subtitle: t("channels.imessage.sub"),
     accountCountLabel,
     statusRows: [
-      { label: "Configured", value: formatNullableBoolean(configured) },
-      { label: "Running", value: imessage?.running ? "Yes" : "No" },
+      { label: t("channels.common.configured"), value: formatNullableBoolean(configured) },
       {
-        label: "Last start",
-        value: imessage?.lastStartAt ? formatRelativeTimestamp(imessage.lastStartAt) : "n/a",
+        label: t("channels.common.running"),
+        value: imessage?.running ? t("channels.common.yes") : t("channels.common.no"),
       },
       {
-        label: "Last probe",
-        value: imessage?.lastProbeAt ? formatRelativeTimestamp(imessage.lastProbeAt) : "n/a",
+        label: t("channels.common.lastStart"),
+        value: imessage?.lastStartAt
+          ? formatRelativeTimestamp(imessage.lastStartAt)
+          : t("channels.common.nA"),
+      },
+      {
+        label: t("channels.common.lastProbe"),
+        value: imessage?.lastProbeAt
+          ? formatRelativeTimestamp(imessage.lastProbeAt)
+          : t("channels.common.nA"),
       },
     ],
     lastError: imessage?.lastError,
     secondaryCallout: imessage?.probe
       ? html`<div class="callout" style="margin-top: 12px;">
-          Probe ${imessage.probe.ok ? "ok" : "failed"} ·
+          ${t("channels.common.probe")} ${imessage.probe.ok ? t("channels.common.probeOk") : t("channels.common.probeFailed")} ·
           ${imessage.probe.error ?? ""}
         </div>`
       : nothing,
     configSection: renderChannelConfigSection({ channelId: "imessage", props }),
     footer: html`<div class="row" style="margin-top: 12px;">
       <button class="btn" @click=${() => props.onRefresh(true)}>
-        Probe
+        ${t("channels.common.probe")}
       </button>
     </div>`,
   });

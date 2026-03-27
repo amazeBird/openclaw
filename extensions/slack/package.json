@@ -24,7 +24,7 @@
       "systemImage": "number"
     },
     "bundle": {
-      "stageRuntimeDependencies": true
+      "stageRuntimeDependencies": false
     }
   }
 }

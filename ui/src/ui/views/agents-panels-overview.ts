@@ -1,4 +1,5 @@
 import { html, nothing } from "lit";
+import { t } from "../../i18n/index.ts";
 import type {
   AgentIdentityResult,
   AgentsFilesListResult,
@@ -88,44 +89,48 @@ export function renderAgentOverview(params: {
 
   return html`
     <section class="card">
-      <div class="card-title">Overview</div>
-      <div class="card-sub">Workspace paths and identity metadata.</div>
+      <div class="card-title">${t("agentsPage.overview.title")}</div>
+      <div class="card-sub">${t("agentsPage.overview.sub")}</div>
 
       <div class="agents-overview-grid" style="margin-top: 16px;">
         <div class="agent-kv">
-          <div class="label">Workspace</div>
+          <div class="label">${t("agentsPage.kv.workspace")}</div>
           <div>
             <button
               type="button"
               class="workspace-link mono"
               @click=${() => onSelectPanel("files")}
-              title="Open Files tab"
+              title=${t("agentsPage.openFilesTab")}
             >${workspace}</button>
           </div>
         </div>
         <div class="agent-kv">
-          <div class="label">Primary Model</div>
+          <div class="label">${t("agentsPage.kv.primaryModel")}</div>
           <div class="mono">${model}</div>
         </div>
         <div class="agent-kv">
-          <div class="label">Skills Filter</div>
-          <div>${skillFilter ? `${skillCount} selected` : "all skills"}</div>
+          <div class="label">${t("agentsPage.kv.skillsFilter")}</div>
+          <div>${
+            skillFilter
+              ? t("agentsPage.overview.skillsSelected", { count: String(skillCount ?? 0) })
+              : t("agentsPage.overview.allSkills")
+          }</div>
         </div>
       </div>
 
       ${
         configDirty
           ? html`
-              <div class="callout warn" style="margin-top: 16px">You have unsaved config changes.</div>
+              <div class="callout warn" style="margin-top: 16px">${t("agentsPage.overview.unsavedConfig")}</div>
             `
           : nothing
       }
 
       <div class="agent-model-select" style="margin-top: 20px;">
-        <div class="label">Model Selection</div>
+        <div class="label">${t("agentsPage.overview.modelSelection")}</div>
         <div class="agent-model-fields">
           <label class="field">
-            <span>Primary model${isDefault ? " (default)" : ""}</span>
+            <span>${t("agentsPage.overview.primaryModel")}${isDefault ? t("agentsPage.overview.defaultSuffix") : ""}</span>
             <select
               .value=${isDefault ? (effectivePrimary ?? "") : (entryPrimary ?? "")}
               ?disabled=${disabled}
@@ -135,11 +140,15 @@ export function renderAgentOverview(params: {
               ${
                 isDefault
                   ? html`
-                      <option value="">Not set</option>
+                      <option value="">${t("agentsPage.overview.notSet")}</option>
                     `
                   : html`
                       <option value="">
-                        ${defaultPrimary ? `Inherit default (${defaultPrimary})` : "Inherit default"}
+                        ${
+                          defaultPrimary
+                            ? t("agentsPage.overview.inheritDefaultWith", { model: defaultPrimary })
+                            : t("agentsPage.overview.inheritDefault")
+                        }
                       </option>
                     `
               }
@@ -147,7 +156,7 @@ export function renderAgentOverview(params: {
             </select>
           </label>
           <div class="field">
-            <span>Fallbacks</span>
+            <span>${t("agentsPage.overview.fallbacks")}</span>
             <div class="agent-chip-input" @click=${(e: Event) => {
               const container = e.currentTarget as HTMLElement;
               const input = container.querySelector("input");
@@ -186,7 +195,7 @@ export function renderAgentOverview(params: {
         </div>
         <div class="agent-model-actions">
           <button type="button" class="btn btn--sm" ?disabled=${configLoading} @click=${onConfigReload}>
-            Reload Config
+            ${t("agentsPage.overview.reloadConfig")}
           </button>
           <button
             type="button"
@@ -194,7 +203,7 @@ export function renderAgentOverview(params: {
             ?disabled=${configSaving || !configDirty}
             @click=${onConfigSave}
           >
-            ${configSaving ? "Saving…" : "Save"}
+            ${configSaving ? t("agentsPage.overview.saving") : t("agentsPage.overview.save")}
           </button>
         </div>
       </div>
