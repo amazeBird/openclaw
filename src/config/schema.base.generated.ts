@@ -16130,6 +16130,10 @@ export const GENERATED_BASE_CONFIG_SCHEMA = {
       help: "Plugin entry name inside the source marketplace, used for later updates.",
       tags: ["advanced"],
     },
+    "agents.defaults.heartbeat.isolatedSession": {
+      help: "When true (the default when unset), periodic heartbeat runs use a dedicated `…:heartbeat` session so HEARTBEAT.md checks do not append turns to the main webchat transcript. Set false only if you intentionally want heartbeat in the same session history as normal chat.",
+      tags: ["storage", "automation"],
+    },
     "models.providers.*.headers.*": {
       sensitive: true,
       tags: ["security", "models"],

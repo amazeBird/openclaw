@@ -1,0 +1,1096 @@
+/*
+ * U001 Phase 1 — Chat-focused overrides for Urban theme families.
+ * Relies on tokens in theme-urban.css (data-theme urban / urban-light).
+ * Calibrated against my-docs/U001_REFERENCE_MOCK.html (main “window” + chrome).
+ */
+
+/* ── Chat page: outer window card (reference .window) ── */
+:root[data-theme="urban"] .shell--chat section.card.chat,
+:root[data-theme="urban-light"] .shell--chat section.card.chat {
+  background: linear-gradient(
+    180deg,
+    #16161a 0%,
+    var(--bg-elevated) 38%,
+    var(--card) 100%
+  ) !important;
+  border: 3px solid var(--urban-frame, #0a0a0a) !important;
+  border-radius: var(--urban-radius-chunk, 20px) !important;
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px color-mix(in srgb, white 4%, transparent) !important;
+}
+
+:root[data-theme="urban-light"] .shell--chat section.card.chat {
+  background: linear-gradient(
+    180deg,
+    #ffffff 0 var(--bg-elevated) 45%,
+    var(--card) 100%
+  ) !important;
+  box-shadow:
+    0 14px 36px rgba(0, 0, 0, 0.08),
+    inset 0 0 0 1px color-mix(in srgb, black 5%, transparent) !important;
+}
+
+:root[data-theme="urban"] .shell--chat section.card.chat:hover,
+:root[data-theme="urban-light"] .shell--chat section.card.chat:hover {
+  border-color: var(--urban-frame, #0a0a0a) !important;
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px color-mix(in srgb, white 4%, transparent) !important;
+}
+
+:root[data-theme="urban-light"] .shell--chat section.card.chat:hover {
+  box-shadow:
+    0 14px 36px rgba(0, 0, 0, 0.08),
+    inset 0 0 0 1px color-mix(in srgb, black 5%, transparent) !important;
+}
+
+/* Page bed: faint diagonal stripe (reference .stage) */
+:root[data-theme="urban"] .shell--chat .content.content--chat {
+  background-color: var(--bg);
+  background-image: repeating-linear-gradient(
+    -32deg,
+    transparent,
+    transparent 6px,
+    color-mix(in srgb, white 2.5%, transparent) 6px,
+    color-mix(in srgb, white 2.5%, transparent) 7px
+  );
+}
+
+:root[data-theme="urban-light"] .shell--chat .content.content--chat {
+  background-image: repeating-linear-gradient(
+    -32deg,
+    transparent,
+    transparent 6px,
+    color-mix(in srgb, black 2.2%, transparent) 6px,
+    color-mix(in srgb, black 2.2%, transparent) 7px
+  );
+}
+
+/* Token strip (U001): pill + frame, aligned with layout mock */
+:root[data-theme="urban"] .shell--chat .chat-token-strip,
+:root[data-theme="urban-light"] .shell--chat .chat-token-strip {
+  border-width: var(--border-width-strong, 2px);
+  border-style: solid;
+  border-color: var(--urban-frame, #0a0a0a);
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--bg) 92%, var(--bg-elevated) 8%);
+}
+
+/* Session row: green pill badge style */
+:root[data-theme="urban"] .content--chat .chat-controls__session select,
+:root[data-theme="urban"] .content--chat .chat-controls__model select,
+:root[data-theme="urban-light"] .content--chat .chat-controls__session select,
+:root[data-theme="urban-light"] .content--chat .chat-controls__model select {
+  border-width: var(--border-width-strong, 2px);
+  border-style: solid;
+  border-color: var(--urban-frame, #0a0a0a);
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  color: var(--primary-foreground);
+  font-weight: 600;
+}
+
+:root[data-theme="urban-light"] .content--chat .chat-controls__session select,
+:root[data-theme="urban-light"] .content--chat .chat-controls__model select {
+  border-color: var(--urban-frame, #18181b);
+}
+
+:root[data-theme="urban"] .content--chat .content-header,
+:root[data-theme="urban-light"] .content--chat .content-header {
+  border-bottom: var(--border-width-strong, 2px) solid var(--border-strong);
+  padding-bottom: 4px;
+  margin-bottom: 2px;
+}
+
+/* ── Message bubbles: chunky borders, flat fills ── */
+:root[data-theme="urban"] .chat-bubble,
+:root[data-theme="urban-light"] .chat-bubble {
+  border-width: var(--border-width-strong, 2px);
+  border-style: solid;
+}
+
+:root[data-theme="urban"] .chat-bubble {
+  border-color: var(--border-strong);
+  background: var(--card);
+}
+
+/* Outbound: blue (grouped + legacy chat-line) */
+:root[data-theme="urban"] .chat-group.user .chat-bubble,
+:root[data-theme="urban"] .chat-line.user .chat-bubble {
+  border-color: color-mix(in srgb, var(--urban-interaction-blue) 55%, var(--urban-frame, #0a0a0a));
+  background: var(--urban-interaction-blue);
+  color: var(--urban-interaction-blue-foreground);
+}
+
+:root[data-theme="urban"] .chat-group.user .chat-bubble:hover,
+:root[data-theme="urban"] .chat-line.user .chat-bubble:hover {
+  background: color-mix(in srgb, white 10%, var(--urban-interaction-blue));
+}
+
+:root[data-theme="urban-light"] .chat-group.user .chat-bubble,
+:root[data-theme="urban-light"] .chat-line.user .chat-bubble {
+  border-color: color-mix(in srgb, var(--urban-interaction-blue) 42%, var(--urban-frame, #18181b));
+  background: var(--urban-interaction-blue);
+  color: var(--urban-interaction-blue-foreground);
+}
+
+:root[data-theme="urban-light"] .chat-group.user .chat-bubble:hover,
+:root[data-theme="urban-light"] .chat-line.user .chat-bubble:hover {
+  background: color-mix(in srgb, white 12%, var(--urban-interaction-blue));
+}
+
+/* Incoming: light capsule on dark urban */
+:root[data-theme="urban"] .chat-group.assistant .chat-bubble,
+:root[data-theme="urban"] .chat-group.other .chat-bubble,
+:root[data-theme="urban"] .chat-line.assistant .chat-bubble,
+:root[data-theme="urban"] .chat-line.other .chat-bubble {
+  border-color: var(--urban-frame, #0a0a0a);
+  background: var(--urban-msg-incoming-bg);
+  color: var(--urban-msg-incoming-fg);
+}
+
+:root[data-theme="urban"] .chat-group.tool .chat-bubble {
+  border-color: var(--urban-interaction-blue);
+  background: var(--urban-msg-incoming-bg);
+  color: var(--urban-msg-incoming-fg);
+}
+
+:root[data-theme="urban"] .chat-group.assistant .chat-bubble:hover,
+:root[data-theme="urban"] .chat-group.other .chat-bubble:hover,
+:root[data-theme="urban"] .chat-line.assistant .chat-bubble:hover,
+:root[data-theme="urban"] .chat-line.other .chat-bubble:hover {
+  background: color-mix(
+    in srgb,
+    var(--urban-msg-incoming-bg) 88%,
+    var(--urban-msg-incoming-fg) 12%
+  );
+}
+
+:root[data-theme="urban"] .chat-group.tool .chat-bubble:hover {
+  background: color-mix(
+    in srgb,
+    var(--urban-msg-incoming-bg) 88%,
+    var(--urban-interaction-blue) 12%
+  );
+}
+
+:root[data-theme="urban-light"] .chat-bubble {
+  border-color: var(--border-strong);
+  background: var(--card);
+}
+
+:root[data-theme="urban-light"] .chat-group.assistant .chat-bubble,
+:root[data-theme="urban-light"] .chat-group.other .chat-bubble,
+:root[data-theme="urban-light"] .chat-line.assistant .chat-bubble,
+:root[data-theme="urban-light"] .chat-line.other .chat-bubble {
+  border-color: var(--border-strong);
+  background: var(--urban-msg-incoming-bg);
+  color: var(--urban-msg-incoming-fg);
+}
+
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble {
+  border-color: var(--urban-interaction-blue);
+  background: var(--urban-msg-incoming-bg);
+  color: var(--urban-msg-incoming-fg);
+}
+
+:root[data-theme="urban-light"] .chat-group.assistant .chat-bubble:hover,
+:root[data-theme="urban-light"] .chat-group.other .chat-bubble:hover,
+:root[data-theme="urban-light"] .chat-line.assistant .chat-bubble:hover,
+:root[data-theme="urban-light"] .chat-line.other .chat-bubble:hover {
+  background: color-mix(in srgb, var(--urban-msg-incoming-bg) 92%, var(--urban-msg-incoming-fg) 8%);
+}
+
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble:hover {
+  background: color-mix(
+    in srgb,
+    var(--urban-msg-incoming-bg) 92%,
+    var(--urban-interaction-blue) 8%
+  );
+}
+
+/*
+ * components.css forces `.chat-text { color: var(--chat-text) }` (dark-theme gray).
+ * On incoming light bubbles that yields ~1.2:1 contrast — looks “white on white”.
+ */
+:root[data-theme="urban"] .chat-group.assistant .chat-bubble .chat-text,
+:root[data-theme="urban"] .chat-group.other .chat-bubble .chat-text,
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-text,
+:root[data-theme="urban"] .chat-line.assistant .chat-bubble .chat-text,
+:root[data-theme="urban"] .chat-line.other .chat-bubble .chat-text,
+:root[data-theme="urban-light"] .chat-group.assistant .chat-bubble .chat-text,
+:root[data-theme="urban-light"] .chat-group.other .chat-bubble .chat-text,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-text,
+:root[data-theme="urban-light"] .chat-line.assistant .chat-bubble .chat-text,
+:root[data-theme="urban-light"] .chat-line.other .chat-bubble .chat-text {
+  color: var(--urban-msg-incoming-fg);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+:root[data-theme="urban"] .chat-group.assistant .chat-bubble .chat-text :where(blockquote),
+:root[data-theme="urban"] .chat-group.other .chat-bubble .chat-text :where(blockquote),
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-text :where(blockquote),
+:root[data-theme="urban-light"] .chat-group.assistant .chat-bubble .chat-text :where(blockquote),
+:root[data-theme="urban-light"] .chat-group.other .chat-bubble .chat-text :where(blockquote),
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-text :where(blockquote) {
+  color: color-mix(in srgb, var(--urban-msg-incoming-fg) 70%, var(--muted));
+}
+
+:root[data-theme="urban"] .chat-group.assistant .chat-bubble .chat-text :where(:not(pre) > code),
+:root[data-theme="urban"] .chat-group.other .chat-bubble .chat-text :where(:not(pre) > code),
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-text :where(:not(pre) > code),
+:root[data-theme="urban-light"]
+  .chat-group.assistant
+  .chat-bubble
+  .chat-text
+  :where(:not(pre) > code),
+:root[data-theme="urban-light"] .chat-group.other .chat-bubble .chat-text :where(:not(pre) > code),
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-text :where(:not(pre) > code) {
+  color: inherit;
+  background: color-mix(in srgb, var(--urban-msg-incoming-fg) 7%, var(--urban-msg-incoming-bg));
+  border-color: color-mix(in srgb, var(--urban-msg-incoming-fg) 18%, transparent);
+}
+
+:root[data-theme="urban"] .chat-group.assistant .chat-bubble .chat-text :where(pre),
+:root[data-theme="urban"] .chat-group.other .chat-bubble .chat-text :where(pre),
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-text :where(pre),
+:root[data-theme="urban-light"] .chat-group.assistant .chat-bubble .chat-text :where(pre),
+:root[data-theme="urban-light"] .chat-group.other .chat-bubble .chat-text :where(pre),
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-text :where(pre) {
+  color: inherit;
+  background: color-mix(in srgb, var(--urban-msg-incoming-fg) 8%, var(--urban-msg-incoming-bg));
+  border-color: color-mix(in srgb, var(--urban-msg-incoming-fg) 16%, transparent);
+}
+
+:root[data-theme="urban"] .chat-group.assistant .chat-bubble .chat-thinking,
+:root[data-theme="urban"] .chat-group.other .chat-bubble .chat-thinking,
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-thinking,
+:root[data-theme="urban-light"] .chat-group.assistant .chat-bubble .chat-thinking,
+:root[data-theme="urban-light"] .chat-group.other .chat-bubble .chat-thinking,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-thinking {
+  color: color-mix(in srgb, var(--urban-msg-incoming-fg) 78%, var(--muted));
+  border-color: color-mix(in srgb, var(--urban-msg-incoming-fg) 22%, transparent);
+  background: color-mix(in srgb, var(--urban-msg-incoming-fg) 5%, var(--urban-msg-incoming-bg));
+}
+
+/* Tool fold summary uses `--text` / `--muted` (dark-theme tints); fix on light bubble */
+:root[data-theme="urban"] .chat-group.assistant .chat-bubble .chat-tool-msg-summary,
+:root[data-theme="urban"] .chat-group.other .chat-bubble .chat-tool-msg-summary,
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-tool-msg-summary,
+:root[data-theme="urban-light"] .chat-group.assistant .chat-bubble .chat-tool-msg-summary,
+:root[data-theme="urban-light"] .chat-group.other .chat-bubble .chat-tool-msg-summary,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-tool-msg-summary {
+  color: color-mix(in srgb, var(--urban-msg-incoming-fg) 72%, var(--muted));
+  border-color: color-mix(in srgb, var(--urban-msg-incoming-fg) 14%, transparent);
+  background: color-mix(in srgb, var(--urban-msg-incoming-fg) 4%, var(--urban-msg-incoming-bg));
+}
+
+:root[data-theme="urban"] .chat-group.assistant .chat-bubble .chat-tool-msg-summary:hover,
+:root[data-theme="urban"] .chat-group.other .chat-bubble .chat-tool-msg-summary:hover,
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-tool-msg-summary:hover,
+:root[data-theme="urban-light"] .chat-group.assistant .chat-bubble .chat-tool-msg-summary:hover,
+:root[data-theme="urban-light"] .chat-group.other .chat-bubble .chat-tool-msg-summary:hover,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-tool-msg-summary:hover {
+  color: var(--urban-msg-incoming-fg);
+  background: color-mix(in srgb, var(--urban-msg-incoming-fg) 7%, var(--urban-msg-incoming-bg));
+  border-color: color-mix(in srgb, var(--urban-msg-incoming-fg) 22%, transparent);
+}
+
+:root[data-theme="urban"] .chat-group.assistant .chat-bubble .chat-tool-msg-summary__label,
+:root[data-theme="urban"] .chat-group.other .chat-bubble .chat-tool-msg-summary__label,
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-tool-msg-summary__label,
+:root[data-theme="urban-light"] .chat-group.assistant .chat-bubble .chat-tool-msg-summary__label,
+:root[data-theme="urban-light"] .chat-group.other .chat-bubble .chat-tool-msg-summary__label,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-tool-msg-summary__label {
+  color: var(--urban-msg-incoming-fg);
+}
+
+/* Outbound: match blue bubble (override global .chat-text); U001 mock uses stronger body copy */
+:root[data-theme="urban"] .chat-group.user .chat-bubble .chat-text,
+:root[data-theme="urban"] .chat-line.user .chat-bubble .chat-text,
+:root[data-theme="urban-light"] .chat-group.user .chat-bubble .chat-text,
+:root[data-theme="urban-light"] .chat-line.user .chat-bubble .chat-text {
+  color: var(--urban-interaction-blue-foreground);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* User bubble: links + inline code on blue */
+:root[data-theme="urban"] .chat-group.user .chat-bubble .chat-text :where(a),
+:root[data-theme="urban"] .chat-line.user .chat-bubble .chat-text :where(a),
+:root[data-theme="urban-light"] .chat-group.user .chat-bubble .chat-text :where(a),
+:root[data-theme="urban-light"] .chat-line.user .chat-bubble .chat-text :where(a) {
+  color: color-mix(in srgb, var(--urban-interaction-blue-foreground) 88%, var(--accent) 12%);
+}
+
+:root[data-theme="urban"] .chat-group.user .chat-bubble .chat-text :where(:not(pre) > code),
+:root[data-theme="urban"] .chat-line.user .chat-bubble .chat-text :where(:not(pre) > code),
+:root[data-theme="urban-light"] .chat-group.user .chat-bubble .chat-text :where(:not(pre) > code),
+:root[data-theme="urban-light"] .chat-line.user .chat-bubble .chat-text :where(:not(pre) > code) {
+  background: rgba(255, 255, 255, 0.22);
+  color: inherit;
+  font-weight: 400;
+}
+
+:root[data-theme="urban"] .chat-group.user .chat-bubble .chat-text :where(pre),
+:root[data-theme="urban"] .chat-line.user .chat-bubble .chat-text :where(pre),
+:root[data-theme="urban-light"] .chat-group.user .chat-bubble .chat-text :where(pre),
+:root[data-theme="urban-light"] .chat-line.user .chat-bubble .chat-text :where(pre) {
+  background: rgba(0, 0, 0, 0.2);
+  color: inherit;
+  font-weight: 400;
+}
+
+/* Nested bold in user markdown stays emphatic without double-heavy stacking */
+:root[data-theme="urban"] .chat-group.user .chat-bubble .chat-text :where(strong),
+:root[data-theme="urban"] .chat-line.user .chat-bubble .chat-text :where(strong),
+:root[data-theme="urban-light"] .chat-group.user .chat-bubble .chat-text :where(strong),
+:root[data-theme="urban-light"] .chat-line.user .chat-bubble .chat-text :where(strong) {
+  font-weight: 700;
+}
+
+/* Avatars: larger circles; input bar unchanged */
+:root[data-theme="urban"] .shell--chat .chat-avatar,
+:root[data-theme="urban-light"] .shell--chat .chat-avatar {
+  width: 50px;
+  height: 50px;
+  min-width: 50px;
+  min-height: 50px;
+  border-radius: 50%;
+  border-width: var(--border-width-strong, 2px);
+  border-color: var(--urban-frame, #0a0a0a);
+  margin-bottom: 2px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+:root[data-theme="urban-light"] .shell--chat .chat-avatar {
+  border-color: var(--urban-frame, #18181b);
+}
+
+:root[data-theme="urban"] .shell--chat .chat-avatar.user,
+:root[data-theme="urban-light"] .shell--chat .chat-avatar.user {
+  border-color: var(--urban-frame, #0a0a0a);
+  background: var(--accent-subtle);
+  color: var(--accent);
+}
+
+:root[data-theme="urban-light"] .shell--chat .chat-avatar.user {
+  border-color: var(--urban-frame, #18181b);
+}
+
+/* Light disk + dark glyph / visible logo frame (was low-contrast gray-on-gray) */
+:root[data-theme="urban"] .shell--chat .chat-avatar.assistant,
+:root[data-theme="urban"] .shell--chat .chat-avatar.other,
+:root[data-theme="urban"] .shell--chat .chat-avatar.tool,
+:root[data-theme="urban-light"] .shell--chat .chat-avatar.assistant,
+:root[data-theme="urban-light"] .shell--chat .chat-avatar.other,
+:root[data-theme="urban-light"] .shell--chat .chat-avatar.tool {
+  background: var(--urban-msg-incoming-bg);
+  border-color: var(--urban-frame, #0a0a0a);
+  color: var(--urban-msg-incoming-fg);
+}
+
+:root[data-theme="urban-light"] .shell--chat .chat-avatar.assistant,
+:root[data-theme="urban-light"] .shell--chat .chat-avatar.other,
+:root[data-theme="urban-light"] .shell--chat .chat-avatar.tool {
+  border-color: var(--urban-frame, #18181b);
+}
+
+/* Light-on-light logos: subtle inset ring so marks don’t “vanish” on pale disk */
+:root[data-theme="urban"] .shell--chat img.chat-avatar.assistant,
+:root[data-theme="urban"] .shell--chat img.chat-avatar.other,
+:root[data-theme="urban"] .shell--chat img.chat-avatar.tool,
+:root[data-theme="urban-light"] .shell--chat img.chat-avatar.assistant,
+:root[data-theme="urban-light"] .shell--chat img.chat-avatar.other,
+:root[data-theme="urban-light"] .shell--chat img.chat-avatar.tool {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--urban-msg-incoming-fg) 14%, transparent);
+}
+
+/* Timestamps & sender row: on dark thread bed, pull toward --text so name/time aren’t mud-gray */
+:root[data-theme="urban"] .shell--chat .chat-sender-name,
+:root[data-theme="urban"] .shell--chat .chat-group-timestamp {
+  color: color-mix(in srgb, var(--text) 78%, var(--muted) 22%);
+  opacity: 1;
+}
+
+:root[data-theme="urban-light"] .shell--chat .chat-sender-name,
+:root[data-theme="urban-light"] .shell--chat .chat-group-timestamp {
+  color: color-mix(in srgb, var(--text) 70%, var(--muted) 30%);
+  opacity: 1;
+}
+
+/*
+ * Bubble actions — circular “ghost ink” (no boxy lime border); accent only on hover / success.
+ * Aligns with Urban chrome: soft pills + chartreuse highlight.
+ */
+:root[data-theme="urban"] .shell--chat .chat-bubble-actions,
+:root[data-theme="urban-light"] .shell--chat .chat-bubble-actions {
+  gap: 2px;
+  top: 5px;
+  right: 6px;
+}
+
+:root[data-theme="urban"] .shell--chat .chat-group.assistant .chat-bubble-actions .btn.btn--xs,
+:root[data-theme="urban"] .shell--chat .chat-group.other .chat-bubble-actions .btn.btn--xs,
+:root[data-theme="urban"] .shell--chat .chat-group.tool .chat-bubble-actions .btn.btn--xs,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble-actions
+  .btn.btn--xs,
+:root[data-theme="urban-light"] .shell--chat .chat-group.other .chat-bubble-actions .btn.btn--xs,
+:root[data-theme="urban-light"] .shell--chat .chat-group.tool .chat-bubble-actions .btn.btn--xs {
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--urban-msg-incoming-fg) 7%, var(--urban-msg-incoming-bg) 93%);
+  color: color-mix(in srgb, var(--urban-msg-incoming-fg) 42%, var(--muted) 58%);
+  box-shadow: none;
+}
+
+:root[data-theme="urban"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble-actions
+  .btn.btn--xs:hover,
+:root[data-theme="urban"] .shell--chat .chat-group.other .chat-bubble-actions .btn.btn--xs:hover,
+:root[data-theme="urban"] .shell--chat .chat-group.tool .chat-bubble-actions .btn.btn--xs:hover,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble-actions
+  .btn.btn--xs:hover,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.other
+  .chat-bubble-actions
+  .btn.btn--xs:hover,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.tool
+  .chat-bubble-actions
+  .btn.btn--xs:hover {
+  background: color-mix(in srgb, var(--accent) 16%, var(--urban-msg-incoming-bg) 84%);
+  color: color-mix(in srgb, var(--accent) 55%, var(--urban-msg-incoming-fg) 45%);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+:root[data-theme="urban"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble-actions
+  .chat-copy-btn[data-copied="1"],
+:root[data-theme="urban"]
+  .shell--chat
+  .chat-group.other
+  .chat-bubble-actions
+  .chat-copy-btn[data-copied="1"],
+:root[data-theme="urban"]
+  .shell--chat
+  .chat-group.tool
+  .chat-bubble-actions
+  .chat-copy-btn[data-copied="1"],
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble-actions
+  .chat-copy-btn[data-copied="1"],
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.other
+  .chat-bubble-actions
+  .chat-copy-btn[data-copied="1"],
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.tool
+  .chat-bubble-actions
+  .chat-copy-btn[data-copied="1"] {
+  border: none;
+  background: color-mix(in srgb, var(--ok) 12%, var(--urban-msg-incoming-bg) 88%);
+  color: color-mix(in srgb, var(--ok) 72%, var(--urban-msg-incoming-fg) 28%);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ok) 28%, transparent);
+}
+
+/* Outgoing blue bubble: frosted white glyph buttons */
+:root[data-theme="urban"] .shell--chat .chat-group.user .chat-bubble-actions .btn.btn--xs,
+:root[data-theme="urban-light"] .shell--chat .chat-group.user .chat-bubble-actions .btn.btn--xs {
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.88);
+  box-shadow: none;
+}
+
+:root[data-theme="urban"] .shell--chat .chat-group.user .chat-bubble-actions .btn.btn--xs:hover,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.user
+  .chat-bubble-actions
+  .btn.btn--xs:hover {
+  background: rgba(255, 255, 255, 0.26);
+  color: #fff;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+:root[data-theme="urban"]
+  .shell--chat
+  .chat-group.user
+  .chat-bubble-actions
+  .chat-copy-btn[data-copied="1"],
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.user
+  .chat-bubble-actions
+  .chat-copy-btn[data-copied="1"] {
+  border: none;
+  background: color-mix(in srgb, var(--ok) 35%, rgba(255, 255, 255, 0.12) 65%);
+  color: #fff;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ok) 40%, transparent);
+}
+
+/* Slightly finer strokes inside compact bubble actions */
+:root[data-theme="urban"] .shell--chat .chat-bubble-actions .btn.btn--xs svg,
+:root[data-theme="urban-light"] .shell--chat .chat-bubble-actions .btn.btn--xs svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 1.35px;
+}
+
+/* Reading indicator sits on incoming light bubble; dots must not use pale --muted */
+:root[data-theme="urban"]
+  .chat-group.assistant
+  .chat-bubble.chat-reading-indicator
+  .chat-reading-indicator__dots
+  > span,
+:root[data-theme="urban"]
+  .chat-group.other
+  .chat-bubble.chat-reading-indicator
+  .chat-reading-indicator__dots
+  > span,
+:root[data-theme="urban-light"]
+  .chat-group.assistant
+  .chat-bubble.chat-reading-indicator
+  .chat-reading-indicator__dots
+  > span,
+:root[data-theme="urban-light"]
+  .chat-group.other
+  .chat-bubble.chat-reading-indicator
+  .chat-reading-indicator__dots
+  > span {
+  background: var(--urban-msg-incoming-fg);
+  opacity: 0.45;
+}
+
+/* Tool cards */
+:root[data-theme="urban"] .chat-tool-card,
+:root[data-theme="urban-light"] .chat-tool-card {
+  border-width: var(--border-width-strong, 2px);
+}
+
+/*
+ * Incoming light bubbles: tool / “N tools” rows used chartreuse (--accent) icons on pale gray —
+ * fails WCAG. Flatten the inner “second box” so one chunky outer bubble + inset divider rail.
+ */
+:root[data-theme="urban"] .shell--chat .chat-group.assistant .chat-bubble .chat-tool-msg-summary,
+:root[data-theme="urban"] .shell--chat .chat-group.other .chat-bubble .chat-tool-msg-summary,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tool-msg-summary,
+:root[data-theme="urban-light"] .shell--chat .chat-group.other .chat-bubble .chat-tool-msg-summary {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0;
+  padding: 6px 8px 8px 10px;
+  margin: 4px 0 0;
+  box-shadow: none;
+  border-left: 3px solid var(--urban-frame, #0a0a0a);
+}
+
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tool-msg-summary,
+:root[data-theme="urban-light"] .shell--chat .chat-group.other .chat-bubble .chat-tool-msg-summary {
+  border-left-color: var(--urban-frame, #18181b);
+}
+
+/* Tool messages: blue accent */
+:root[data-theme="urban"] .shell--chat .chat-group.tool .chat-bubble .chat-tool-msg-summary,
+:root[data-theme="urban-light"] .shell--chat .chat-group.tool .chat-bubble .chat-tool-msg-summary {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0;
+  padding: 6px 8px 8px 10px;
+  margin: 4px 0 0;
+  box-shadow: none;
+  border-left: 3px solid var(--urban-interaction-blue);
+}
+
+:root[data-theme="urban"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tool-msg-summary:hover,
+:root[data-theme="urban"] .shell--chat .chat-group.other .chat-bubble .chat-tool-msg-summary:hover,
+:root[data-theme="urban"] .shell--chat .chat-group.tool .chat-bubble .chat-tool-msg-summary:hover,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tool-msg-summary:hover,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.other
+  .chat-bubble
+  .chat-tool-msg-summary:hover,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.tool
+  .chat-bubble
+  .chat-tool-msg-summary:hover {
+  background: color-mix(
+    in srgb,
+    var(--urban-msg-incoming-fg) 6%,
+    var(--urban-msg-incoming-bg)
+  ) !important;
+}
+
+:root[data-theme="urban"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tool-msg-summary::before,
+:root[data-theme="urban"]
+  .shell--chat
+  .chat-group.other
+  .chat-bubble
+  .chat-tool-msg-summary::before,
+:root[data-theme="urban"] .shell--chat .chat-group.tool .chat-bubble .chat-tool-msg-summary::before,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tool-msg-summary::before,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.other
+  .chat-bubble
+  .chat-tool-msg-summary::before,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.tool
+  .chat-bubble
+  .chat-tool-msg-summary::before {
+  color: color-mix(in srgb, var(--urban-msg-incoming-fg) 72%, var(--muted));
+  opacity: 1;
+}
+
+:root[data-theme="urban"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tool-msg-summary__icon,
+:root[data-theme="urban"] .shell--chat .chat-group.other .chat-bubble .chat-tool-msg-summary__icon,
+:root[data-theme="urban"] .shell--chat .chat-group.tool .chat-bubble .chat-tool-msg-summary__icon,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tool-msg-summary__icon,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.other
+  .chat-bubble
+  .chat-tool-msg-summary__icon,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.tool
+  .chat-bubble
+  .chat-tool-msg-summary__icon {
+  color: var(--urban-msg-incoming-fg) !important;
+  opacity: 1 !important;
+}
+
+:root[data-theme="urban"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tool-msg-summary__names,
+:root[data-theme="urban"] .shell--chat .chat-group.other .chat-bubble .chat-tool-msg-summary__names,
+:root[data-theme="urban"] .shell--chat .chat-group.tool .chat-bubble .chat-tool-msg-summary__names,
+:root[data-theme="urban"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tool-msg-summary__preview,
+:root[data-theme="urban"]
+  .shell--chat
+  .chat-group.other
+  .chat-bubble
+  .chat-tool-msg-summary__preview,
+:root[data-theme="urban"]
+  .shell--chat
+  .chat-group.tool
+  .chat-bubble
+  .chat-tool-msg-summary__preview,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tool-msg-summary__names,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.other
+  .chat-bubble
+  .chat-tool-msg-summary__names,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.tool
+  .chat-bubble
+  .chat-tool-msg-summary__names,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tool-msg-summary__preview,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.other
+  .chat-bubble
+  .chat-tool-msg-summary__preview,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.tool
+  .chat-bubble
+  .chat-tool-msg-summary__preview {
+  color: color-mix(in srgb, var(--urban-msg-incoming-fg) 78%, var(--muted)) !important;
+  opacity: 1 !important;
+}
+
+:root[data-theme="urban"] .shell--chat .chat-group.assistant .chat-bubble .chat-tools-summary,
+:root[data-theme="urban"] .shell--chat .chat-group.other .chat-bubble .chat-tools-summary,
+:root[data-theme="urban-light"] .shell--chat .chat-group.assistant .chat-bubble .chat-tools-summary,
+:root[data-theme="urban-light"] .shell--chat .chat-group.other .chat-bubble .chat-tools-summary {
+  background: transparent;
+  border-radius: 0;
+  margin-top: 2px;
+  border-left: 3px solid var(--urban-frame, #0a0a0a);
+  padding-left: 10px;
+}
+
+:root[data-theme="urban-light"] .shell--chat .chat-group.assistant .chat-bubble .chat-tools-summary,
+:root[data-theme="urban-light"] .shell--chat .chat-group.other .chat-bubble .chat-tools-summary {
+  border-left-color: var(--urban-frame, #18181b);
+}
+
+/* Tool messages: blue accent */
+:root[data-theme="urban"] .shell--chat .chat-group.tool .chat-bubble .chat-tools-summary,
+:root[data-theme="urban-light"] .shell--chat .chat-group.tool .chat-bubble .chat-tools-summary {
+  background: transparent;
+  border-radius: 0;
+  margin-top: 2px;
+  border-left: 3px solid var(--urban-interaction-blue);
+  padding-left: 10px;
+}
+
+:root[data-theme="urban"] .shell--chat .chat-group.assistant .chat-bubble .chat-tools-summary__icon,
+:root[data-theme="urban"] .shell--chat .chat-group.other .chat-bubble .chat-tools-summary__icon,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tools-summary__icon,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.other
+  .chat-bubble
+  .chat-tools-summary__icon {
+  color: var(--urban-msg-incoming-fg) !important;
+  opacity: 1 !important;
+}
+
+:root[data-theme="urban"] .shell--chat .chat-group.tool .chat-bubble .chat-tools-summary__icon,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.tool
+  .chat-bubble
+  .chat-tools-summary__icon {
+  color: var(--urban-interaction-blue) !important;
+  opacity: 1 !important;
+}
+
+:root[data-theme="urban"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tools-summary__count,
+:root[data-theme="urban"] .shell--chat .chat-group.other .chat-bubble .chat-tools-summary__count,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tools-summary__count,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.other
+  .chat-bubble
+  .chat-tools-summary__count {
+  color: var(--urban-msg-incoming-fg) !important;
+}
+
+:root[data-theme="urban"] .shell--chat .chat-group.tool .chat-bubble .chat-tools-summary__count,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.tool
+  .chat-bubble
+  .chat-tools-summary__count {
+  color: var(--urban-interaction-blue) !important;
+}
+
+:root[data-theme="urban"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tools-summary__names,
+:root[data-theme="urban"] .shell--chat .chat-group.other .chat-bubble .chat-tools-summary__names,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tools-summary__names,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.other
+  .chat-bubble
+  .chat-tools-summary__names {
+  color: color-mix(in srgb, var(--urban-msg-incoming-fg) 75%, var(--muted)) !important;
+}
+
+:root[data-theme="urban"] .shell--chat .chat-group.tool .chat-bubble .chat-tools-summary__names,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.tool
+  .chat-bubble
+  .chat-tools-summary__names {
+  color: var(--urban-interaction-blue) !important;
+}
+
+:root[data-theme="urban"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tools-collapse__body,
+:root[data-theme="urban"] .shell--chat .chat-group.other .chat-bubble .chat-tools-collapse__body,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tools-collapse__body,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.other
+  .chat-bubble
+  .chat-tools-collapse__body {
+  border-top-color: color-mix(in srgb, var(--urban-msg-incoming-fg) 14%, transparent);
+  padding-top: 8px;
+}
+
+:root[data-theme="urban"] .shell--chat .chat-group.tool .chat-bubble .chat-tools-collapse__body,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.tool
+  .chat-bubble
+  .chat-tools-collapse__body {
+  border-top-color: color-mix(in srgb, var(--urban-interaction-blue) 30%, transparent);
+  padding-top: 8px;
+}
+
+:root[data-theme="urban"] .shell--chat .chat-group.assistant .chat-bubble .chat-json-collapse,
+:root[data-theme="urban"] .shell--chat .chat-group.other .chat-bubble .chat-json-collapse,
+:root[data-theme="urban-light"] .shell--chat .chat-group.assistant .chat-bubble .chat-json-collapse,
+:root[data-theme="urban-light"] .shell--chat .chat-group.other .chat-bubble .chat-json-collapse {
+  border-color: color-mix(in srgb, var(--urban-msg-incoming-fg) 16%, transparent);
+  background: color-mix(in srgb, var(--urban-msg-incoming-fg) 5%, var(--urban-msg-incoming-bg));
+}
+
+:root[data-theme="urban"] .shell--chat .chat-group.tool .chat-bubble .chat-json-collapse,
+:root[data-theme="urban-light"] .shell--chat .chat-group.tool .chat-bubble .chat-json-collapse {
+  border-color: var(--urban-interaction-blue);
+  background: color-mix(in srgb, var(--urban-interaction-blue) 5%, var(--urban-msg-incoming-bg));
+}
+
+:root[data-theme="urban"] .shell--chat .chat-group.assistant .chat-bubble .chat-json-badge,
+:root[data-theme="urban"] .shell--chat .chat-group.other .chat-bubble .chat-json-badge,
+:root[data-theme="urban-light"] .shell--chat .chat-group.assistant .chat-bubble .chat-json-badge,
+:root[data-theme="urban-light"] .shell--chat .chat-group.other .chat-bubble .chat-json-badge {
+  background: color-mix(in srgb, var(--urban-msg-incoming-fg) 10%, var(--urban-msg-incoming-bg));
+  color: var(--urban-msg-incoming-fg);
+}
+
+:root[data-theme="urban"] .shell--chat .chat-group.tool .chat-bubble .chat-json-badge,
+:root[data-theme="urban-light"] .shell--chat .chat-group.tool .chat-bubble .chat-json-badge {
+  background: color-mix(in srgb, var(--urban-interaction-blue) 10%, var(--urban-msg-incoming-bg));
+  color: var(--urban-interaction-blue);
+}
+
+:root[data-theme="urban"] .shell--chat .chat-group.assistant .chat-bubble .chat-tool-card__action,
+:root[data-theme="urban"] .shell--chat .chat-group.other .chat-bubble .chat-tool-card__action,
+:root[data-theme="urban"] .shell--chat .chat-group.tool .chat-bubble .chat-tool-card__action,
+:root[data-theme="urban-light"]
+  .shell--chat
+  .chat-group.assistant
+  .chat-bubble
+  .chat-tool-card__action,
+:root[data-theme="urban-light"] .shell--chat .chat-group.other .chat-bubble .chat-tool-card__action,
+:root[data-theme="urban-light"] .shell--chat .chat-group.tool .chat-bubble .chat-tool-card__action {
+  color: color-mix(in srgb, var(--urban-interaction-blue) 85%, var(--urban-msg-incoming-fg) 15%);
+}
+
+/* Header control strip: pill icon buttons */
+:root[data-theme="urban"] .chat-controls .btn--icon,
+:root[data-theme="urban-light"] .chat-controls .btn--icon {
+  border-radius: var(--radius-full);
+  border-width: var(--border-width-strong, 2px);
+}
+
+:root[data-theme="urban"] .chat-controls .btn--icon.active,
+:root[data-theme="urban-light"] .chat-controls .btn--icon.active {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+  color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+/* Compose: input shell */
+:root[data-theme="urban"] .agent-chat__input,
+:root[data-theme="urban-light"] .agent-chat__input {
+  border-width: var(--border-width-strong, 2px);
+  border-style: solid;
+  border-color: var(--border-strong);
+}
+
+:root[data-theme="urban"] .agent-chat__input:focus-within,
+:root[data-theme="urban-light"] .agent-chat__input:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+:root[data-theme="urban"] .agent-chat__input-btn,
+:root[data-theme="urban"] .agent-chat__toolbar .btn--ghost,
+:root[data-theme="urban-light"] .agent-chat__input-btn,
+:root[data-theme="urban-light"] .agent-chat__toolbar .btn--ghost {
+  border-radius: var(--radius-full);
+  border-width: var(--border-width-strong, 2px);
+}
+
+:root[data-theme="urban"] .chat-send-btn,
+:root[data-theme="urban-light"] .chat-send-btn {
+  border-radius: var(--radius-full);
+}
+
+:root[data-theme="urban"] .chat-send-btn:not(.chat-send-btn--stop),
+:root[data-theme="urban-light"] .chat-send-btn:not(.chat-send-btn--stop) {
+  border: var(--border-width-strong, 2px) solid var(--urban-frame, #0a0a0a);
+  background: var(--accent);
+  color: var(--primary-foreground);
+}
+
+:root[data-theme="urban"] .chat-send-btn:not(.chat-send-btn--stop):hover:not(:disabled),
+:root[data-theme="urban-light"] .chat-send-btn:not(.chat-send-btn--stop):hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+:root[data-theme="urban"] .agent-chat__suggestion,
+:root[data-theme="urban-light"] .agent-chat__suggestion {
+  border-width: var(--border-width-strong, 2px);
+  border-color: var(--urban-frame, #0a0a0a);
+  background: color-mix(in srgb, var(--urban-frame, #0a0a0a) 88%, var(--panel) 12%);
+  color: var(--text-strong);
+}
+
+:root[data-theme="urban-light"] .agent-chat__suggestion {
+  border-color: var(--urban-frame, #18181b);
+  background: color-mix(in srgb, var(--panel-strong) 92%, var(--urban-frame, #18181b) 8%);
+  color: var(--text-strong);
+}
+
+:root[data-theme="urban"] .agent-chat__suggestion:hover,
+:root[data-theme="urban-light"] .agent-chat__suggestion:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent-subtle) 55%, var(--panel) 45%);
+}
+
+/* Thinking row in header */
+:root[data-theme="urban"] .chat-controls__thinking,
+:root[data-theme="urban-light"] .chat-controls__thinking {
+  border-width: var(--border-width-strong, 2px);
+  border-radius: var(--radius-full);
+}
+
+/* ── Tool messages: blue border + white background (readable) ── */
+:root[data-theme="urban"] .chat-group.tool .chat-bubble,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble {
+  border-color: var(--urban-interaction-blue);
+  background: var(--urban-msg-incoming-bg);
+  color: var(--urban-msg-incoming-fg);
+}
+
+:root[data-theme="urban"] .chat-group.tool .chat-bubble:hover,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble:hover {
+  background: color-mix(in srgb, var(--urban-msg-incoming-bg) 92%, var(--urban-msg-incoming-fg) 8%);
+}
+
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-text,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-text {
+  color: var(--urban-msg-incoming-fg);
+}
+
+/* Tool message inner elements - blue accents with readable text */
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-tool-msg-summary,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-tool-msg-summary {
+  background: transparent !important;
+  border-left-color: var(--urban-interaction-blue) !important;
+}
+
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-tool-msg-summary__label,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-tool-msg-summary__label,
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-tool-msg-summary__names,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-tool-msg-summary__names {
+  color: var(--urban-msg-incoming-fg) !important;
+}
+
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-tools-summary,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-tools-summary {
+  border-left-color: var(--urban-interaction-blue) !important;
+}
+
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-tools-summary__count,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-tools-summary__count,
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-tools-summary__names,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-tools-summary__names {
+  color: var(--urban-msg-incoming-fg) !important;
+}
+
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-tool-card,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-tool-card {
+  border-color: var(--urban-interaction-blue);
+  background: color-mix(in srgb, var(--urban-interaction-blue) 5%, var(--urban-msg-incoming-bg));
+}
+
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-tool-card__icon,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-tool-card__icon,
+:root[data-theme="urban"] .chat-group.tool .chat-bubble .chat-tool-msg-summary__icon,
+:root[data-theme="urban-light"] .chat-group.tool .chat-bubble .chat-tool-msg-summary__icon {
+  color: var(--urban-interaction-blue) !important;
+}

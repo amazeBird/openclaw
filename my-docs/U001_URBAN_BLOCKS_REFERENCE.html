@@ -1,0 +1,668 @@
+<!doctype html>
+<!--
+  U001 — Urban 机能块参考稿（另起一稿）
+  把 U001_REFERENCE_MOCK 里可复用的视觉元素抽成「命名块」，方便对照产品与实现。
+  相关: U001_REFERENCE_MOCK.html · U001_OPENCLAW_LAYOUT_MOCK.html · ui/src/styles/theme-urban*.css
+-->
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>U001 · Urban 组件块参考</title>
+    <style>
+      :root {
+        --u-bg: #09090b;
+        --u-bg-elevated: #141418;
+        --u-card: #121216;
+        --u-border-strong: #3f3f46;
+        --u-text: #d4d4d8;
+        --u-text-strong: #fafafa;
+        --u-muted: #71717a;
+        --u-accent: #b4d83a;
+        --u-accent-ink: #111114;
+        --u-orange: #fb923c;
+        --u-frame: #0a0a0a;
+        --u-stripe: rgba(255, 255, 255, 0.02);
+        --u-radius-chunk: 18px;
+        --u-radius-pill: 9999px;
+        --u-bw: 2px;
+        --u-bw-fat: 3px;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          "Inter",
+          -apple-system,
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--u-text);
+        background: #050506;
+        line-height: 1.5;
+      }
+
+      .page {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 24px 20px 48px;
+      }
+
+      .page::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        opacity: 0.4;
+        background: repeating-linear-gradient(
+          -32deg,
+          transparent,
+          transparent 6px,
+          var(--u-stripe) 6px,
+          var(--u-stripe) 7px
+        );
+        pointer-events: none;
+      }
+
+      h1 {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--u-text-strong);
+        letter-spacing: -0.02em;
+        margin: 0 0 8px;
+      }
+
+      .lede {
+        font-size: 0.9rem;
+        color: var(--u-muted);
+        margin: 0 0 20px;
+      }
+
+      .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 16px;
+        margin-bottom: 28px;
+        font-size: 0.85rem;
+      }
+
+      .links a {
+        color: var(--u-accent);
+        text-decoration: none;
+        border-bottom: 1px solid color-mix(in srgb, var(--u-accent) 45%, transparent);
+      }
+
+      .links a:hover {
+        color: color-mix(in srgb, var(--u-accent) 88%, white);
+      }
+
+      h2 {
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--u-muted);
+        margin: 32px 0 12px;
+        padding-bottom: 6px;
+        border-bottom: var(--u-bw) solid var(--u-border-strong);
+      }
+
+      h2:first-of-type {
+        margin-top: 0;
+      }
+
+      .block-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--u-muted);
+        margin-bottom: 8px;
+        font-family: ui-monospace, monospace;
+      }
+
+      .showcase {
+        padding: 16px;
+        border-radius: var(--u-radius-chunk);
+        border: var(--u-bw-fat) solid var(--u-frame);
+        background: linear-gradient(180deg, #16161a, var(--u-bg-elevated));
+        margin-bottom: 20px;
+      }
+
+      /* ── Named blocks (prefix u001-ref- = 仅参考稿) ── */
+      .u001-ref-name-pill {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: var(--u-radius-pill);
+        border: var(--u-bw) solid var(--u-frame);
+        background: var(--u-card);
+        color: var(--u-text-strong);
+        font-weight: 700;
+        font-size: 0.95rem;
+      }
+
+      .u001-ref-inset {
+        border-radius: 14px;
+        border: var(--u-bw) solid var(--u-border-strong);
+        background: rgba(0, 0, 0, 0.28);
+        padding: 12px 14px;
+        font-size: 0.88rem;
+        color: var(--u-text);
+      }
+
+      .u001-ref-inset ul {
+        margin: 0;
+        padding-left: 1.15rem;
+      }
+
+      .u001-ref-actions {
+        display: flex;
+        gap: 10px;
+        align-items: stretch;
+      }
+
+      .u001-ref-btn-primary-dark {
+        flex: 1;
+        padding: 12px 16px;
+        border-radius: var(--u-radius-pill);
+        border: var(--u-bw) solid var(--u-frame);
+        background: #0a0a0c;
+        color: var(--u-text-strong);
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-align: center;
+        cursor: default;
+      }
+
+      .u001-ref-btn-icon {
+        width: 46px;
+        height: 46px;
+        flex-shrink: 0;
+        border-radius: var(--u-radius-pill);
+        border: var(--u-bw) solid var(--u-frame);
+        background: var(--u-bg-elevated);
+        display: grid;
+        place-items: center;
+        font-size: 1.1rem;
+        cursor: default;
+      }
+
+      .u001-ref-bottom-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+        border-radius: var(--u-radius-chunk);
+        border: var(--u-bw) solid var(--u-frame);
+        background: linear-gradient(180deg, #3f3f46, #27272a);
+        color: var(--u-text-strong);
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+
+      .u001-ref-bottom-bar__chev {
+        margin-left: auto;
+        letter-spacing: 0.12em;
+        font-weight: 900;
+        opacity: 0.88;
+      }
+
+      .u001-ref-rivet {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid #18181b;
+        background: radial-gradient(circle at 30% 30%, #71717a, #3f3f46);
+        flex-shrink: 0;
+      }
+
+      .u001-ref-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .u001-ref-info-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.82rem;
+        color: var(--u-muted);
+      }
+
+      .u001-ref-info-line strong {
+        color: var(--u-text);
+        font-weight: 600;
+      }
+
+      /* Optional: orange hero strip + avatar (full invitation header) */
+      .u001-ref-hero {
+        position: relative;
+        min-height: 100px;
+        padding: 14px 14px 40px;
+        border-radius: var(--u-radius-chunk) var(--u-radius-chunk) 0 0;
+        border: var(--u-bw) solid var(--u-frame);
+        border-bottom: none;
+        background-image:
+          radial-gradient(circle at 20% 30%, rgba(0, 0, 0, 0.12) 0 2px, transparent 2px),
+          radial-gradient(circle at 60% 70%, rgba(0, 0, 0, 0.1) 0 2px, transparent 2px),
+          linear-gradient(165deg, #fdba74, var(--u-orange));
+        background-size:
+          10px 10px,
+          12px 12px,
+          100% 100%;
+      }
+
+      .u001-ref-hero-avatar {
+        position: absolute;
+        left: 50%;
+        bottom: -28px;
+        transform: translateX(-50%);
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        border: var(--u-bw-fat) solid var(--u-frame);
+        background: linear-gradient(160deg, #52525b, #27272a);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+      }
+
+      .u001-ref-card-shell {
+        border-radius: var(--u-radius-chunk);
+        border: var(--u-bw-fat) solid var(--u-frame);
+        background: var(--u-bg-elevated);
+        overflow: hidden;
+      }
+
+      .u001-ref-card-body {
+        padding: 36px 16px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      /* Narrow column = mobile / drawer preview */
+      .narrow-wrap {
+        max-width: 400px;
+        margin-left: 0;
+      }
+
+      table.map {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+        margin-top: 8px;
+      }
+
+      table.map th,
+      table.map td {
+        border: var(--u-bw) solid var(--u-border-strong);
+        padding: 10px 12px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      table.map th {
+        background: color-mix(in srgb, var(--u-card) 80%, transparent);
+        color: var(--u-text-strong);
+        font-weight: 700;
+      }
+
+      table.map code {
+        font-size: 0.78rem;
+        color: var(--u-accent);
+      }
+
+      .note {
+        font-size: 0.8rem;
+        color: var(--u-muted);
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        border: var(--u-bw) dashed var(--u-border-strong);
+      }
+
+      /* ── Typography ladder (align with U001_URBAN_THEME_TOKENS §5.1) ── */
+      .u001-type-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .u001-type-row {
+        padding-bottom: 14px;
+        border-bottom: 1px solid color-mix(in srgb, var(--u-border-strong) 55%, transparent);
+      }
+
+      .u001-type-row:last-child {
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+
+      .u001-type-tag {
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--u-accent);
+        margin-bottom: 6px;
+        font-family: ui-monospace, monospace;
+      }
+
+      .u001-type-display {
+        font-size: 1.5rem;
+        font-weight: 800;
+        line-height: 1.2;
+        letter-spacing: -0.028em;
+        color: var(--u-text-strong);
+      }
+
+      .u001-type-ui-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.25;
+        color: var(--u-text-strong);
+      }
+
+      .u001-type-body {
+        font-size: 0.9rem;
+        font-weight: 450;
+        line-height: 1.55;
+        color: var(--u-text);
+        max-width: 42em;
+      }
+
+      .u001-type-meta {
+        font-size: 0.8rem;
+        font-weight: 450;
+        line-height: 1.4;
+        color: var(--u-muted);
+      }
+
+      .u001-type-section-label {
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--u-muted);
+      }
+
+      .u001-type-section-label--zh {
+        text-transform: none;
+        letter-spacing: 0.06em;
+      }
+
+      .u001-type-btn-accent {
+        display: inline-block;
+        padding: 8px 18px;
+        border-radius: var(--u-radius-pill);
+        border: var(--u-bw) solid var(--u-frame);
+        background: var(--u-accent);
+        color: var(--u-accent-ink);
+        font-size: 0.88rem;
+        font-weight: 700;
+      }
+
+      .u001-type-mono {
+        font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: color-mix(in srgb, var(--u-accent) 85%, var(--u-text));
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: var(--u-bw) solid var(--u-border-strong);
+        background: rgba(0, 0, 0, 0.35);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <h1>U001 · Urban 机能块参考稿</h1>
+      <p class="lede">
+        从参考界面抽象出的<strong>可复用视觉块</strong>，单独成稿便于：设计对齐、实现时对照 CSS
+        变量、与完整页面稿（游戏意象 / OpenClaw 布局）分工使用。
+      </p>
+
+      <nav class="links" aria-label="相关稿">
+        <a href="./U001_REFERENCE_MOCK.html">完整参考窗（单卡 + 侧栏意象）</a>
+        <a href="./U001_OPENCLAW_LAYOUT_MOCK.html">OpenClaw 聊天 shell 效果图</a>
+        <a href="./U001_EXAMPLE_MAIN_UI.html">主界面示例（整合版）</a>
+        <a href="./U001_EXAMPLE_CONFIG_UI.html">配置页示例</a>
+        <a href="../ui/src/styles/theme-urban.css">theme-urban.css</a>
+        <a href="./U001_URBAN_THEME_TOKENS.md">U001_URBAN_THEME_TOKENS.md（§5.1 字体）</a>
+      </nav>
+
+      <h2>0 · 字体搭配与层级</h2>
+      <p class="lede" style="margin-top: -8px">
+        产品与 urban 主题共用<strong>一套无衬线栈</strong>（<code>--font-body</code> /
+        <code>--font-display</code> 同源）；机能感靠<strong>字重 + 字号 + 字间距</strong
+        >，不靠第二种标题字体。以下为与规范文档一致的示意（中英混排）。
+      </p>
+      <div class="showcase">
+        <div class="u001-type-stack">
+          <div class="u001-type-row">
+            <div class="u001-type-tag">Display</div>
+            <div class="u001-type-display">Urban dashboard · 控制台</div>
+            <div class="u001-type-meta" style="margin-top: 6px">
+              weight 800 · letter-spacing -0.028em · 页内大标题 / 空状态
+            </div>
+          </div>
+          <div class="u001-type-row">
+            <div class="u001-type-tag">UI title</div>
+            <div class="u001-type-ui-title">会话与模型 · Session &amp; model</div>
+            <div class="u001-type-meta" style="margin-top: 6px">
+              weight 700 · 卡片标题、名称条、侧栏品牌
+            </div>
+          </div>
+          <div class="u001-type-row">
+            <div class="u001-type-tag">Body</div>
+            <div class="u001-type-body">
+              正文与说明：OpenClaw 在 urban 下仍应以
+              <code>--text</code> 为主色，酸绿仅作强调与边界。长段落用 400–500 字重即可。
+            </div>
+          </div>
+          <div class="u001-type-row">
+            <div class="u001-type-tag">Meta</div>
+            <div class="u001-type-meta">v2026.3.25 · 17:42 · 次要信息用 muted，不必再加粗。</div>
+          </div>
+          <div class="u001-type-row">
+            <div class="u001-type-tag">Section label</div>
+            <div class="u001-type-section-label" style="margin-bottom: 6px">Control · Agent</div>
+            <div class="u001-type-section-label u001-type-section-label--zh">
+              控制 · 代理（中文可不用 uppercase，靠字重与字号）
+            </div>
+          </div>
+          <div class="u001-type-row">
+            <div class="u001-type-tag">Button on accent</div>
+            <div><span class="u001-type-btn-accent">Primary 主操作</span></div>
+            <div class="u001-type-meta" style="margin-top: 8px">
+              weight 700 · <code>color: var(--primary-foreground)</code>
+            </div>
+          </div>
+          <div class="u001-type-row">
+            <div class="u001-type-tag">Mono only for code</div>
+            <div class="u001-type-mono">openclaw config get agents.defaults.model</div>
+          </div>
+        </div>
+      </div>
+      <p class="note">
+        产品内请使用 <code>var(--font-body)</code>；本页为静态稿，用与
+        <code>theme-urban.css</code> 相近的栈演示效果。CJK 由系统 UI 字体回退，与 Inter
+        混排时保持同一 <code>font-family</code> 即可。
+      </p>
+
+      <h2>1 · 命名与 token</h2>
+      <div class="showcase">
+        <div class="block-label">建议在产品里继续用已有变量，而不是抄本页的 class 名</div>
+        <table class="map" aria-label="Token 对照">
+          <thead>
+            <tr>
+              <th>参考块</th>
+              <th>对齐变量（urban）</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>外框 / 描边加重</td>
+              <td><code>--urban-frame</code>、<code>--border-width-strong</code></td>
+            </tr>
+            <tr>
+              <td>酸绿强调</td>
+              <td><code>--accent</code>、<code>--primary-foreground</code></td>
+            </tr>
+            <tr>
+              <td>内嵌浅槽</td>
+              <td><code>--card</code> / 深色半透明底 + <code>--border-strong</code></td>
+            </tr>
+            <tr>
+              <td>次强调橙区</td>
+              <td><code>--urban-orange</code>、网点可用 <code>radial-gradient</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>2 · 单块展示</h2>
+
+      <div class="block-label">.u001-ref-name-pill — 标题条 / 会话名条</div>
+      <div class="showcase">
+        <div class="u001-ref-name-pill">
+          <span>占位角色名</span>
+          <span aria-hidden="true">😉</span>
+        </div>
+      </div>
+
+      <div class="block-label">.u001-ref-inset — 深底内嵌说明区</div>
+      <div class="showcase">
+        <div class="u001-ref-inset">
+          <ul>
+            <li>说明区块：用于对齐「深底 + 内嵌卡片 + 粗边框」层次。</li>
+            <li>正式产品请继续用 OpenClaw 组件与 CSS 变量，不搬运本稿 DOM 结构。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="block-label">.u001-ref-actions — 主操作 + 圆形图标钮</div>
+      <div class="showcase">
+        <div class="u001-ref-actions">
+          <div class="u001-ref-btn-primary-dark">主要操作</div>
+          <div class="u001-ref-btn-icon" aria-hidden="true">★</div>
+        </div>
+      </div>
+
+      <div class="block-label">.u001-ref-bottom-bar — 底部宽幅条（铆钉 + 装饰 chevron）</div>
+      <div class="showcase">
+        <div class="u001-ref-bottom-bar">
+          <span class="u001-ref-rivet" aria-hidden="true"></span>
+          <span>底部宽幅操作条</span>
+          <span class="u001-ref-bottom-bar__chev" aria-hidden="true">&gt;&gt;&gt;</span>
+          <span class="u001-ref-rivet" aria-hidden="true"></span>
+        </div>
+      </div>
+
+      <h2>3 · 组合栈（与截图一致的一条龙）</h2>
+      <div class="showcase narrow-wrap">
+        <div class="u001-ref-stack">
+          <div class="u001-ref-name-pill">
+            <span>占位角色名</span>
+            <span aria-hidden="true">😉</span>
+          </div>
+          <div class="u001-ref-inset">
+            <ul>
+              <li>说明区块：用于对齐「深底 + 内嵌卡片 + 粗边框」层次。</li>
+              <li>正式产品请继续用 OpenClaw 组件与 CSS 变量，不搬运本稿结构。</li>
+            </ul>
+          </div>
+          <div class="u001-ref-actions">
+            <div class="u001-ref-btn-primary-dark">主要操作</div>
+            <div class="u001-ref-btn-icon" aria-hidden="true">★</div>
+          </div>
+          <div class="u001-ref-bottom-bar">
+            <span class="u001-ref-rivet" aria-hidden="true"></span>
+            <span>底部宽幅操作条</span>
+            <span class="u001-ref-bottom-bar__chev" aria-hidden="true">&gt;&gt;&gt;</span>
+            <span class="u001-ref-rivet" aria-hidden="true"></span>
+          </div>
+        </div>
+      </div>
+      <p class="note">
+        上列容器加了 <code>max-width: 400px</code>，模拟窄屏 / 移动单列；桌面可把
+        <code>.narrow-wrap</code> 去掉或加宽。
+      </p>
+
+      <h2>4 · 扩展：带橙头 + 头像的「邀请函」壳（可选）</h2>
+      <div class="showcase">
+        <div class="u001-ref-card-shell">
+          <div class="u001-ref-hero">
+            <div class="u001-ref-hero-avatar" aria-hidden="true"></div>
+          </div>
+          <div class="u001-ref-card-body">
+            <div class="u001-ref-info-line">
+              <span aria-hidden="true">ⓘ</span>
+              <span>剩余名额 <strong>3 / 3</strong>（示意）</span>
+            </div>
+            <div class="u001-ref-name-pill">
+              <span>占位角色名</span>
+              <span aria-hidden="true">😉</span>
+            </div>
+            <div class="u001-ref-inset">
+              <ul>
+                <li>橙区 + 头像叠压：适合「卡片详情顶区」类模块。</li>
+                <li>实现时优先用独立 section + token，避免与聊天气泡规则打架。</li>
+              </ul>
+            </div>
+            <div class="u001-ref-actions">
+              <div class="u001-ref-btn-primary-dark">主要操作</div>
+              <div class="u001-ref-btn-icon" aria-hidden="true">★</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2>5 · 映射到 OpenClaw 界面（建议）</h2>
+      <div class="showcase" style="padding: 0; overflow: hidden">
+        <table class="map" style="margin: 0; border: none">
+          <thead>
+            <tr>
+              <th>参考块</th>
+              <th>可落地位置（思路）</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>u001-ref-name-pill</code></td>
+              <td>配置卡片标题行、侧栏分组标题条、会话详情顶栏（仅样式层次）</td>
+            </tr>
+            <tr>
+              <td><code>u001-ref-inset</code></td>
+              <td>表单说明、Raw JSON 提示区、工具卡折叠内的说明文字</td>
+            </tr>
+            <tr>
+              <td><code>u001-ref-actions</code></td>
+              <td>卡片底部主 CTA + 次要图标操作（与现有 <code>.btn</code> 组合）</td>
+            </tr>
+            <tr>
+              <td><code>u001-ref-bottom-bar</code></td>
+              <td>移动端底栏、全局状态条、可选「下一步」引导条（慎用高度）</td>
+            </tr>
+            <tr>
+              <td><code>u001-ref-hero</code> + 头像</td>
+              <td>欢迎页 / Agent 卡片头图区（非聊天消息流）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="note">
+        本文件 class 前缀 <code>u001-ref-*</code> 仅用于静态参考；落地时请把规则迁到
+        <code>theme-urban*.css</code> 或组件现有 class
+        上，并保持与默认主题隔离（<code>data-theme="urban"</code>）。
+      </p>
+    </div>
+  </body>
+</html>

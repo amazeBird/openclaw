@@ -5,6 +5,10 @@
 @import "./styles/chat.css";
 @import "./styles/config.css";
 @import "./styles/usage.css";
+@import "./styles/theme-urban.css";
+@import "./styles/theme-urban-chat.css";
+@import "./styles/theme-urban-shell.css";
+@import "./styles/theme-urban-config.css";
 @import "@create-markdown/preview/themes/system.css";
 
 .cm-preview {

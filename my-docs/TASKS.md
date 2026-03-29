@@ -27,6 +27,12 @@
 | L003   | Web UI 剩余视图国际化 - Phase 2       | ✅已完成 | 中     | 2026-03-28 | [计划: PLANS.md](PLANS.md#计划-3-web-ui-剩余视图国际化) · [zh-CN.ts](../ui/src/i18n/locales/zh-CN.ts) · [sessions.ts](../ui/src/ui/views/sessions.ts) · [instances.ts](../ui/src/ui/views/instances.ts) · [logs.ts](../ui/src/ui/views/logs.ts) · [skills.ts](../ui/src/ui/views/skills.ts) · [nodes.ts](../ui/src/ui/views/nodes.ts) · [debug.ts](../ui/src/ui/views/debug.ts) · [channels.\*.ts](../ui/src/ui/views/channels.*.ts) | OpenClaw |
 | L004   | 配置表单内部元素国际化                | ✅已完成 | 中     | 2026-03-28 | [zh-CN.ts](../ui/src/i18n/locales/zh-CN.ts) · [config-form.node.ts](../ui/src/ui/views/config-form.node.ts)                                                                                                                                                                                                                                                                                                                          | OpenClaw |
 
+### 🎨 UI / 视觉与体验
+
+| 任务ID | 任务名称                                         | 状态     | 优先级 | 截止时间 | 相关文档                                                                                                                                                                                                                                                                                                        | 负责人   |
+| ------ | ------------------------------------------------ | -------- | ------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| U001   | Web UI「都市机能」风格改造（绝区零聊天窗为参考） | 🔄进行中 | 中     | 待定     | [计划: PLANS.md](PLANS.md#u001-urban-ui-theme) · [规范](U001_URBAN_THEME_TOKENS.md) · [theme-urban.css](../ui/src/styles/theme-urban.css) · [theme-urban-chat.css](../ui/src/styles/theme-urban-chat.css) · [theme-urban-shell.css](../ui/src/styles/theme-urban-shell.css) · Phase 0–2 ✅ · Phase 3 配置页待做 | OpenClaw |
+
 ### 🔒 安全与风险
 
 | 任务ID | 任务名称                                   | 状态     | 优先级 | 截止时间   | 相关文档                                                                                                                                                                                                                                                 | 负责人   |
@@ -39,6 +45,7 @@
 
 ### 工程文档
 
+- **U001 都市机能主题 Token（Phase 0）**: [U001_URBAN_THEME_TOKENS.md](U001_URBAN_THEME_TOKENS.md)
 - **工程结构**: [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)
 - **工程规范**: [CLAUDE.md](../CLAUDE.md) / [AGENTS.md](../AGENTS.md)
 - **构建配置**: [package.json](../package.json)
@@ -48,6 +55,7 @@
 ### 视图层代码位置
 
 - **Web UI**: `ui/src/ui/views/` (TypeScript, ~68 个文件)
+- **Web UI 样式与主题**: `ui/src/styles/`（含 `chat/`、`base.css`、`layout.css` 等）；U001 改造以 CSS 变量与主题层为主，避免一次性改遍所有视图
 - **macOS UI**: `apps/macos/Sources/OpenClaw/` (SwiftUI)
 - **iOS UI**: `apps/ios/Sources/` (SwiftUI)
 - **Android UI**: `apps/android/app/src/main/java/ai/openclaw/app/ui/` (Kotlin)

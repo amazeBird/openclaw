@@ -31,6 +31,8 @@ export const SessionDefaultsSchema = Type.Object(
     mainKey: NonEmptyString,
     mainSessionKey: NonEmptyString,
     scope: Type.Optional(NonEmptyString),
+    /** Configured `agents.list` ids (plus defaults when empty). Control UI uses this to drop stale session keys. */
+    agentIds: Type.Optional(Type.Array(NonEmptyString)),
   },
   { additionalProperties: false },
 );

@@ -7,6 +7,7 @@ import {
   startDebugPolling,
   stopDebugPolling,
 } from "./app-polling.ts";
+import { reconcileChatSessionKeyWithUrlAndMain } from "./app-render.helpers.ts";
 import { observeTopbar, scheduleChatScroll, scheduleLogsScroll } from "./app-scroll.ts";
 import {
   applySettingsFromUrl,
@@ -16,6 +17,7 @@ import {
   syncTabWithLocation,
   syncThemeWithSettings,
 } from "./app-settings.ts";
+import type { AppViewState } from "./app-view-state.ts";
 import { loadControlUiBootstrapConfig } from "./controllers/control-ui-bootstrap.ts";
 import type { Tab } from "./navigation.ts";
 
@@ -85,6 +87,15 @@ export function handleDisconnected(host: LifecycleHost) {
 }
 
 export function handleUpdated(host: LifecycleHost, changed: Map<PropertyKey, unknown>) {
+  if (
+    changed.has("sessionsResult") ||
+    changed.has("hello") ||
+    changed.has("connected") ||
+    changed.has("tab") ||
+    changed.has("sessionKey")
+  ) {
+    reconcileChatSessionKeyWithUrlAndMain(host as unknown as AppViewState);
+  }
   if (host.tab === "chat" && host.chatManualRefreshInFlight) {
     return;
   }

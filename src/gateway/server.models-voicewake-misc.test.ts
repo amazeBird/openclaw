@@ -121,29 +121,13 @@ const buildPiCatalogFixture = (): PiCatalogFixtureEntry[] => [
   },
 ];
 
+// Merged gateway test config can set an explicit Anthropic primary; collectControlUi keys then
+// filter the Pi fixture down to that ref, and ensureDefault adds the resolved primary if missing.
 const expectedSortedCatalog = (): ModelCatalogRpcEntry[] => [
   {
-    id: "claude-test-a",
-    name: "A-Model",
+    id: "claude-opus-4-6",
+    name: "claude-opus-4-6",
     provider: "anthropic",
-    contextWindow: 200_000,
-  },
-  {
-    id: "claude-test-b",
-    name: "B-Model",
-    provider: "anthropic",
-    contextWindow: 1000,
-  },
-  {
-    id: "gpt-test-a",
-    name: "A-Model",
-    provider: "openai",
-    contextWindow: 8000,
-  },
-  {
-    id: "gpt-test-z",
-    name: "gpt-test-z",
-    provider: "openai",
   },
 ];
 
@@ -317,6 +301,98 @@ describe("gateway server models + voicewake", () => {
     expect(models).toEqual(expectedSortedCatalog());
 
     expect(piSdkMock.discoverCalls).toBe(1);
+  });
+
+  test("models.list lists only models.providers when providers are configured", async () => {
+    await withModelsConfig(
+      {
+        models: {
+          providers: {
+            deepseek: {
+              baseUrl: "https://api.deepseek.com",
+              models: [
+                { id: "deepseek-chat", name: "DeepSeek Chat" },
+                { id: "deepseek-reasoner", name: "DeepSeek Reasoner" },
+              ],
+            },
+          },
+        },
+        agents: {
+          defaults: {
+            model: { primary: "deepseek/deepseek-chat" },
+          },
+        },
+      },
+      async () => {
+        seedPiCatalog();
+        const res = await listModels();
+        expect(res.ok).toBe(true);
+        expect(res.payload?.models).toEqual([
+          { id: "deepseek-chat", name: "DeepSeek Chat", provider: "deepseek" },
+          { id: "deepseek-reasoner", name: "DeepSeek Reasoner", provider: "deepseek" },
+        ]);
+      },
+    );
+  });
+
+  test("models.list drops bundled-catalog SKUs when primary is an off-catalog configured ref", async () => {
+    await withModelsConfig(
+      {
+        agents: {
+          defaults: {
+            model: { primary: "deepseek/deepseek-chat" },
+          },
+        },
+      },
+      async () => {
+        seedPiCatalog();
+        const res = await listModels();
+        expect(res.ok).toBe(true);
+        expect(res.payload?.models).toEqual([
+          {
+            id: "deepseek-chat",
+            name: "deepseek-chat",
+            provider: "deepseek",
+          },
+        ]);
+      },
+    );
+  });
+
+  test("models.list narrows to default provider when multiple models.providers exist", async () => {
+    await withModelsConfig(
+      {
+        models: {
+          providers: {
+            cerebras: {
+              baseUrl: "https://api.cerebras.ai",
+              models: [{ id: "llama-8b", name: "Llama 8B" }],
+            },
+            deepseek: {
+              baseUrl: "https://api.deepseek.com",
+              models: [
+                { id: "deepseek-chat", name: "DeepSeek Chat" },
+                { id: "deepseek-reasoner", name: "DeepSeek Reasoner" },
+              ],
+            },
+          },
+        },
+        agents: {
+          defaults: {
+            model: { primary: "deepseek/deepseek-chat" },
+          },
+        },
+      },
+      async () => {
+        seedPiCatalog();
+        const res = await listModels();
+        expect(res.ok).toBe(true);
+        expect(res.payload?.models).toEqual([
+          { id: "deepseek-chat", name: "DeepSeek Chat", provider: "deepseek" },
+          { id: "deepseek-reasoner", name: "DeepSeek Reasoner", provider: "deepseek" },
+        ]);
+      },
+    );
   });
 
   test("models.list filters to allowlisted configured models by default", async () => {

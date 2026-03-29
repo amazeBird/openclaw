@@ -74,6 +74,19 @@ export function isCronSessionKey(sessionKey: string | undefined | null): boolean
   return parsed.rest.toLowerCase().startsWith("cron:");
 }
 
+/**
+ * Heartbeat runs with `isolatedSession: true` use `${baseSessionKey}:heartbeat`
+ * (see `runHeartbeatOnce`). Those keys are auxiliary and should not become the
+ * Control UI default chat session when background heartbeat chat events arrive.
+ */
+export function isIsolatedHeartbeatSessionKey(sessionKey: string | undefined | null): boolean {
+  const raw = (sessionKey ?? "").trim().toLowerCase();
+  if (!raw) {
+    return false;
+  }
+  return raw.endsWith(":heartbeat");
+}
+
 export function isSubagentSessionKey(sessionKey: string | undefined | null): boolean {
   const raw = (sessionKey ?? "").trim();
   if (!raw) {

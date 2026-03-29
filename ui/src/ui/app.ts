@@ -1,7 +1,7 @@
 import { LitElement } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { resolveAgentIdFromSessionKey } from "../../../src/routing/session-key.js";
-import { i18n, I18nController, isSupportedLocale } from "../i18n/index.ts";
+import { i18n, I18nController, isSupportedLocale, t } from "../i18n/index.ts";
 import {
   handleChannelConfigReload as handleChannelConfigReloadInternal,
   handleChannelConfigSave as handleChannelConfigSaveInternal,
@@ -134,8 +134,8 @@ export class OpenClawApp extends LitElement {
   @state() tab: Tab = "chat";
   @state() onboarding = resolveOnboardingMode();
   @state() connected = false;
-  @state() theme: ThemeName = this.settings.theme ?? "claw";
-  @state() themeMode: ThemeMode = this.settings.themeMode ?? "system";
+  @state() theme: ThemeName = this.settings.theme ?? "urban";
+  @state() themeMode: ThemeMode = this.settings.themeMode ?? "dark";
   @state() themeResolved: ResolvedTheme = "dark";
   @state() themeOrder: ThemeName[] = this.buildThemeOrder(this.theme);
   @state() hello: GatewayHelloOk | null = null;
@@ -487,7 +487,7 @@ export class OpenClawApp extends LitElement {
           });
           break;
         case "export":
-          exportChatMarkdown(this.chatMessages, this.assistantName);
+          exportChatMarkdown(this.chatMessages, this.assistantName, t("chat.senderYou"));
           break;
         case "refresh-tools-effective": {
           void refreshVisibleToolsEffectiveForCurrentSessionInternal(this);

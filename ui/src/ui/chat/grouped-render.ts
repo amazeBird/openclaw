@@ -7,7 +7,11 @@ import { toSanitizedMarkdownHtml } from "../markdown.ts";
 import { openExternalUrlSafe } from "../open-external-url.ts";
 import { detectTextDirection } from "../text-direction.ts";
 import type { MessageGroup, ToolCard } from "../types/chat-types.ts";
-import { agentLogoUrl } from "../views/agents-utils.ts";
+import {
+  defaultAssistantPortraitUrl,
+  defaultToolPortraitUrl,
+  defaultUserPortraitUrl,
+} from "../views/agents-utils.ts";
 import { renderCopyAsMarkdownButton } from "./copy-as-markdown.ts";
 import {
   extractTextCached,
@@ -121,18 +125,20 @@ export function renderMessageGroup(
     basePath?: string;
     contextWindow?: number | null;
     onDelete?: () => void;
+    userSenderLabel?: string;
   },
 ) {
   const normalizedRole = normalizeRoleForGrouping(group.role);
   const assistantName = opts.assistantName ?? "Assistant";
+  const defaultUserSender = opts.userSenderLabel?.trim() || "You";
   const userLabel = group.senderLabel?.trim();
   const who =
     normalizedRole === "user"
-      ? (userLabel ?? "You")
+      ? (userLabel ?? defaultUserSender)
       : normalizedRole === "assistant"
         ? assistantName
         : normalizedRole === "tool"
-          ? "Tool"
+          ? "哲"
           : normalizedRole;
   const roleClass =
     normalizedRole === "user"
@@ -159,6 +165,7 @@ export function renderMessageGroup(
           avatar: opts.assistantAvatar ?? null,
         },
         opts.basePath,
+        defaultUserSender,
       )}
       <div class="chat-group-messages">
         ${group.messages.map((item, index) =>
@@ -438,47 +445,41 @@ function renderAvatar(
   role: string,
   assistant?: Pick<AssistantIdentity, "name" | "avatar">,
   basePath?: string,
+  userSenderLabel = "You",
 ) {
   const normalized = normalizeRoleForGrouping(role);
   const assistantName = assistant?.name?.trim() || "Assistant";
   const assistantAvatar = assistant?.avatar?.trim() || "";
   const initial =
-    normalized === "user"
+    normalized === "assistant"
       ? html`
-          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M20 21a8 8 0 1 0-16 0" />
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+            <path d="M12 2l2.4 7.2H22l-6 4.8 2.4 7.2L12 16l-6.4 5.2L8 14 2 9.2h7.6z" />
           </svg>
         `
-      : normalized === "assistant"
+      : normalized === "tool"
         ? html`
-            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-              <path d="M12 2l2.4 7.2H22l-6 4.8 2.4 7.2L12 16l-6.4 5.2L8 14 2 9.2h7.6z" />
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+              <path
+                d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53a7.76 7.76 0 0 0 .07-1 7.76 7.76 0 0 0-.07-.97l2.11-1.63a.5.5 0 0 0 .12-.64l-2-3.46a.5.5 0 0 0-.61-.22l-2.49 1a7.15 7.15 0 0 0-1.69-.98l-.38-2.65A.49.49 0 0 0 14 2h-4a.49.49 0 0 0-.49.42l-.38 2.65a7.15 7.15 0 0 0-1.69.98l-2.49-1a.5.5 0 0 0-.61.22l-2 3.46a.49.49 0 0 0 .12.64L4.57 11a7.9 7.9 0 0 0 0 1.94l-2.11 1.69a.49.49 0 0 0-.12.64l2 3.46a.5.5 0 0 0 .61.22l2.49-1c.52.4 1.08.72 1.69.98l.38 2.65c.05.24.26.42.49.42h4c.23 0 .44-.18.49-.42l.38-2.65a7.15 7.15 0 0 0 1.69-.98l2.49 1a.5.5 0 0 0 .61-.22l2-3.46a.49.49 0 0 0-.12-.64z"
+              />
             </svg>
           `
-        : normalized === "tool"
-          ? html`
-              <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-                <path
-                  d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53a7.76 7.76 0 0 0 .07-1 7.76 7.76 0 0 0-.07-.97l2.11-1.63a.5.5 0 0 0 .12-.64l-2-3.46a.5.5 0 0 0-.61-.22l-2.49 1a7.15 7.15 0 0 0-1.69-.98l-.38-2.65A.49.49 0 0 0 14 2h-4a.49.49 0 0 0-.49.42l-.38 2.65a7.15 7.15 0 0 0-1.69.98l-2.49-1a.5.5 0 0 0-.61.22l-2 3.46a.49.49 0 0 0 .12.64L4.57 11a7.9 7.9 0 0 0 0 1.94l-2.11 1.69a.49.49 0 0 0-.12.64l2 3.46a.5.5 0 0 0 .61.22l2.49-1c.52.4 1.08.72 1.69.98l.38 2.65c.05.24.26.42.49.42h4c.23 0 .44-.18.49-.42l.38-2.65a7.15 7.15 0 0 0 1.69-.98l2.49 1a.5.5 0 0 0 .61-.22l2-3.46a.49.49 0 0 0-.12-.64z"
-                />
-              </svg>
-            `
-          : html`
-              <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-                <circle cx="12" cy="12" r="10" />
-                <text
-                  x="12"
-                  y="16.5"
-                  text-anchor="middle"
-                  font-size="14"
-                  font-weight="600"
-                  fill="var(--bg, #fff)"
-                >
-                  ?
-                </text>
-              </svg>
-            `;
+        : html`
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+              <circle cx="12" cy="12" r="10" />
+              <text
+                x="12"
+                y="16.5"
+                text-anchor="middle"
+                font-size="15"
+                font-weight="600"
+                fill="var(--bg, #fff)"
+              >
+                ?
+              </text>
+            </svg>
+          `;
   const className =
     normalized === "user"
       ? "user"
@@ -487,6 +488,11 @@ function renderAvatar(
         : normalized === "tool"
           ? "tool"
           : "other";
+
+  if (normalized === "user") {
+    const userUrl = defaultUserPortraitUrl(basePath ?? "");
+    return html`<img class="chat-avatar ${className}" src="${userUrl}" alt="${userSenderLabel}" />`;
+  }
 
   if (assistantAvatar && normalized === "assistant") {
     if (isAvatarUrl(assistantAvatar)) {
@@ -497,18 +503,44 @@ function renderAvatar(
       />`;
     }
     return html`<img
-      class="chat-avatar ${className} chat-avatar--logo"
-      src="${agentLogoUrl(basePath ?? "")}"
+      class="chat-avatar ${className} chat-avatar--portrait"
+      src="${defaultAssistantPortraitUrl(basePath ?? "")}"
       alt="${assistantName}"
     />`;
   }
 
-  /* Assistant with no custom avatar: use logo when basePath available */
-  if (normalized === "assistant" && basePath) {
-    const logoUrl = agentLogoUrl(basePath);
+  /* Tool role: use assistant avatar if available, otherwise Ze portrait */
+  if (assistantAvatar && normalized === "tool") {
+    if (isAvatarUrl(assistantAvatar)) {
+      return html`<img
+        class="chat-avatar ${className}"
+        src="${assistantAvatar}"
+        alt="${assistantName}"
+      />`;
+    }
     return html`<img
-      class="chat-avatar ${className} chat-avatar--logo"
-      src="${logoUrl}"
+      class="chat-avatar ${className} chat-avatar--portrait"
+      src="${defaultToolPortraitUrl(basePath ?? "")}"
+      alt="${assistantName}"
+    />`;
+  }
+
+  /* Assistant with no resolved URL: static sample portrait (not gateway placeholder) */
+  if (normalized === "assistant") {
+    const portraitUrl = defaultAssistantPortraitUrl(basePath ?? "");
+    return html`<img
+      class="chat-avatar ${className} chat-avatar--portrait"
+      src="${portraitUrl}"
+      alt="${assistantName}"
+    />`;
+  }
+
+  /* Tool with no resolved URL: Ze portrait */
+  if (normalized === "tool") {
+    const portraitUrl = defaultToolPortraitUrl(basePath ?? "");
+    return html`<img
+      class="chat-avatar ${className} chat-avatar--portrait"
+      src="${portraitUrl}"
       alt="${assistantName}"
     />`;
   }

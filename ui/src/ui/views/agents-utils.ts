@@ -220,7 +220,72 @@ export function resolveAgentAvatarUrl(
 
 export function agentLogoUrl(basePath: string): string {
   const base = basePath?.trim() ? basePath.replace(/\/$/, "") : "";
-  return base ? `${base}/favicon.svg` : "favicon.svg";
+  return base ? `${base}/zzz-brand-logo.png` : "zzz-brand-logo.png";
+}
+
+/** Default assistant portrait (U001 sample); lives in `ui/public/`. */
+export function defaultAssistantPortraitUrl(basePath: string): string {
+  const base = basePath?.trim() ? basePath.replace(/\/$/, "") : "";
+  return base ? `${base}/fariy-assistant.jpg` : "fariy-assistant.jpg";
+}
+
+/** Default user portrait (ZZZ Proxy); `ui/public/`. */
+export function defaultUserPortraitUrl(basePath: string): string {
+  const base = basePath?.trim() ? basePath.replace(/\/$/, "") : "";
+  return base ? `${base}/zzz-proxy-avatar.png` : "zzz-proxy-avatar.png";
+}
+
+/** Default tool portrait (Ze); `ui/public/`. */
+export function defaultToolPortraitUrl(basePath: string): string {
+  const base = basePath?.trim() ? basePath.replace(/\/$/, "") : "";
+  return base ? `${base}/ze-assistant.jpg` : "ze-assistant.jpg";
+}
+
+/**
+ * True for the gateway control-UI agent avatar route (`/avatar/<id>`), which often serves the
+ * generic placeholder. Remote `https?` / `data:` URLs are never treated as bundled.
+ */
+export function isBundledGatewayAgentAvatarUrl(url: string, basePath: string): boolean {
+  const trimmed = url.trim();
+  if (!trimmed) {
+    return false;
+  }
+  if (/^https?:\/\//i.test(trimmed)) {
+    try {
+      const { pathname } = new URL(trimmed);
+      return /\/avatar\/[^/]+\/?$/.test(pathname);
+    } catch {
+      return false;
+    }
+  }
+  const base = basePath?.trim().replace(/\/$/, "") ?? "";
+  if (base && trimmed.startsWith(`${base}/avatar/`)) {
+    const rest = trimmed.slice(base.length + "/avatar/".length);
+    return rest.length > 0 && !rest.includes("/");
+  }
+  if (trimmed.startsWith("/avatar/")) {
+    const rest = trimmed.slice("/avatar/".length);
+    return rest.length > 0 && !rest.includes("/");
+  }
+  return false;
+}
+
+/** Chat thread: prefer real custom URLs; skip gateway placeholder avatars; else static Fairy art. */
+export function resolveChatAssistantAvatarUrl(params: {
+  basePath: string;
+  identityAvatar: string | null;
+  gatewayMetaAvatar: string | null;
+}): string {
+  const fallback = defaultAssistantPortraitUrl(params.basePath);
+  const identity = params.identityAvatar?.trim() || null;
+  const gateway = params.gatewayMetaAvatar?.trim() || null;
+  if (identity && !isBundledGatewayAgentAvatarUrl(identity, params.basePath)) {
+    return identity;
+  }
+  if (gateway && !isBundledGatewayAgentAvatarUrl(gateway, params.basePath)) {
+    return gateway;
+  }
+  return fallback;
 }
 
 function isLikelyEmoji(value: string) {

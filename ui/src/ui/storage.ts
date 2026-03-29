@@ -23,6 +23,7 @@ type PersistedUiSettings = Omit<UiSettings, "token" | "sessionKey" | "lastActive
 import { isSupportedLocale } from "../i18n/index.ts";
 import { getSafeLocalStorage } from "../local-storage.ts";
 import { inferBasePathFromPathname, normalizeBasePath } from "./navigation.ts";
+import { normalizeControlUiSessionKey } from "./session-query.ts";
 import { parseThemeSelection, type ThemeMode, type ThemeName } from "./theme.ts";
 
 export const BORDER_RADIUS_STOPS = [0, 25, 50, 75, 100] as const;
@@ -59,6 +60,9 @@ export type UiSettings = {
   locale?: string;
 };
 
+/** Matches `pnpm gateway:dev` / `openclaw --dev gateway` default WS port. */
+const VITE_DEV_DEFAULT_GATEWAY_PORT = "19001";
+
 function isViteDevPage(): boolean {
   if (typeof document === "undefined") {
     return false;
@@ -84,7 +88,7 @@ function deriveDefaultGatewayUrl(): { pageUrl: string; effectiveUrl: string } {
   if (!isViteDevPage()) {
     return { pageUrl, effectiveUrl: pageUrl };
   }
-  const effectiveUrl = `${proto}://${formatHostWithPort(location.hostname, "18789")}`;
+  const effectiveUrl = `${proto}://${formatHostWithPort(location.hostname, VITE_DEV_DEFAULT_GATEWAY_PORT)}`;
   return { pageUrl, effectiveUrl };
 }
 
@@ -136,18 +140,18 @@ function resolveScopedSessionSelection(
     scoped.lastActiveSessionKey.trim()
   ) {
     return {
-      sessionKey: scoped.sessionKey.trim(),
-      lastActiveSessionKey: scoped.lastActiveSessionKey.trim(),
+      sessionKey: normalizeControlUiSessionKey(scoped.sessionKey),
+      lastActiveSessionKey: normalizeControlUiSessionKey(scoped.lastActiveSessionKey),
     };
   }
 
   const legacySessionKey =
     typeof parsed.sessionKey === "string" && parsed.sessionKey.trim()
-      ? parsed.sessionKey.trim()
+      ? normalizeControlUiSessionKey(parsed.sessionKey)
       : defaults.sessionKey;
   const legacyLastActiveSessionKey =
     typeof parsed.lastActiveSessionKey === "string" && parsed.lastActiveSessionKey.trim()
-      ? parsed.lastActiveSessionKey.trim()
+      ? normalizeControlUiSessionKey(parsed.lastActiveSessionKey)
       : legacySessionKey || defaults.lastActiveSessionKey;
 
   return {
@@ -198,8 +202,8 @@ export function loadSettings(): UiSettings {
     token: loadSessionToken(defaultUrl),
     sessionKey: "main",
     lastActiveSessionKey: "main",
-    theme: "claw",
-    themeMode: "system",
+    theme: "urban",
+    themeMode: "dark",
     chatFocusMode: false,
     chatShowThinking: true,
     chatShowToolCalls: true,

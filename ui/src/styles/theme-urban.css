@@ -1,0 +1,198 @@
+/*
+ * U001 — Urban tech theme tokens (Phase 0).
+ * Activated when document.documentElement.dataset.theme is "urban" or "urban-light".
+ * Wiring ThemeName → resolved theme happens in Phase 1 (theme.ts + appearance UI).
+ *
+ * Spec: my-docs/U001_URBAN_THEME_TOKENS.md
+ */
+
+:root[data-theme="urban"] {
+  color-scheme: dark;
+
+  /* Optional decor (default off; Phase 1 may toggle) */
+  --urban-decor-opacity: 0;
+  /* Reference mock: near-black outer stroke (my-docs/U001_REFERENCE_MOCK.html) */
+  --urban-frame: #0a0a0a;
+  --urban-radius-chunk: 20px;
+  --urban-orange: #fb923c;
+  --urban-orange-subtle: rgba(251, 146, 60, 0.15);
+  /* U001 mock: outbound blue + incoming light bubbles (my-docs/U001_EXAMPLE_MAIN_UI.html) */
+  --urban-interaction-blue: #3b82f6;
+  --urban-interaction-blue-foreground: #ffffff;
+  --urban-msg-incoming-bg: #f4f4f5;
+  --urban-msg-incoming-fg: #0a0a0a;
+  --border-width-strong: 2px;
+
+  /* Surfaces — near-black base */
+  --bg: #09090b;
+  --bg-accent: #0c0c0e;
+  --bg-elevated: #141418;
+  --bg-hover: #1c1c22;
+  --bg-muted: #1c1c22;
+
+  --card: #121216;
+  --card-foreground: #fafafa;
+  --card-highlight: rgba(255, 255, 255, 0.04);
+  --popover: #141418;
+  --popover-foreground: #fafafa;
+
+  --panel: #09090b;
+  --panel-strong: #141418;
+  --panel-hover: #1c1c22;
+  --chrome: rgba(9, 9, 11, 0.96);
+  --chrome-strong: rgba(9, 9, 11, 0.98);
+
+  /* Text */
+  --text: #d4d4d8;
+  --text-strong: #fafafa;
+  --chat-text: #d4d4d8;
+  --muted: #71717a;
+  --muted-strong: #52525b;
+  --muted-foreground: #71717a;
+
+  /* Borders — stronger for “chunky” UI */
+  --border: #27272a;
+  --border-strong: #3f3f46;
+  --border-hover: #52525b;
+  --input: #27272a;
+
+  /* Primary accent — chartreuse / acid green */
+  --ring: #b4d83a;
+  --accent: #b4d83a;
+  --accent-hover: #c9e860;
+  --accent-muted: #b4d83a;
+  --accent-subtle: rgba(180, 216, 58, 0.14);
+  --accent-glow: rgba(180, 216, 58, 0.22);
+  --accent-foreground: #111114;
+  --primary: #b4d83a;
+  --primary-foreground: #111114;
+
+  --secondary: #121216;
+  --secondary-foreground: #fafafa;
+  --accent-2: #fb923c;
+  --accent-2-muted: rgba(251, 146, 60, 0.8);
+  --accent-2-subtle: var(--urban-orange-subtle);
+
+  /* Semantic */
+  --ok: #86efac;
+  --ok-muted: rgba(134, 239, 172, 0.8);
+  --ok-subtle: rgba(134, 239, 172, 0.1);
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
+  --warn: #fb923c;
+  --warn-muted: rgba(251, 146, 60, 0.8);
+  --warn-subtle: rgba(251, 146, 60, 0.12);
+  --danger: #ef4444;
+  --danger-muted: rgba(239, 68, 68, 0.8);
+  --danger-subtle: rgba(239, 68, 68, 0.12);
+  --info: #38bdf8;
+
+  --focus: rgba(180, 216, 58, 0.22);
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 3px color-mix(in srgb, var(--ring) 75%, transparent);
+  --focus-glow: 0 0 0 2px var(--bg), 0 0 0 3px var(--ring), 0 0 16px var(--accent-glow);
+
+  --grid-line: rgba(255, 255, 255, 0.04);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 24px var(--accent-glow);
+
+  /* Typography — no extra webfont; stronger system fallback */
+  --font-body:
+    "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  --font-display: var(--font-body);
+}
+
+:root[data-theme="urban-light"] {
+  color-scheme: light;
+
+  --urban-decor-opacity: 0;
+  --urban-frame: #18181b;
+  --urban-radius-chunk: 20px;
+  --urban-orange: #ea580c;
+  --urban-orange-subtle: rgba(234, 88, 12, 0.12);
+  --urban-interaction-blue: #2563eb;
+  --urban-interaction-blue-foreground: #ffffff;
+  --urban-msg-incoming-bg: #ffffff;
+  --urban-msg-incoming-fg: #18181b;
+  --border-width-strong: 2px;
+
+  --bg: #f4f4f5;
+  --bg-accent: #e4e4e7;
+  --bg-elevated: #ffffff;
+  --bg-hover: #e4e4e7;
+  --bg-muted: #e4e4e7;
+
+  --card: #ffffff;
+  --card-foreground: #18181b;
+  --card-highlight: rgba(0, 0, 0, 0.03);
+  --popover: #ffffff;
+  --popover-foreground: #18181b;
+
+  --panel: #f4f4f5;
+  --panel-strong: #e4e4e7;
+  --panel-hover: #d4d4d8;
+  --chrome: rgba(244, 244, 245, 0.96);
+  --chrome-strong: rgba(244, 244, 245, 0.98);
+
+  --text: #27272a;
+  --text-strong: #18181b;
+  --chat-text: #27272a;
+  --muted: #71717a;
+  --muted-strong: #52525b;
+  --muted-foreground: #71717a;
+
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --border-hover: #a1a1aa;
+  --input: #d4d4d8;
+
+  --ring: #6b8e23;
+  --accent: #6b8e23;
+  --accent-hover: #5a7a1c;
+  --accent-muted: #6b8e23;
+  --accent-subtle: rgba(107, 142, 35, 0.12);
+  --accent-glow: rgba(107, 142, 35, 0.18);
+  --accent-foreground: #ffffff;
+  --primary: #6b8e23;
+  --primary-foreground: #ffffff;
+
+  --secondary: #e4e4e7;
+  --secondary-foreground: #18181b;
+  --accent-2: #ea580c;
+  --accent-2-muted: rgba(234, 88, 12, 0.85);
+  --accent-2-subtle: var(--urban-orange-subtle);
+
+  --ok: #15803d;
+  --ok-muted: rgba(21, 128, 61, 0.85);
+  --ok-subtle: rgba(21, 128, 61, 0.1);
+  --destructive: #dc2626;
+  --destructive-foreground: #fafafa;
+  --warn: #c2410c;
+  --warn-muted: rgba(194, 65, 12, 0.85);
+  --warn-subtle: rgba(194, 65, 12, 0.1);
+  --danger: #dc2626;
+  --danger-muted: rgba(220, 38, 38, 0.85);
+  --danger-subtle: rgba(220, 38, 38, 0.1);
+  --info: #2563eb;
+
+  --focus: rgba(107, 142, 35, 0.2);
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 3px color-mix(in srgb, var(--ring) 65%, transparent);
+  --focus-glow: 0 0 0 2px var(--bg), 0 0 0 3px var(--ring), 0 0 12px var(--accent-glow);
+
+  --grid-line: rgba(0, 0, 0, 0.05);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 0 20px var(--accent-glow);
+
+  --font-body:
+    "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  --font-display: var(--font-body);
+}

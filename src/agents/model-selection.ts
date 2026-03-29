@@ -7,10 +7,13 @@ import {
 } from "../config/model-input.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { resolveRuntimeCliBackends } from "../plugins/cli-backends.runtime.js";
+import { normalizeAgentId } from "../routing/session-key.js";
 import { sanitizeForLog } from "../terminal/ansi.js";
 import {
+  listAgentEntries,
   resolveAgentConfig,
   resolveAgentEffectiveModelPrimary,
+  resolveAgentExplicitModelPrimary,
   resolveAgentModelFallbacksOverride,
 } from "./agent-scope.js";
 import { resolveConfiguredProviderFallback } from "./configured-provider-fallback.js";
@@ -199,6 +202,50 @@ export function inferUniqueProviderFromConfiguredModels(params: {
   return providers.values().next().value;
 }
 
+/**
+ * When `primary` is a bare model id (no `provider/`), map it to the single `models.providers`
+ * entry that lists that id. Skips ambiguous matches (same id on multiple providers).
+ */
+export function inferUniqueProviderFromModelsProviders(params: {
+  cfg: OpenClawConfig;
+  modelId: string;
+}): string | undefined {
+  const normalizedId = params.modelId.trim().toLowerCase();
+  if (!normalizedId) {
+    return undefined;
+  }
+  const providers = params.cfg.models?.providers;
+  if (!providers || typeof providers !== "object") {
+    return undefined;
+  }
+  const hits: string[] = [];
+  for (const [providerRaw, prov] of Object.entries(providers)) {
+    const providerId = normalizeProviderId(providerRaw);
+    if (!providerId || !prov || typeof prov !== "object") {
+      continue;
+    }
+    const models = (prov as { models?: unknown }).models;
+    if (!Array.isArray(models)) {
+      continue;
+    }
+    for (const entry of models) {
+      if (!entry || typeof entry !== "object") {
+        continue;
+      }
+      const idRaw = (entry as { id?: unknown }).id;
+      if (typeof idRaw !== "string") {
+        continue;
+      }
+      if (idRaw.trim().toLowerCase() === normalizedId) {
+        hits.push(providerId);
+        break;
+      }
+    }
+  }
+  const unique = [...new Set(hits)];
+  return unique.length === 1 ? unique[0] : undefined;
+}
+
 export function resolveAllowlistModelKey(raw: string, defaultProvider: string): string | null {
   const parsed = parseModelRef(raw, defaultProvider);
   if (!parsed) {
@@ -294,6 +341,22 @@ export function resolveConfiguredModelRef(params: {
       const aliasMatch = aliasIndex.byAlias.get(aliasKey);
       if (aliasMatch) {
         return aliasMatch.ref;
+      }
+
+      const fromAllowlist = inferUniqueProviderFromConfiguredModels({
+        cfg: params.cfg,
+        model: trimmed,
+      });
+      if (fromAllowlist) {
+        return normalizeModelRef(fromAllowlist, trimmed);
+      }
+
+      const fromProviders = inferUniqueProviderFromModelsProviders({
+        cfg: params.cfg,
+        modelId: trimmed,
+      });
+      if (fromProviders) {
+        return normalizeModelRef(fromProviders, trimmed);
       }
 
       // Default to anthropic if no provider is specified, but warn as this is deprecated.
@@ -540,6 +603,71 @@ export function buildConfiguredModelCatalog(params: { cfg: OpenClawConfig }): Mo
   }
 
   return catalog;
+}
+
+function addControlUiModelKey(
+  keys: Set<string>,
+  raw: string | undefined,
+  defaultProvider: string,
+): void {
+  const trimmed = raw?.trim();
+  if (!trimmed) {
+    return;
+  }
+  const parsed = parseModelRef(trimmed, defaultProvider);
+  if (parsed) {
+    keys.add(modelKey(parsed.provider, parsed.model));
+  }
+}
+
+/**
+ * Model refs declared in config (providers, allowlist, primaries, fallbacks). Used to strip
+ * bundled-catalog entries the user never configured (e.g. dozens of Claude SKUs).
+ */
+export function collectControlUiConfiguredModelKeys(cfg: OpenClawConfig): Set<string> {
+  const resolved = resolveDefaultModelForAgent({ cfg });
+  const defProv = resolved.provider;
+  const keys = new Set<string>();
+
+  for (const entry of buildConfiguredModelCatalog({ cfg })) {
+    keys.add(modelKey(entry.provider, entry.id));
+  }
+
+  for (const allowKey of Object.keys(cfg.agents?.defaults?.models ?? {})) {
+    addControlUiModelKey(keys, allowKey, defProv);
+  }
+
+  const defaultsModel = cfg.agents?.defaults?.model;
+  const defaultsPrimaryRaw = resolveAgentModelPrimaryValue(defaultsModel);
+  if (defaultsPrimaryRaw) {
+    // Always record an explicit `agents.defaults.model.primary` so off-catalog primaries (e.g.
+    // DeepSeek while the Pi merge lists only Anthropic/OpenAI) still narrow the Control UI list.
+    addControlUiModelKey(keys, defaultsPrimaryRaw, defProv);
+  }
+  for (const fb of resolveAgentModelFallbackValues(defaultsModel)) {
+    addControlUiModelKey(keys, String(fb), defProv);
+  }
+
+  const heartbeatModel = cfg.agents?.defaults?.heartbeat?.model?.trim();
+  if (heartbeatModel) {
+    addControlUiModelKey(keys, heartbeatModel, defProv);
+  }
+
+  for (const agent of listAgentEntries(cfg)) {
+    const id = normalizeAgentId(String(agent.id ?? ""));
+    if (!id) {
+      continue;
+    }
+    addControlUiModelKey(keys, resolveAgentExplicitModelPrimary(cfg, id), defProv);
+    const entryModel = resolveAgentConfig(cfg, id)?.model;
+    if (entryModel && typeof entryModel === "object") {
+      for (const fb of entryModel.fallbacks ?? []) {
+        addControlUiModelKey(keys, String(fb), defProv);
+      }
+    }
+  }
+
+  return keys;
 }
 
 export type ModelRefStatus = {

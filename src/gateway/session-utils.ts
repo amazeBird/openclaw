@@ -952,10 +952,11 @@ export function loadCombinedSessionStoreForGateway(cfg: OpenClawConfig): {
 }
 
 export function getSessionDefaults(cfg: OpenClawConfig): GatewaySessionsDefaults {
-  const resolved = resolveConfiguredModelRef({
+  // Align with runtime chat: per-agent `agents.list[].model` overrides
+  // `agents.defaults.model`, but `resolveConfiguredModelRef` alone only reads globals.
+  const resolved = resolveDefaultModelForAgent({
     cfg,
-    defaultProvider: DEFAULT_PROVIDER,
-    defaultModel: DEFAULT_MODEL,
+    agentId: resolveDefaultAgentId(cfg),
   });
   const contextTokens =
     cfg.agents?.defaults?.contextTokens ??

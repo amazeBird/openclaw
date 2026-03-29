@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   agentLogoUrl,
+  defaultAssistantPortraitUrl,
+  defaultToolPortraitUrl,
+  defaultUserPortraitUrl,
+  isBundledGatewayAgentAvatarUrl,
+  resolveChatAssistantAvatarUrl,
   resolveConfiguredCronModelSuggestions,
   resolveAgentAvatarUrl,
   resolveEffectiveModelFallbacks,
@@ -103,12 +108,86 @@ describe("sortLocaleStrings", () => {
 
 describe("agentLogoUrl", () => {
   it("keeps base-mounted control UI logo paths absolute to the mount", () => {
-    expect(agentLogoUrl("/ui")).toBe("/ui/favicon.svg");
-    expect(agentLogoUrl("/apps/openclaw/")).toBe("/apps/openclaw/favicon.svg");
+    expect(agentLogoUrl("/ui")).toBe("/ui/zzz-brand-logo.png");
+    expect(agentLogoUrl("/apps/openclaw/")).toBe("/apps/openclaw/zzz-brand-logo.png");
   });
 
   it("uses a route-relative fallback before basePath bootstrap finishes", () => {
-    expect(agentLogoUrl("")).toBe("favicon.svg");
+    expect(agentLogoUrl("")).toBe("zzz-brand-logo.png");
+  });
+});
+
+describe("defaultAssistantPortraitUrl", () => {
+  it("mirrors base path rules for the default assistant portrait asset", () => {
+    expect(defaultAssistantPortraitUrl("/ui")).toBe("/ui/fariy-assistant.jpg");
+    expect(defaultAssistantPortraitUrl("/apps/openclaw/")).toBe(
+      "/apps/openclaw/fariy-assistant.jpg",
+    );
+    expect(defaultAssistantPortraitUrl("")).toBe("fariy-assistant.jpg");
+  });
+});
+
+describe("defaultUserPortraitUrl", () => {
+  it("mirrors base path rules for the default user portrait asset", () => {
+    expect(defaultUserPortraitUrl("/ui")).toBe("/ui/zzz-proxy-avatar.png");
+    expect(defaultUserPortraitUrl("")).toBe("zzz-proxy-avatar.png");
+  });
+});
+
+describe("defaultToolPortraitUrl", () => {
+  it("mirrors base path rules for the default tool portrait asset", () => {
+    expect(defaultToolPortraitUrl("/ui")).toBe("/ui/ze-assistant.jpg");
+    expect(defaultToolPortraitUrl("/apps/openclaw/")).toBe("/apps/openclaw/ze-assistant.jpg");
+    expect(defaultToolPortraitUrl("")).toBe("ze-assistant.jpg");
+  });
+});
+
+describe("isBundledGatewayAgentAvatarUrl", () => {
+  it("detects control-UI /avatar/<id> routes with or without mount prefix", () => {
+    expect(isBundledGatewayAgentAvatarUrl("/avatar/main", "")).toBe(true);
+    expect(isBundledGatewayAgentAvatarUrl("/openclaw/avatar/main", "/openclaw")).toBe(true);
+    expect(isBundledGatewayAgentAvatarUrl("/openclaw/avatar/main", "/openclaw/")).toBe(true);
+    expect(
+      isBundledGatewayAgentAvatarUrl("https://x.example/openclaw/avatar/main", "/openclaw"),
+    ).toBe(true);
+  });
+
+  it("does not flag arbitrary paths or remote assets", () => {
+    expect(isBundledGatewayAgentAvatarUrl("/ui/fariy-assistant.jpg", "/ui")).toBe(false);
+    expect(isBundledGatewayAgentAvatarUrl("https://cdn.example/a.png", "")).toBe(false);
+    expect(isBundledGatewayAgentAvatarUrl("/avatar/main/extra", "")).toBe(false);
+  });
+});
+
+describe("resolveChatAssistantAvatarUrl", () => {
+  it("falls back to static art when only gateway placeholder URLs are present", () => {
+    expect(
+      resolveChatAssistantAvatarUrl({
+        basePath: "/ui",
+        identityAvatar: "/ui/avatar/main",
+        gatewayMetaAvatar: "/ui/avatar/main",
+      }),
+    ).toBe("/ui/fariy-assistant.jpg");
+  });
+
+  it("prefers a non-placeholder identity URL", () => {
+    expect(
+      resolveChatAssistantAvatarUrl({
+        basePath: "/ui",
+        identityAvatar: "https://example.com/me.png",
+        gatewayMetaAvatar: "/ui/avatar/main",
+      }),
+    ).toBe("https://example.com/me.png");
+  });
+
+  it("uses gateway URL when it is not the bundled avatar route", () => {
+    expect(
+      resolveChatAssistantAvatarUrl({
+        basePath: "/ui",
+        identityAvatar: null,
+        gatewayMetaAvatar: "https://files.example/portrait.jpg",
+      }),
+    ).toBe("https://files.example/portrait.jpg");
   });
 });
 

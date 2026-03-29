@@ -65,6 +65,27 @@ describe("getOrLoadBootstrapFiles", () => {
     expect(r2).toBe(files2);
     expect(mockLoad()).toHaveBeenCalledTimes(2);
   });
+
+  it("same session key with different workspace dirs loads separately", async () => {
+    const filesA = [makeFile("SOUL.md", "A")];
+    const filesB = [makeFile("SOUL.md", "B")];
+    mockLoad().mockResolvedValueOnce(filesA).mockResolvedValueOnce(filesB);
+
+    const r1 = await getOrLoadBootstrapFiles({
+      workspaceDir: "/project-a",
+      sessionKey: "agent:main:main",
+    });
+    const r2 = await getOrLoadBootstrapFiles({
+      workspaceDir: "/project-b",
+      sessionKey: "agent:main:main",
+    });
+
+    expect(r1).toBe(filesA);
+    expect(r2).toBe(filesB);
+    expect(mockLoad()).toHaveBeenCalledTimes(2);
+    expect(mockLoad()).toHaveBeenNthCalledWith(1, "/project-a");
+    expect(mockLoad()).toHaveBeenNthCalledWith(2, "/project-b");
+  });
 });
 
 describe("clearBootstrapSnapshot", () => {

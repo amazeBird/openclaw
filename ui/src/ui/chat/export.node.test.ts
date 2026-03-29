@@ -23,4 +23,14 @@ describe("chat export", () => {
     expect(markdown).toContain("Final answer");
     expect(markdown).not.toContain("scratchpad");
   });
+
+  it("uses custom user sender label in markdown", () => {
+    const markdown = buildChatMarkdown(
+      [{ role: "user", content: "hi", timestamp: Date.UTC(2026, 2, 11, 12, 0, 0) }],
+      "Bot",
+      "绳匠",
+    );
+    expect(markdown).toContain("## 绳匠 (2026-03-11T12:00:00.000Z)");
+    expect(markdown).not.toContain("## You ");
+  });
 });

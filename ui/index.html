@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OpenClaw Control</title>
+    <title>Zenless Zone Zero Control</title>
     <meta name="color-scheme" content="dark light" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <script>
       (function () {
-        var THEMES = { claw: 1, knot: 1, dash: 1 };
+        var THEMES = { claw: 1, knot: 1, dash: 1, urban: 1 };
         var MODES = { system: 1, light: 1, dark: 1 };
         var LEGACY = {
           dark: "claw:dark",
@@ -19,6 +19,7 @@
           fieldmanual: "dash:dark",
           clawdash: "dash:light",
           system: "claw:system",
+          urban: "urban:dark",
         };
         try {
           var keys = Object.keys(localStorage);
@@ -29,7 +30,18 @@
               if (raw) break;
             }
           }
-          if (!raw) return;
+          if (!raw) {
+            var prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+            document.documentElement.setAttribute(
+              "data-theme",
+              prefersLight ? "urban-light" : "urban",
+            );
+            document.documentElement.setAttribute(
+              "data-theme-mode",
+              prefersLight ? "light" : "dark",
+            );
+            return;
+          }
           var s = JSON.parse(raw);
           var t = s && s.theme;
           var m = s && s.themeMode;
@@ -50,9 +62,13 @@
                 ? mode === "light"
                   ? "dash-light"
                   : "dash"
-                : mode === "light"
-                  ? "light"
-                  : "dark";
+                : theme === "urban"
+                  ? mode === "light"
+                    ? "urban-light"
+                    : "urban"
+                  : mode === "light"
+                    ? "light"
+                    : "dark";
           document.documentElement.setAttribute("data-theme", resolved);
           document.documentElement.setAttribute(
             "data-theme-mode",

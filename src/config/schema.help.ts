@@ -236,6 +236,8 @@ export const FIELD_HELP: Record<string, string> = {
     "Optional default working directory for this agent's ACP sessions.",
   "agents.list[].identity.avatar":
     "Avatar image path (relative to the agent workspace only) or a remote URL/data URL.",
+  "agents.defaults.heartbeat.isolatedSession":
+    "When true (the default when unset), periodic heartbeat runs use a dedicated `…:heartbeat` session so HEARTBEAT.md checks do not append turns to the main webchat transcript. Set false only if you intentionally want heartbeat in the same session history as normal chat.",
   "agents.defaults.heartbeat.suppressToolErrorWarnings":
     "Suppress tool error warning payloads during heartbeat runs.",
   "agents.list[].heartbeat.suppressToolErrorWarnings":

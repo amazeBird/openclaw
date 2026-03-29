@@ -21,6 +21,7 @@ import {
   applyCompactionDefaults,
   applyContextPruningDefaults,
   applyAgentDefaults,
+  applyHeartbeatIsolationDefault,
   applyLoggingDefaults,
   applyMessageDefaults,
   applyModelDefaults,
@@ -1348,8 +1349,12 @@ export function createConfigIO(overrides: ConfigIoDeps = {}) {
         applyModelDefaults(
           applyCompactionDefaults(
             applyContextPruningDefaults(
-              applyAgentDefaults(
-                applySessionDefaults(applyLoggingDefaults(applyMessageDefaults(validated.config))),
+              applyHeartbeatIsolationDefault(
+                applyAgentDefaults(
+                  applySessionDefaults(
+                    applyLoggingDefaults(applyMessageDefaults(validated.config)),
+                  ),
+                ),
               ),
             ),
           ),
@@ -1453,7 +1458,9 @@ export function createConfigIO(overrides: ConfigIoDeps = {}) {
           applyModelDefaults(
             applyCompactionDefaults(
               applyContextPruningDefaults(
-                applyAgentDefaults(applySessionDefaults(applyMessageDefaults({}))),
+                applyHeartbeatIsolationDefault(
+                  applyAgentDefaults(applySessionDefaults(applyMessageDefaults({}))),
+                ),
               ),
             ),
           ),

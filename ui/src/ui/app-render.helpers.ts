@@ -1,6 +1,9 @@
 import { html, nothing } from "lit";
 import { repeat } from "lit/directives/repeat.js";
-import { parseAgentSessionKey } from "../../../src/sessions/session-key-utils.js";
+import {
+  isIsolatedHeartbeatSessionKey,
+  parseAgentSessionKey,
+} from "../../../src/sessions/session-key-utils.js";
 import { t } from "../i18n/index.ts";
 import { refreshChat } from "./app-chat.ts";
 import { syncUrlWithSessionKey } from "./app-settings.ts";
@@ -16,6 +19,7 @@ import { ChatState, loadChatHistory } from "./controllers/chat.ts";
 import { loadSessions } from "./controllers/sessions.ts";
 import { icons } from "./icons.ts";
 import { iconForTab, pathForTab, titleForTab, type Tab } from "./navigation.ts";
+import { normalizeControlUiSessionKey } from "./session-query.ts";
 import type { ThemeTransitionContext } from "./theme-transition.ts";
 import type { ThemeMode, ThemeName } from "./theme.ts";
 import type { SessionsListResult } from "./types.ts";
@@ -38,6 +42,30 @@ function resolveSidebarChatSessionKey(state: AppViewState): string {
     return mainKey;
   }
   return "main";
+}
+
+/** Target session when focusing the Chat tab (avoid clobbering `agent:…:main` with bare `main` pre-hello). */
+function resolveChatNavTargetSessionKey(state: AppViewState): string {
+  const snapshot = state.hello?.snapshot as
+    | { sessionDefaults?: SessionDefaultsSnapshot }
+    | undefined;
+  const mainSessionKey = snapshot?.sessionDefaults?.mainSessionKey?.trim();
+  if (mainSessionKey) {
+    return mainSessionKey;
+  }
+  if (typeof window !== "undefined") {
+    try {
+      const fromUrl = normalizeControlUiSessionKey(
+        new URL(window.location.href).searchParams.get("session") ?? "",
+      );
+      if (fromUrl && !isIsolatedHeartbeatSessionKey(fromUrl)) {
+        return fromUrl;
+      }
+    } catch {
+      // ignore invalid URLs
+    }
+  }
+  return resolveSidebarChatSessionKey(state);
 }
 
 function resetChatStateForSessionSwitch(state: AppViewState, sessionKey: string) {
@@ -76,9 +104,9 @@ export function renderTab(state: AppViewState, tab: Tab, opts?: { collapsed?: bo
         }
         event.preventDefault();
         if (tab === "chat") {
-          const mainSessionKey = resolveSidebarChatSessionKey(state);
-          if (state.sessionKey !== mainSessionKey) {
-            resetChatStateForSessionSwitch(state, mainSessionKey);
+          const targetSessionKey = resolveChatNavTargetSessionKey(state);
+          if (state.sessionKey !== targetSessionKey) {
+            resetChatStateForSessionSwitch(state, targetSessionKey);
             void state.loadAssistantIdentity();
           }
         }
@@ -134,12 +162,18 @@ function renderCronFilterIcon(hiddenCount: number) {
 
 export function renderChatSessionSelect(state: AppViewState) {
   const sessionGroups = resolveSessionOptionGroups(state, state.sessionKey, state.sessionsResult);
+  const canonicalMain = resolveSidebarChatSessionKey(state);
+  const selectBinding = resolveSessionKeyForNativeSelect(
+    state.sessionKey,
+    sessionGroups,
+    canonicalMain,
+  );
   const modelSelect = renderChatModelSelect(state);
   return html`
     <div class="chat-controls__session-row">
       <label class="field chat-controls__session">
         <select
-          .value=${state.sessionKey}
+          .value=${selectBinding}
           ?disabled=${!state.connected || sessionGroups.length === 0}
           @change=${(e: Event) => {
             const next = (e.target as HTMLSelectElement).value;
@@ -336,6 +370,12 @@ export function renderChatControls(state: AppViewState) {
  */
 export function renderChatMobileToggle(state: AppViewState) {
   const sessionGroups = resolveSessionOptionGroups(state, state.sessionKey, state.sessionsResult);
+  const canonicalMain = resolveSidebarChatSessionKey(state);
+  const selectBinding = resolveSessionKeyForNativeSelect(
+    state.sessionKey,
+    sessionGroups,
+    canonicalMain,
+  );
   const disableThinkingToggle = state.onboarding;
   const disableFocusToggle = state.onboarding;
   const showThinking = state.onboarding ? false : state.settings.chatShowThinking;
@@ -409,7 +449,7 @@ export function renderChatMobileToggle(state: AppViewState) {
         <div class="chat-controls">
           <label class="field chat-controls__session">
             <select
-              .value=${state.sessionKey}
+              .value=${selectBinding}
               @change=${(e: Event) => {
                 const next = (e.target as HTMLSelectElement).value;
                 switchChatSession(state, next);
@@ -487,7 +527,11 @@ export function renderChatMobileToggle(state: AppViewState) {
 }
 
 export function switchChatSession(state: AppViewState, nextSessionKey: string) {
-  state.sessionKey = nextSessionKey;
+  const next = nextSessionKey.trim();
+  if (!next || state.sessionKey === next) {
+    return;
+  }
+  state.sessionKey = next;
   state.chatMessage = "";
   state.chatStream = null;
   // P1: Clear queued chat items from the previous session
@@ -498,13 +542,13 @@ export function switchChatSession(state: AppViewState, nextSessionKey: string) {
   (state as unknown as OpenClawApp).resetChatScroll();
   state.applySettings({
     ...state.settings,
-    sessionKey: nextSessionKey,
-    lastActiveSessionKey: nextSessionKey,
+    sessionKey: next,
+    lastActiveSessionKey: next,
   });
   void state.loadAssistantIdentity();
   syncUrlWithSessionKey(
     state as unknown as Parameters<typeof syncUrlWithSessionKey>[0],
-    nextSessionKey,
+    next,
     true,
   );
   void loadChatHistory(state as unknown as ChatState);
@@ -747,6 +791,9 @@ export function resolveSessionOptionGroups(
     if (!key || seenKeys.has(key)) {
       return;
     }
+    if (key !== sessionKey && isIsolatedHeartbeatSessionKey(key)) {
+      return;
+    }
     seenKeys.add(key);
     const row = byKey.get(key);
     const parsed = parseAgentSessionKey(key);
@@ -765,6 +812,10 @@ export function resolveSessionOptionGroups(
       title: key,
     });
   };
+
+  // Always surface the canonical main webchat session so the dropdown is not
+  // stuck showing only an isolated `:heartbeat` row when global rows are hidden.
+  addOption(resolveSidebarChatSessionKey(state));
 
   for (const row of rows) {
     if (row.key !== sessionKey && (row.kind === "global" || row.kind === "unknown")) {
@@ -856,6 +907,87 @@ export function resolveSessionOptionGroups(
   return Array.from(groups.values());
 }
 
+type SessionDefaultsSnap = { mainSessionKey?: string };
+
+/**
+ * Pure helper: session key the chat tab should use so `?session=` and main webchat stay aligned.
+ * Exported for unit tests.
+ */
+export function pickWebchatSessionReconciliation(params: {
+  tab: Tab;
+  connected: boolean;
+  sessionKey: string;
+  urlSessionParam: string;
+  helloSnapshot: { sessionDefaults?: SessionDefaultsSnap } | undefined;
+}): string | null {
+  if (params.tab !== "chat" || !params.connected) {
+    return null;
+  }
+  const urlSession = normalizeControlUiSessionKey(params.urlSessionParam);
+  if (
+    urlSession &&
+    !isIsolatedHeartbeatSessionKey(urlSession) &&
+    urlSession !== params.sessionKey
+  ) {
+    return urlSession;
+  }
+  const mainFromHello = params.helloSnapshot?.sessionDefaults?.mainSessionKey?.trim() ?? "";
+  if (
+    mainFromHello &&
+    isIsolatedHeartbeatSessionKey(params.sessionKey) &&
+    params.sessionKey !== mainFromHello
+  ) {
+    return mainFromHello;
+  }
+  return null;
+}
+
+/** Keep `sessionKey` in sync with the address bar and never leave webchat stuck on `:heartbeat`. */
+export function reconcileChatSessionKeyWithUrlAndMain(state: AppViewState): void {
+  const snapshot = state.hello?.snapshot as { sessionDefaults?: SessionDefaultsSnap } | undefined;
+  const urlSessionParam =
+    typeof window !== "undefined"
+      ? (new URL(window.location.href).searchParams.get("session") ?? "")
+      : "";
+  const picked = pickWebchatSessionReconciliation({
+    tab: state.tab,
+    connected: state.connected,
+    sessionKey: state.sessionKey,
+    urlSessionParam,
+    helloSnapshot: snapshot,
+  });
+  if (picked) {
+    switchChatSession(state, picked);
+  }
+}
+
+function resolveSessionKeyForNativeSelect(
+  sessionKey: string,
+  groups: SessionOptionGroup[],
+  canonicalMain: string,
+): string {
+  const keys = new Set(groups.flatMap((g) => g.options.map((o) => o.key)));
+  if (keys.has(sessionKey)) {
+    return sessionKey;
+  }
+  if (keys.has(canonicalMain)) {
+    return canonicalMain;
+  }
+  if (sessionKey === "main") {
+    for (const k of keys) {
+      const p = parseAgentSessionKey(k);
+      if (p?.rest === "main" && !isIsolatedHeartbeatSessionKey(k)) {
+        return k;
+      }
+    }
+  }
+  const parsed = parseAgentSessionKey(sessionKey);
+  if (parsed?.rest === "main" && keys.has("main")) {
+    return "main";
+  }
+  return sessionKey;
+}
+
 /** Count sessions with a cron: key that would be hidden when hideCron=true. */
 function countHiddenCronSessions(sessionKey: string, sessions: SessionsListResult | null): number {
   if (!sessions?.sessions) {
@@ -896,8 +1028,9 @@ function resolveSessionScopedOptionLabel(
 type ThemeOption = { id: ThemeName; label: string; icon: string };
 const THEME_OPTIONS: ThemeOption[] = [
   { id: "claw", label: "Claw", icon: "🦀" },
-  { id: "knot", label: "Knot", icon: "🪢" },
   { id: "dash", label: "Dash", icon: "📊" },
+  { id: "knot", label: "Knot", icon: "🪢" },
+  { id: "urban", label: "Urban", icon: "🏙️" },
 ];
 
 type ThemeModeOption = { id: ThemeMode; label: string; short: string };

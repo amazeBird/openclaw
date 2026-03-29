@@ -2,6 +2,10 @@ import {
   GATEWAY_EVENT_UPDATE_AVAILABLE,
   type GatewayUpdateAvailableEventPayload,
 } from "../../../src/gateway/events.js";
+import {
+  isIsolatedHeartbeatSessionKey,
+  parseAgentSessionKey,
+} from "../../../src/sessions/session-key-utils.js";
 import { CHAT_SESSIONS_ACTIVE_MINUTES, flushChatQueueForEvent } from "./app-chat.ts";
 import type { EventLogEntry } from "./app-events.ts";
 import {
@@ -9,6 +13,7 @@ import {
   loadCron,
   refreshActiveTab,
   setLastActiveSessionKey,
+  syncUrlWithSessionKey,
 } from "./app-settings.ts";
 import { handleAgentEvent, resetToolStream, type AgentEventPayload } from "./app-tool-stream.ts";
 import type { OpenClawApp } from "./app.ts";
@@ -36,6 +41,7 @@ import {
 } from "./gateway.ts";
 import { GatewayBrowserClient } from "./gateway.ts";
 import type { Tab } from "./navigation.ts";
+import { normalizeControlUiSessionKey } from "./session-query.ts";
 import type { UiSettings } from "./storage.ts";
 import type {
   AgentsListResult,
@@ -89,6 +95,8 @@ type SessionDefaultsSnapshot = {
   mainKey?: string;
   mainSessionKey?: string;
   scope?: string;
+  /** Normalized `agents.list` ids from gateway config; stale UI keys (e.g. removed `dev`) map to main. */
+  agentIds?: string[];
 };
 
 type GatewayHostWithShutdownMessage = GatewayHost & {
@@ -122,16 +130,28 @@ export function resolveControlUiClientVersion(params: {
   }
 }
 
-function normalizeSessionKeyForDefaults(
+/** Exported for unit tests; maps bookmarked/legacy session keys to gateway `sessionDefaults`. */
+export function normalizeSessionKeyForDefaults(
   value: string | undefined,
   defaults: SessionDefaultsSnapshot,
 ): string {
-  const raw = (value ?? "").trim();
+  const raw = normalizeControlUiSessionKey(value ?? "");
   const mainSessionKey = defaults.mainSessionKey?.trim();
   if (!mainSessionKey) {
     return raw;
   }
   if (!raw) {
+    return mainSessionKey;
+  }
+  const agentIds = defaults.agentIds?.length
+    ? new Set(defaults.agentIds.map((id) => id.trim().toLowerCase()).filter((id) => id.length > 0))
+    : null;
+  const parsedAgent = parseAgentSessionKey(raw);
+  if (agentIds && parsedAgent && !agentIds.has(parsedAgent.agentId)) {
+    return mainSessionKey;
+  }
+  // Background heartbeat uses `…:heartbeat`; it must never be the Control UI chat target.
+  if (isIsolatedHeartbeatSessionKey(raw)) {
     return mainSessionKey;
   }
   const mainKey = defaults.mainKey?.trim() || "main";
@@ -168,6 +188,13 @@ function applySessionDefaults(host: GatewayHost, defaults?: SessionDefaultsSnaps
     nextSettings.lastActiveSessionKey !== host.settings.lastActiveSessionKey;
   if (nextSessionKey !== host.sessionKey) {
     host.sessionKey = nextSessionKey;
+    if (host.tab === "chat") {
+      syncUrlWithSessionKey(
+        host as unknown as Parameters<typeof syncUrlWithSessionKey>[0],
+        nextSessionKey,
+        true,
+      );
+    }
   }
   if (shouldUpdateSettings) {
     applySettings(host as unknown as Parameters<typeof applySettings>[0], nextSettings);
@@ -308,7 +335,7 @@ function handleTerminalChatEvent(
 }
 
 function handleChatGatewayEvent(host: GatewayHost, payload: ChatEventPayload | undefined) {
-  if (payload?.sessionKey) {
+  if (payload?.sessionKey && !isIsolatedHeartbeatSessionKey(payload.sessionKey)) {
     setLastActiveSessionKey(
       host as unknown as Parameters<typeof setLastActiveSessionKey>[0],
       payload.sessionKey,

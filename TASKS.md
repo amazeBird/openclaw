@@ -28,6 +28,12 @@
 | L003   | Web UI 剩余视图国际化 - Phase 2       | ✅已完成 | 2026-03-28 | [计划: my-docs/PLANS.md](my-docs/PLANS.md) · [en.ts](ui/src/i18n/locales/en.ts) · [zh-CN.ts](ui/src/i18n/locales/zh-CN.ts) |
 | L004   | 配置表单内部元素国际化                | ✅已完成 | 2026-03-28 | [zh-CN.ts](ui/src/i18n/locales/zh-CN.ts) · [config-form.node.ts](ui/src/ui/views/config-form.node.ts)                      |
 
+### 🎨 UI / 视觉与体验
+
+| 任务ID | 任务名称                                         | 状态     | 截止时间 | 相关文档                                                                                                                                                                                             |
+| ------ | ------------------------------------------------ | -------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| U001   | Web UI「都市机能」风格改造（绝区零聊天窗为参考） | 🔄进行中 | 待定     | [计划](my-docs/PLANS.md#u001-urban-ui-theme) · [规范](my-docs/U001_URBAN_THEME_TOKENS.md) · [chat](ui/src/styles/theme-urban-chat.css) · [shell](ui/src/styles/theme-urban-shell.css) · Phase 0–2 ✅ |
+
 ### 🔒 安全与风险
 
 | 任务ID | 任务名称                                   | 状态     | 截止时间   | 相关文档                                                                                                  |

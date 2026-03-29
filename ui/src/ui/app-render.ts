@@ -90,9 +90,11 @@ import "./components/dashboard-header.ts";
 import { buildExternalLinkRel, EXTERNAL_LINK_TARGET } from "./external-link.ts";
 import { icons } from "./icons.ts";
 import { normalizeBasePath, TAB_GROUPS, subtitleForTab, titleForTab } from "./navigation.ts";
-import { agentLogoUrl } from "./views/agents-utils.ts";
 import {
+  agentLogoUrl,
+  resolveAgentAvatarUrl as resolveIdentityAvatarUrl,
   resolveAgentConfig,
+  resolveChatAssistantAvatarUrl,
   resolveConfiguredCronModelSuggestions,
   resolveEffectiveModelFallbacks,
   resolveModelPrimary,
@@ -241,8 +243,6 @@ function dismissUpdateBanner(updateAvailable: unknown) {
   }
 }
 
-const AVATAR_DATA_RE = /^data:/i;
-const AVATAR_HTTP_RE = /^https?:\/\//i;
 const COMMUNICATION_SECTION_KEYS = ["channels", "messages", "broadcast", "talk", "audio"] as const;
 const APPEARANCE_SECTION_KEYS = ["__appearance__", "ui", "wizard"] as const;
 const AUTOMATION_SECTION_KEYS = [
@@ -278,22 +278,6 @@ type AutomationSectionKey = (typeof AUTOMATION_SECTION_KEYS)[number];
 type InfrastructureSectionKey = (typeof INFRASTRUCTURE_SECTION_KEYS)[number];
 type AiAgentsSectionKey = (typeof AI_AGENTS_SECTION_KEYS)[number];
 
-function resolveAssistantAvatarUrl(state: AppViewState): string | undefined {
-  const list = state.agentsList?.agents ?? [];
-  const parsed = parseAgentSessionKey(state.sessionKey);
-  const agentId = parsed?.agentId ?? state.agentsList?.defaultId ?? "main";
-  const agent = list.find((entry) => entry.id === agentId);
-  const identity = agent?.identity;
-  const candidate = identity?.avatarUrl ?? identity?.avatar;
-  if (!candidate) {
-    return undefined;
-  }
-  if (AVATAR_DATA_RE.test(candidate) || AVATAR_HTTP_RE.test(candidate)) {
-    return candidate;
-  }
-  return identity?.avatarUrl;
-}
-
 export function renderApp(state: AppViewState) {
   const updatableState = state as AppViewState & { requestUpdate?: () => void };
   const requestHostUpdate =
@@ -321,11 +305,18 @@ export function renderApp(state: AppViewState) {
   const navCollapsed = Boolean(state.settings.navCollapsed && !navDrawerOpen);
   const showThinking = state.onboarding ? false : state.settings.chatShowThinking;
   const showToolCalls = state.onboarding ? true : state.settings.chatShowToolCalls;
-  const assistantAvatarUrl = resolveAssistantAvatarUrl(state);
-  const chatAvatarUrl = state.chatAvatarUrl ?? assistantAvatarUrl ?? null;
+  const basePath = normalizeBasePath(state.basePath ?? "");
+  const parsedSession = parseAgentSessionKey(state.sessionKey);
+  const portraitAgentId = parsedSession?.agentId ?? state.agentsList?.defaultId ?? "main";
+  const portraitAgent = state.agentsList?.agents?.find((entry) => entry.id === portraitAgentId);
+  const identityAvatar = resolveIdentityAvatarUrl({ identity: portraitAgent?.identity });
+  const chatAvatarUrl = resolveChatAssistantAvatarUrl({
+    basePath,
+    identityAvatar,
+    gatewayMetaAvatar: state.chatAvatarUrl,
+  });
   const configValue =
     state.configForm ?? (state.configSnapshot?.config as Record<string, unknown> | null);
-  const basePath = normalizeBasePath(state.basePath ?? "");
   const resolvedAgentId =
     state.agentsSelectedId ??
     state.agentsList?.defaultId ??
@@ -472,10 +463,10 @@ export function renderApp(state: AppViewState) {
                   navCollapsed
                     ? nothing
                     : html`
-                        <img class="sidebar-brand__logo" src="${agentLogoUrl(basePath)}" alt="OpenClaw" />
+                        <img class="sidebar-brand__logo" src="${agentLogoUrl(basePath)}" alt="${t("nav.brandTitle")}" />
                         <span class="sidebar-brand__copy">
                           <span class="sidebar-brand__eyebrow">${t("nav.control")}</span>
-                          <span class="sidebar-brand__title">OpenClaw</span>
+                          <span class="sidebar-brand__title">${t("nav.brandTitle")}</span>
                         </span>
                       `
                 }
@@ -1554,6 +1545,7 @@ export function renderApp(state: AppViewState) {
                 onSplitRatioChange: (ratio: number) => state.handleSplitRatioChange(ratio),
                 assistantName: state.assistantName,
                 assistantAvatar: state.assistantAvatar,
+                userSenderLabel: t("chat.senderYou"),
                 basePath: state.basePath ?? "",
               })
             : nothing

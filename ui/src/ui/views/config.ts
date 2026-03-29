@@ -555,11 +555,32 @@ function renderDiffValue(path: string, value: unknown, _uiHints: ConfigUiHints):
   return truncateValue(value);
 }
 
-type ThemeOption = { id: ThemeName; label: string; description: string; icon: TemplateResult };
+type ThemeOption = { id: ThemeName; labelKey: string; descKey: string; icon: TemplateResult };
 const THEME_OPTIONS: ThemeOption[] = [
-  { id: "claw", label: "Claw", description: "Chroma family", icon: icons.zap },
-  { id: "knot", label: "Knot", description: "Black & red", icon: icons.link },
-  { id: "dash", label: "Dash", description: "Chocolate blueprint", icon: icons.barChart },
+  {
+    id: "claw",
+    labelKey: "config.appearance.themeClaw",
+    descKey: "config.appearance.themeClawDesc",
+    icon: icons.zap,
+  },
+  {
+    id: "dash",
+    labelKey: "config.appearance.themeDash",
+    descKey: "config.appearance.themeDashDesc",
+    icon: icons.barChart,
+  },
+  {
+    id: "knot",
+    labelKey: "config.appearance.themeKnot",
+    descKey: "config.appearance.themeKnotDesc",
+    icon: icons.link,
+  },
+  {
+    id: "urban",
+    labelKey: "config.appearance.themeUrban",
+    descKey: "config.appearance.themeUrbanDesc",
+    icon: icons.spark,
+  },
 ];
 
 function renderAppearanceSection(props: ConfigProps) {
@@ -573,7 +594,7 @@ function renderAppearanceSection(props: ConfigProps) {
             (opt) => html`
               <button
                 class="settings-theme-card ${opt.id === props.theme ? "settings-theme-card--active" : ""}"
-                title=${opt.description}
+                title=${t(opt.descKey)}
                 @click=${(e: Event) => {
                   if (opt.id !== props.theme) {
                     const context: ThemeTransitionContext = {
@@ -584,7 +605,7 @@ function renderAppearanceSection(props: ConfigProps) {
                 }}
               >
                 <span class="settings-theme-card__icon" aria-hidden="true">${opt.icon}</span>
-                <span class="settings-theme-card__label">${opt.label}</span>
+                <span class="settings-theme-card__label">${t(opt.labelKey)}</span>
                 ${
                   opt.id === props.theme
                     ? html`<span class="settings-theme-card__check" aria-hidden="true">${icons.check}</span>`

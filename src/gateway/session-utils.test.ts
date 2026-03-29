@@ -15,6 +15,7 @@ import {
   capArrayByJsonBytes,
   classifySessionKey,
   deriveSessionTitle,
+  getSessionDefaults,
   listAgentsForGateway,
   listSessionsFromStore,
   loadCombinedSessionStoreForGateway,
@@ -90,6 +91,26 @@ function createLegacyRuntimeStore(model: string): Record<string, SessionEntry> {
 describe("gateway session utils", () => {
   afterEach(() => {
     resetSubagentRegistryForTests({ persist: false });
+  });
+
+  test("getSessionDefaults follows default agent model from agents.list", () => {
+    const cfg = {
+      agents: {
+        defaults: {
+          model: { primary: "anthropic/claude-opus-4-6" },
+        },
+        list: [
+          {
+            id: "main",
+            default: true,
+            model: { primary: "deepseek/deepseek-chat" },
+          },
+        ],
+      },
+    } as OpenClawConfig;
+    const defaults = getSessionDefaults(cfg);
+    expect(defaults.modelProvider).toBe("deepseek");
+    expect(defaults.model).toBe("deepseek-chat");
   });
 
   test("capArrayByJsonBytes trims from the front", () => {

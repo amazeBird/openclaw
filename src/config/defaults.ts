@@ -377,6 +377,35 @@ export function applyModelDefaults(cfg: OpenClawConfig): OpenClawConfig {
   };
 }
 
+/**
+ * Default heartbeat runs to `…:heartbeat` isolated sessions so periodic HEARTBEAT.md
+ * checks do not append turns to the main webchat transcript (Control UI / `agent:…:main`).
+ * Explicit `heartbeat.isolatedSession: false` keeps legacy “same session” behavior.
+ */
+export function applyHeartbeatIsolationDefault(cfg: OpenClawConfig): OpenClawConfig {
+  const agents = cfg.agents;
+  const defaults = agents?.defaults;
+  if (!agents || !defaults) {
+    return cfg;
+  }
+  if (defaults.heartbeat?.isolatedSession !== undefined) {
+    return cfg;
+  }
+  return {
+    ...cfg,
+    agents: {
+      ...agents,
+      defaults: {
+        ...defaults,
+        heartbeat: {
+          ...defaults.heartbeat,
+          isolatedSession: true,
+        },
+      },
+    },
+  };
+}
+
 export function applyAgentDefaults(cfg: OpenClawConfig): OpenClawConfig {
   const agents = cfg.agents;
   const defaults = agents?.defaults;

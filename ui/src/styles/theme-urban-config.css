@@ -1,0 +1,97 @@
+/*
+ * U001 — Config page urban styling (my-docs/U001_EXAMPLE_CONFIG_UI.html).
+ * Loaded after config.css; only applies when data-theme is urban / urban-light.
+ */
+
+:root[data-theme="urban"] .config-layout,
+:root[data-theme="urban-light"] .config-layout {
+  border-width: 3px;
+  border-style: solid;
+  border-color: var(--urban-frame, #0a0a0a);
+  border-radius: var(--urban-radius-chunk, 20px);
+  background: var(--card);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px color-mix(in srgb, white 3%, transparent);
+}
+
+:root[data-theme="urban-light"] .config-layout {
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.08),
+    inset 0 0 0 1px color-mix(in srgb, black 4%, transparent);
+}
+
+:root[data-theme="urban"] .config-search,
+:root[data-theme="urban-light"] .config-search {
+  border-bottom-width: var(--border-width-strong, 2px);
+  border-bottom-style: solid;
+  background: var(--bg-accent);
+}
+
+:root[data-theme="urban"] .config-search__input,
+:root[data-theme="urban-light"] .config-search__input {
+  border-width: var(--border-width-strong, 2px);
+  border-color: var(--border-strong);
+}
+
+:root[data-theme="urban"] .config-top-tabs,
+:root[data-theme="urban-light"] .config-top-tabs {
+  border-bottom-width: var(--border-width-strong, 2px);
+  border-bottom-style: solid;
+  background: var(--bg-accent);
+}
+
+:root[data-theme="urban"] .config-top-tabs__tab,
+:root[data-theme="urban-light"] .config-top-tabs__tab {
+  border-width: var(--border-width-strong, 2px);
+}
+
+:root[data-theme="urban"] .config-top-tabs__tab.active,
+:root[data-theme="urban-light"] .config-top-tabs__tab.active {
+  border-color: var(--urban-frame, #0a0a0a);
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--urban-frame, #0a0a0a) 45%, transparent);
+}
+
+:root[data-theme="urban-light"] .config-top-tabs__tab.active {
+  border-color: var(--urban-frame, #18181b);
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--urban-frame, #18181b) 45%, transparent);
+}
+
+:root[data-theme="urban"] .config-actions,
+:root[data-theme="urban-light"] .config-actions {
+  border-bottom-width: var(--border-width-strong, 2px);
+  border-bottom-style: solid;
+}
+
+:root[data-theme="urban"] .config-mode-toggle,
+:root[data-theme="urban-light"] .config-mode-toggle {
+  border-width: var(--border-width-strong, 2px);
+  border-style: solid;
+  border-color: var(--urban-frame, #0a0a0a);
+}
+
+:root[data-theme="urban-light"] .config-mode-toggle {
+  border-color: var(--urban-frame, #18181b);
+}
+
+:root[data-theme="urban"] .config-section-card,
+:root[data-theme="urban-light"] .config-section-card {
+  border-width: var(--border-width-strong, 2px);
+  border-style: solid;
+}
+
+:root[data-theme="urban"] .config-section-card__header,
+:root[data-theme="urban-light"] .config-section-card__header {
+  border-bottom-width: var(--border-width-strong, 2px);
+  border-bottom-style: solid;
+}
+
+:root[data-theme="urban"] .config-section-card__icon,
+:root[data-theme="urban-light"] .config-section-card__icon {
+  border-width: var(--border-width-strong, 2px);
+  border-color: var(--urban-frame, #0a0a0a);
+}
+
+:root[data-theme="urban-light"] .config-section-card__icon {
+  border-color: var(--urban-frame, #18181b);
+}

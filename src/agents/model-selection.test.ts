@@ -1,8 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
 import type { OpenClawConfig } from "../config/config.js";
+import type { ModelDefinitionConfig } from "../config/types.models.js";
 import { resetLogger, setLoggerOverride } from "../logging/logger.js";
 import {
   buildAllowedModelSet,
+  collectControlUiConfiguredModelKeys,
   inferUniqueProviderFromConfiguredModels,
   parseModelRef,
   buildModelAliasIndex,
@@ -15,6 +17,18 @@ import {
   resolveThinkingDefault,
   resolveModelRefFromString,
 } from "./model-selection.js";
+
+function mockModelDef(id: string, name: string): ModelDefinitionConfig {
+  return {
+    id,
+    name,
+    reasoning: false,
+    input: ["text"],
+    cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+    contextWindow: 8192,
+    maxTokens: 4096,
+  };
+}
 
 const EXPLICIT_ALLOWLIST_CONFIG = {
   agents: {
@@ -617,6 +631,86 @@ describe("model-selection", () => {
       }
     });
 
+    it("resolves bare primary model id via models.providers when unambiguous", () => {
+      const cfg: Partial<OpenClawConfig> = {
+        models: {
+          providers: {
+            deepseek: {
+              baseUrl: "https://api.deepseek.com",
+              models: [mockModelDef("deepseek-chat", "DeepSeek Chat")],
+            },
+          },
+        },
+        agents: {
+          defaults: {
+            model: { primary: "deepseek-chat" },
+          },
+        },
+      };
+      const result = resolveConfiguredModelRef({
+        cfg: cfg as OpenClawConfig,
+        defaultProvider: "anthropic",
+        defaultModel: "claude-opus-4-6",
+      });
+      expect(result).toEqual({ provider: "deepseek", model: "deepseek-chat" });
+    });
+
+    it("resolves bare primary via agents.defaults.models allowlist keys when unambiguous", () => {
+      const cfg: Partial<OpenClawConfig> = {
+        agents: {
+          defaults: {
+            model: { primary: "deepseek-chat" },
+            models: {
+              "deepseek/deepseek-chat": {},
+            },
+          },
+        },
+      };
+      const result = resolveConfiguredModelRef({
+        cfg: cfg as OpenClawConfig,
+        defaultProvider: "anthropic",
+        defaultModel: "claude-opus-4-6",
+      });
+      expect(result).toEqual({ provider: "deepseek", model: "deepseek-chat" });
+    });
+
+    it("does not guess provider when multiple models.providers list the same model id", () => {
+      setLoggerOverride({ level: "silent", consoleLevel: "warn" });
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      try {
+        const cfg: Partial<OpenClawConfig> = {
+          models: {
+            providers: {
+              a: {
+                baseUrl: "https://a.example",
+                models: [mockModelDef("shared-id", "A")],
+              },
+              b: {
+                baseUrl: "https://b.example",
+                models: [mockModelDef("shared-id", "B")],
+              },
+            },
+          },
+          agents: {
+            defaults: {
+              model: { primary: "shared-id" },
+            },
+          },
+        };
+        const result = resolveConfiguredModelRef({
+          cfg: cfg as OpenClawConfig,
+          defaultProvider: "anthropic",
+          defaultModel: "claude-opus-4-6",
+        });
+        expect(result).toEqual({ provider: "anthropic", model: "shared-id" });
+        expect(warnSpy).toHaveBeenCalled();
+      } finally {
+        warnSpy.mockRestore();
+        setLoggerOverride(null);
+        resetLogger();
+      }
+    });
+
     it("sanitizes control characters in providerless-model warnings", () => {
       setLoggerOverride({ level: "silent", consoleLevel: "warn" });
       const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
@@ -640,7 +734,8 @@ describe("model-selection", () => {
           model: "\u001B[31mclaude-3-5-sonnet\nspoof",
         });
         const warning = warnSpy.mock.calls[0]?.[0] as string;
-        expect(warning).toContain('Falling back to "anthropic/claude-3-5-sonnet"');
+        // sanitizeForLog strips control chars, so "\n" between sonnet and spoof disappears.
+        expect(warning).toContain('Falling back to "anthropic/claude-3-5-sonnetspoof"');
         expect(warning).not.toContain("\u001B");
         expect(warning).not.toContain("\n");
       } finally {
@@ -805,6 +900,52 @@ describe("model-selection", () => {
         }),
       ).toBe("adaptive");
     });
+  });
+});
+
+describe("collectControlUiConfiguredModelKeys", () => {
+  it("includes models.providers entries and default primary", () => {
+    const cfg = {
+      models: {
+        providers: {
+          deepseek: {
+            baseUrl: "https://api.deepseek.com",
+            models: [mockModelDef("deepseek-chat", "Chat")],
+          },
+        },
+      },
+      agents: {
+        defaults: {
+          model: { primary: "deepseek/deepseek-chat" },
+        },
+      },
+    } as unknown as OpenClawConfig;
+
+    const keys = collectControlUiConfiguredModelKeys(cfg);
+    expect(keys.has(modelKey("deepseek", "deepseek-chat"))).toBe(true);
+  });
+
+  it("returns empty keys when agents.defaults.model has no primary", () => {
+    const cfg = {} as OpenClawConfig;
+    expect(collectControlUiConfiguredModelKeys(cfg).size).toBe(0);
+  });
+
+  it("includes allowlist keys and per-agent primaries", () => {
+    const cfg = {
+      agents: {
+        defaults: {
+          model: { primary: "openai/gpt-5.4" },
+          models: {
+            "anthropic/claude-sonnet-4-6": {},
+          },
+        },
+        list: [{ id: "coder", model: { primary: "google/gemini-2.5-flash" } }],
+      },
+    } as OpenClawConfig;
+
+    const keys = collectControlUiConfiguredModelKeys(cfg);
+    expect(keys.has(modelKey("anthropic", "claude-sonnet-4-6"))).toBe(true);
+    expect(keys.has(modelKey("google", "gemini-2.5-flash"))).toBe(true);
   });
 });
 

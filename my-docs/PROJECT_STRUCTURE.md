@@ -2,7 +2,13 @@
 
 本文档描述 OpenClaw 项目的整体架构、目录结构和核心模块功能。
 
-> 本文档位于 `my-docs/` 目录，由任务 D001 生成。
+> 本文档位于 `my-docs/` 目录，由任务 D001 创建；后续在**大范围改代码或反复查同一类问题**时，应顺手更新「寻源速查」与相关小节，避免重复翻目录。
+
+### 文档维护约定
+
+- **任务与计划**：入口 `TASKS.md`（根目录）→ 详表 `my-docs/TASKS.md`、`my-docs/PLANS.md`（见 `.cursor/rules/fariy-task-table.mdc`）。
+- **改完结构级内容**：同步更新本文档对应小节（根目录树、网关/UI 入口、寻源表）。
+- **路径写法**：与仓库规范一致，使用 **仓库根相对路径**（如 `src/gateway/server-methods/models.ts`），不写绝对路径。
 
 ---
 
@@ -24,19 +30,27 @@
 openclaw/
 ├── src/                    # 核心 TypeScript 源码
 ├── ui/                     # Web 控制界面 (Lit + Vite)
-├── apps/                   # 移动端应用 (iOS/macOS/Android)
-├── extensions/             # 插件/通道扩展
+├── apps/                   # 原生应用 (iOS/macOS/Android)
+├── extensions/             # 工作区插件/通道扩展（npm 包）
 ├── packages/               # 共享 npm 包
-├── scripts/                # 构建与工具脚本
-├── docs/                   # 项目官方文档
-├── my-docs/                # 本任务生成的文档
-├── test/                   # 测试文件
-├── assets/                 # 静态资源
+├── skills/                 # 技能（Skills）相关资源/约定目录
+├── scripts/                # 构建、测试编排、发布与运维脚本
+├── docs/                   # 官方文档（Mintlify；zh-CN 多为生成）
+├── my-docs/                # 本仓库维护者本地/任务文档（非官方 docs）
+├── test/                   # 部分集成/跨模块测试
+├── test-fixtures/          # 测试夹具
+├── assets/                 # 仓库静态资源
+├── dist/                   # 构建产物（CLI/core）
+├── dist-runtime/           # 运行时相关构建输出
+├── patches/                # pnpm patch 等补丁
 ├── Swabble/                # 语音/UI 共享库
 ├── vendor/                 # 第三方依赖
-├── package.json            # 根包配置
+├── vitest*.ts / vitest*.mjs # Vitest 多配置入口（gateway/unit/e2e 等）
+├── package.json            # 根包配置与 scripts
 ├── pnpm-workspace.yaml     # pnpm 工作区配置
-└── ...                     # 配置文件
+├── tsdown.config.ts        # 核心 TS 打包
+├── AGENTS.md / CLAUDE.md   # 贡献者与 AI 代理规范（内容对齐）
+└── .cursor/rules/          # Cursor 规则（含任务表默认上下文）
 ```
 
 ---
@@ -70,6 +84,21 @@ openclaw/
 | `logging/`    | 日志系统                                                                |
 | `terminal/`   | CLI 终端表格与格式化输出                                                |
 
+#### 3.1.1 `src/gateway/` — WebSocket 网关（细表）
+
+网关代码量大，排障时优先按层下钻：
+
+| 路径                                                      | 说明                                                                               |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `gateway/server-methods/`                                 | 各 JSON-RPC / 网关方法实现（如 `chat.ts`、`sessions.ts`、`models.ts`、`agent.ts`） |
+| `gateway/server.impl.ts`、`gateway/server.ts`             | 网关装配、路由与生命周期                                                           |
+| `gateway/server/`                                         | 连接、TLS、WS 消息处理、presence 等子模块                                          |
+| `gateway/protocol/`                                       | 协议类型、校验与 **schema**（`protocol/schema/*`，含 hello snapshot 等）           |
+| `gateway/session-utils.ts`                                | 会话列表、默认值、与配置联动的会话逻辑                                             |
+| `gateway/server/health-state.ts`                          | 健康检查与对外快照字段（如 `sessionDefaults`）                                     |
+| `gateway/client.ts`（及测试）                             | 网关客户端协议侧                                                                   |
+| `gateway/test-helpers.server.ts`、`test-helpers.mocks.ts` | 网关套件测试环境与 RPC 辅助                                                        |
+
 #### 主要 CLI 命令
 
 | 命令                 | 功能                            |
@@ -88,15 +117,19 @@ openclaw/
 
 基于 **Lit** 的 SPA，**Vite** 打包。
 
-| 目录/文件              | 说明                            |
-| ---------------------- | ------------------------------- |
-| `src/main.ts`          | 应用入口                        |
-| `src/ui/app.ts`        | Lit 根组件                      |
-| `src/ui/app-render.ts` | 主渲染与按 tab 分支             |
-| `src/ui/views/`        | 各页面视图 (~68 个文件)         |
-| `src/ui/chat/`         | 会话与消息组件                  |
-| `src/ui/controllers/`  | 与网关/配置交互的数据层         |
-| `src/i18n/`            | 国际化支持 (含 zh-CN, zh-TW 等) |
+| 目录/文件                       | 说明                                                        |
+| ------------------------------- | ----------------------------------------------------------- |
+| `src/main.ts`                   | 应用入口                                                    |
+| `src/ui/app.ts`                 | Lit 根组件                                                  |
+| `src/ui/app-render.ts`          | 主渲染与按 tab 分支                                         |
+| `src/ui/views/`                 | 各页面视图 (~68 个文件)                                     |
+| `src/ui/chat/`                  | 会话与消息组件                                              |
+| `src/ui/controllers/`           | 与网关/配置交互的数据层                                     |
+| `src/i18n/`                     | 国际化支持 (含 zh-CN, zh-TW 等)                             |
+| `src/ui/app-gateway.ts`         | 控制 UI 连接网关、hello、会话 key 与 `sessionDefaults` 归一 |
+| `src/ui/gateway.ts`             | 浏览器侧网关 WebSocket 客户端                               |
+| `src/ui/app-settings.ts`        | 设置持久化、URL 与 `sessionKey` 同步等                      |
+| `src/ui/storage.ts`、`theme.ts` | 本地偏好、主题模式                                          |
 
 #### 主要视图模块
 
@@ -217,13 +250,20 @@ docs/
 └── zh-CN/                 # 中文翻译文档 (自动生成)
 ```
 
-### 3.7 my-docs/ - 本任务生成的文档
+### 3.7 my-docs/ - 维护者文档（非官方 Mintlify）
+
+与 `docs/` 区分：`my-docs/` 放**任务表、计划、工程笔记、定制说明、设计稿引用**等；不替代面向用户的 `docs/`。
 
 ```
 my-docs/
-├── TASKS.md               # 任务驱动表
-├── PLANS.md               # 任务执行计划
-└── PROJECT_STRUCTURE.md   # 本文件 - 工程结构文档
+├── TASKS.md                      # 任务驱动详表
+├── PLANS.md                      # 执行计划与方案锚点
+├── PROJECT_STRUCTURE.md          # 本文件 — 工程结构
+├── OPENCLAW_CUSTOMIZATION_OPTIONS.md  # 定制选项笔记
+├── SECURITY_AUDIT.md             # 安全审计笔记（若有）
+├── data.json                     # 本地数据/样例（若有）
+├── U001_*.md / U001_*.html       # U001 都市主题：规范与静态 mock
+└── assets/                       # 文档用图片等
 ```
 
 ### 3.8 scripts/ - 工具脚本
@@ -237,6 +277,30 @@ scripts/
 ├── restart-mac.sh         # macOS 重启
 └── clawlog.sh             # macOS 日志查询
 ```
+
+---
+
+## 3.9 寻源速查：常见问题 → 该打开的代码
+
+下列映射用于**减少重复全盘搜索**；若某次修复涉及新「稳定入口」，请把一行补进本表。
+
+| 问题域                                               | 优先查看的路径                                                                  |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------- |
+| 控制 UI 模型下拉 / `models.list` 结果                | `src/gateway/server-methods/models.ts`、`src/agents/model-selection.ts`         |
+| 默认模型、`provider/model` 解析、configured catalog  | `src/agents/model-selection.ts`、`src/agents/defaults.ts`                       |
+| Agent ID、会话 key 中的 `agent:<id>:…`、列表内 agent | `src/agents/agent-scope.ts`、`src/sessions/session-key-utils.ts`                |
+| 会话列表默认值、`sessions.list` 相关                 | `src/gateway/session-utils.ts`                                                  |
+| Hello / 快照 / `sessionDefaults`（含 `agentIds` 等） | `src/gateway/server/health-state.ts`、`src/gateway/protocol/schema/snapshot.ts` |
+| 控制 UI 连接后会话 URL、legacy `dev` agent 纠正      | `ui/src/ui/app-gateway.ts`                                                      |
+| 设置与 `sessionKey` 持久化、与 URL 同步              | `ui/src/ui/app-settings.ts`、`ui/src/ui/storage.ts`                             |
+| Web UI 主题与暗色默认                                | `ui/src/ui/theme.ts`、`ui/src/styles.css`、`ui/src/styles/theme-*.css`          |
+| 文案 / 中英文                                        | `ui/src/i18n/locales/en.ts`、`zh-CN.ts`                                         |
+| 配置读写、合并、环境变量与默认注入                   | `src/config/io.ts`、`src/config/validation.ts`、`src/config/defaults.ts`        |
+| 网关 RPC 总线、方法注册                              | `src/gateway/server.impl.ts`、`src/gateway/server-methods/types.ts`             |
+| 通道插件（工作区包）                                 | `extensions/*`（各包 `openclaw.plugin.json`）                                   |
+| 核心内置通道实现                                     | `src/channels/`、`src/telegram`、`src/discord` 等（见 AGENTS.md 结构说明）      |
+
+**运行时数据（不在仓库内）**：用户配置与状态通常在环境变量指向的目录（如 `OPENCLAW_CONFIG_PATH`、`OPENCLAW_STATE_DIR`）；文档与排障描述中用占位说明即可。
 
 ---
 
@@ -331,19 +395,26 @@ pnpm ui:build
 scripts/package-mac-app.sh
 ```
 
+### 5.3 测试与多配置文件
+
+- **统一入口**：`pnpm test` 经 `scripts/test-parallel.mjs` 调度，可按路径/filter 跑子集（见 `AGENTS.md` 测试约定）。
+- **Vitest 拆分**：根目录 `vitest.config.ts` 与 `vitest.gateway.config.ts`、`vitest.unit.config.ts`、`vitest.e2e.config.ts` 等用于不同池或作用域。
+- **测试位置**：多数与源码同目录的 `*.test.ts`；网关集成测试集中在 `src/gateway/*.test.ts`，辅助函数见 `src/gateway/test-helpers*.ts`。
+
 ---
 
 ## 6. 关键文件索引
 
 ### 项目官方文档
 
-| 文件                      | 说明               |
-| ------------------------- | ------------------ |
-| `README.md`               | 项目简介与快速开始 |
-| `CLAUDE.md` / `AGENTS.md` | 工程规范与代理指南 |
-| `package.json`            | 根包配置与 scripts |
-| `pnpm-workspace.yaml`     | 工作区配置         |
-| `tsconfig.json`           | TypeScript 配置    |
+| 文件                      | 说明                                |
+| ------------------------- | ----------------------------------- |
+| `README.md`               | 项目简介与快速开始                  |
+| `TASKS.md`                | 任务入口（链到 `my-docs/TASKS.md`） |
+| `CLAUDE.md` / `AGENTS.md` | 工程规范与代理指南                  |
+| `package.json`            | 根包配置与 scripts                  |
+| `pnpm-workspace.yaml`     | 工作区配置                          |
+| `tsconfig.json`           | TypeScript 配置                     |
 
 ### 本任务生成文档
 
@@ -355,6 +426,6 @@ scripts/package-mac-app.sh
 
 ---
 
-_文档版本_: v1.0
-_最后更新_: 2026-03-27
-_生成任务_: D001
+_文档版本_: v1.1  
+_最后更新_: 2026-03-28  
+_生成任务_: D001（后续由维护迭代）

@@ -1,0 +1,25 @@
+---
+description: FARIY fork — keep modifying this repo; prefer minimal gateway changes; upstream sync optional
+alwaysApply: true
+---
+
+# FARIY / OpenClaw fork strategy (owner decision)
+
+This workspace is a **personal fork** of OpenClaw (`fariy`). The following is **fixed policy** for assistants; do not re-litigate migration to upstream unless the owner explicitly reopens it.
+
+## Decisions
+
+1. **Stay on this fork** — Continue implementing needs by **editing this repository**. OpenClaw upstream capabilities are *roughly sufficient* for the owner’s goals; gaps are addressed with **local changes** (UI, skills, config, and gateway only when needed).
+
+2. **Upstream sync is not a requirement** — There is **no obligation** to track or merge the latest official OpenClaw on any schedule. Rebasing or cherry-picking from upstream is **optional** and only when the owner chooses.
+
+3. **Minimize gateway surface changes** — When implementing features, **prefer** (in order): configuration, **skills**, **`ui/`**, **`extensions/`**, then **narrow, well-scoped `src/` changes**. Treat **`src/gateway/`** and core reply/agent pipelines as **higher-cost**; only touch them when UI/skills/extensions cannot solve the problem. (See `my-docs/OPENCLAW_CUSTOMIZATION_OPTIONS.md` for option tables.)
+
+4. **Official-only migration** — Moving the whole app to **stock** OpenClaw without this fork is a **distant, unlikely** option. Do not assume it will happen. If the owner later asks for a migration plan, treat it as a **new explicit request**.
+
+5. **Discussion closed** — Prior threads about “UI vs official gateway” or “must we sync main” are **settled** by the above; default answers should follow this rule without repeating the debate.
+
+## Practical guidance for agents
+
+- Propose **smallest change** that meets the request; call out when a gateway change is unavoidable.
+- Personal defaults and branding in **`ui/`**, **`my-docs/`**, **`FARIY.md`** are expected; still respect repo **`CODEOWNERS`** and security-sensitive paths unless the owner overrides.

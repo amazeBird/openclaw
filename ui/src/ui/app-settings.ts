@@ -31,6 +31,7 @@ import {
   tabFromPath,
   type Tab,
 } from "./navigation.ts";
+import { normalizeControlUiSessionKey } from "./session-query.ts";
 import { saveSettings, type UiSettings } from "./storage.ts";
 import { startThemeTransition, type ThemeTransitionContext } from "./theme-transition.ts";
 import { resolveTheme, type ResolvedTheme, type ThemeMode, type ThemeName } from "./theme.ts";
@@ -142,7 +143,7 @@ export function applySettingsFromUrl(host: SettingsHost) {
   }
 
   if (sessionRaw != null) {
-    const session = sessionRaw.trim();
+    const session = normalizeControlUiSessionKey(sessionRaw);
     if (session) {
       host.sessionKey = session;
       applySettings(host, {
@@ -305,7 +306,7 @@ export function inferBasePath() {
 
 export function syncThemeWithSettings(host: SettingsHost) {
   host.theme = host.settings.theme ?? "claw";
-  host.themeMode = host.settings.themeMode ?? "system";
+  host.themeMode = host.settings.themeMode ?? "dark";
   applyResolvedTheme(host, resolveTheme(host.theme, host.themeMode));
   applyBorderRadius(host.settings.borderRadius ?? 50);
   syncSystemThemeListener(host);
@@ -402,7 +403,7 @@ export function onPopState(host: SettingsHost) {
   }
 
   const url = new URL(window.location.href);
-  const session = url.searchParams.get("session")?.trim();
+  const session = normalizeControlUiSessionKey(url.searchParams.get("session") ?? "");
   if (session) {
     host.sessionKey = session;
     applySettings(host, {

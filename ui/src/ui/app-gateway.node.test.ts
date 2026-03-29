@@ -1,7 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GATEWAY_EVENT_UPDATE_AVAILABLE } from "../../../src/gateway/events.js";
 import { ConnectErrorDetailCodes } from "../../../src/gateway/protocol/connect-error-details.js";
-import { connectGateway, resolveControlUiClientVersion } from "./app-gateway.ts";
+import {
+  connectGateway,
+  normalizeSessionKeyForDefaults,
+  resolveControlUiClientVersion,
+} from "./app-gateway.ts";
 import type { GatewayHelloOk } from "./gateway.ts";
 
 const loadChatHistoryMock = vi.hoisted(() => vi.fn(async () => undefined));
@@ -510,6 +514,38 @@ describe("connectGateway", () => {
     });
 
     expect(loadChatHistoryMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("normalizeSessionKeyForDefaults", () => {
+  const defaults = {
+    mainSessionKey: "agent:main:main",
+    mainKey: "main",
+    defaultAgentId: "main",
+    agentIds: ["main"],
+  };
+
+  it("rewrites agent keys for ids not in sessionDefaults.agentIds", () => {
+    expect(normalizeSessionKeyForDefaults("agent:dev:main", defaults)).toBe("agent:main:main");
+  });
+
+  it("maps isolated heartbeat sessions to mainSessionKey", () => {
+    expect(normalizeSessionKeyForDefaults("agent:main:main:heartbeat", defaults)).toBe(
+      "agent:main:main",
+    );
+  });
+
+  it("fixes semicolon typo in agent session keys before applying defaults", () => {
+    expect(normalizeSessionKeyForDefaults("agent:main;main", defaults)).toBe("agent:main:main");
+  });
+
+  it("preserves agent keys when the id is listed", () => {
+    expect(normalizeSessionKeyForDefaults("agent:main:main", defaults)).toBe("agent:main:main");
+  });
+
+  it("no-ops when agentIds is absent (older gateways)", () => {
+    const { agentIds: _a, ...withoutAgents } = defaults;
+    expect(normalizeSessionKeyForDefaults("agent:dev:main", withoutAgents)).toBe("agent:dev:main");
   });
 });
 

@@ -1,0 +1,186 @@
+/*
+ * U001 Phase 2 — Sidebar, topbar, mobile nav (Urban theme).
+ * Calibrated against my-docs/U001_REFERENCE_MOCK.html.
+ * Spec: my-docs/U001_URBAN_THEME_TOKENS.md · Plan: my-docs/PLANS.md
+ */
+
+/* ── Shell chrome: stronger splits ── */
+:root[data-theme="urban"] .shell-nav,
+:root[data-theme="urban-light"] .shell-nav {
+  border-right-width: var(--border-width-strong, 2px);
+  border-right-style: solid;
+  border-right-color: color-mix(in srgb, var(--urban-frame, #0a0a0a) 28%, var(--border-strong));
+}
+
+:root[data-theme="urban"] .shell-nav .sidebar {
+  background: color-mix(in srgb, var(--bg) 58%, var(--bg-elevated) 42%);
+}
+
+:root[data-theme="urban-light"] .shell-nav .sidebar {
+  background: color-mix(in srgb, var(--panel) 88%, var(--bg-elevated) 12%);
+}
+
+:root[data-theme="urban"] .topbar,
+:root[data-theme="urban-light"] .topbar {
+  border-bottom-width: var(--border-width-strong, 2px);
+  border-bottom-style: solid;
+  border-bottom-color: color-mix(
+    in srgb,
+    var(--urban-frame, #0a0a0a) 22%,
+    var(--border-strong) 78%
+  );
+}
+
+:root[data-theme="urban"] .topbar {
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+}
+
+:root[data-theme="urban-light"] .topbar {
+  background: color-mix(in srgb, var(--chrome) 92%, transparent);
+}
+
+/* ── Topbar controls (align with chat icon buttons) ── */
+:root[data-theme="urban"] .topbar-search,
+:root[data-theme="urban-light"] .topbar-search {
+  border-width: var(--border-width-strong, 2px);
+}
+
+:root[data-theme="urban"] .topbar-theme-mode,
+:root[data-theme="urban-light"] .topbar-theme-mode {
+  border-width: var(--border-width-strong, 2px);
+  border-color: var(--border-strong);
+}
+
+:root[data-theme="urban"] .topbar-theme-mode__btn--active,
+:root[data-theme="urban-light"] .topbar-theme-mode__btn--active {
+  border-width: var(--border-width-strong, 2px);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+/* ── Sidebar footer + section rhythm ── */
+:root[data-theme="urban"] .sidebar-shell__footer,
+:root[data-theme="urban-light"] .sidebar-shell__footer {
+  border-top-width: var(--border-width-strong, 2px);
+  border-top-style: solid;
+  border-top-color: var(--border-strong);
+}
+
+:root[data-theme="urban"] .nav-section:not(:first-child),
+:root[data-theme="urban-light"] .nav-section:not(:first-child) {
+  padding-top: 12px;
+  margin-top: 4px;
+  border-top: var(--border-width-strong, 2px) solid var(--border-strong);
+}
+
+:root[data-theme="urban"] .nav-collapse-toggle,
+:root[data-theme="urban-light"] .nav-collapse-toggle {
+  border-width: var(--border-width-strong, 2px);
+}
+
+/* ── Nav rows: chunky outline + lime active block ── */
+:root[data-theme="urban"] .nav-item,
+:root[data-theme="urban-light"] .nav-item {
+  border-width: var(--border-width-strong, 2px);
+}
+
+:root[data-theme="urban"] .nav-item:hover,
+:root[data-theme="urban-light"] .nav-item:hover {
+  border-color: var(--border-strong);
+}
+
+/* Solid accent block + dark ink (reference mock contact row) */
+:root[data-theme="urban"] .nav-item.active,
+:root[data-theme="urban"] .nav-item--active,
+:root[data-theme="urban-light"] .nav-item.active,
+:root[data-theme="urban-light"] .nav-item--active {
+  background: var(--accent);
+  border-color: var(--urban-frame, #0a0a0a);
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--urban-frame, #0a0a0a) 55%, transparent);
+  color: var(--primary-foreground);
+}
+
+:root[data-theme="urban"] .nav-item.active .nav-item__icon,
+:root[data-theme="urban"] .nav-item--active .nav-item__icon,
+:root[data-theme="urban-light"] .nav-item.active .nav-item__icon,
+:root[data-theme="urban-light"] .nav-item--active .nav-item__icon {
+  color: var(--primary-foreground);
+  opacity: 1;
+}
+
+:root[data-theme="urban"] .nav-item.active .nav-item__external-icon,
+:root[data-theme="urban"] .nav-item--active .nav-item__external-icon,
+:root[data-theme="urban-light"] .nav-item.active .nav-item__external-icon,
+:root[data-theme="urban-light"] .nav-item--active .nav-item__external-icon {
+  color: color-mix(in srgb, var(--primary-foreground) 72%, transparent);
+  opacity: 1;
+}
+
+/* Drop left-rail bar; full-width lime fill matches mock */
+:root[data-theme="urban"] .nav-item.active::before,
+:root[data-theme="urban"] .nav-item--active::before,
+:root[data-theme="urban-light"] .nav-item.active::before,
+:root[data-theme="urban-light"] .nav-item--active::before {
+  content: none;
+}
+
+:root[data-theme="urban"] .sidebar--collapsed .nav-item.active,
+:root[data-theme="urban"] .sidebar--collapsed .nav-item--active,
+:root[data-theme="urban-light"] .sidebar--collapsed .nav-item.active,
+:root[data-theme="urban-light"] .sidebar--collapsed .nav-item--active {
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--urban-frame, #0a0a0a) 55%, transparent);
+  border-color: var(--urban-frame, #0a0a0a);
+}
+
+/* Brand mark: gold tile behind logo (reference title-bar icon) */
+:root[data-theme="urban"] .sidebar-brand__logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  box-shadow:
+    0 0 0 2px var(--urban-frame, #0a0a0a),
+    0 0 0 6px #eab308;
+}
+
+:root[data-theme="urban-light"] .sidebar-brand__logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  box-shadow:
+    0 0 0 2px var(--urban-frame, #18181b),
+    0 0 0 5px #ca8a04;
+}
+
+/* ── Mobile: hamburger + chat gear + dropdown (match Phase 1) ── */
+@media (max-width: 1100px) {
+  :root[data-theme="urban"] .topbar-nav-toggle,
+  :root[data-theme="urban-light"] .topbar-nav-toggle {
+    border-width: var(--border-width-strong, 2px);
+    border-color: var(--border-strong);
+  }
+
+  :root[data-theme="urban"] .chat-controls-mobile-toggle,
+  :root[data-theme="urban-light"] .chat-controls-mobile-toggle {
+    border-radius: var(--radius-full);
+    border-width: var(--border-width-strong, 2px);
+    border-color: var(--border-strong);
+  }
+
+  :root[data-theme="urban"] .chat-mobile-controls-wrapper .chat-controls-dropdown,
+  :root[data-theme="urban-light"] .chat-mobile-controls-wrapper .chat-controls-dropdown {
+    border-width: var(--border-width-strong, 2px);
+    border-color: var(--border-strong);
+  }
+
+  :root[data-theme="urban"] .chat-mobile-controls-wrapper .chat-controls .btn--icon,
+  :root[data-theme="urban-light"] .chat-mobile-controls-wrapper .chat-controls .btn--icon {
+    border-radius: var(--radius-full);
+    border-width: var(--border-width-strong, 2px);
+  }
+
+  :root[data-theme="urban"] .chat-mobile-controls-wrapper .chat-controls .btn--icon.active,
+  :root[data-theme="urban-light"] .chat-mobile-controls-wrapper .chat-controls .btn--icon.active {
+    border-color: var(--accent);
+    background: var(--accent-subtle);
+    color: var(--accent);
+  }
+}

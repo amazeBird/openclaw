@@ -1,4 +1,4 @@
-import { resolveDefaultAgentId } from "../../agents/agent-scope.js";
+import { listAgentIds, resolveDefaultAgentId } from "../../agents/agent-scope.js";
 import { getHealthSnapshot, type HealthSummary } from "../../commands/health.js";
 import { STATE_DIR, createConfigIO, loadConfig } from "../../config/config.js";
 import { resolveMainSessionKey } from "../../config/sessions.js";
@@ -40,6 +40,7 @@ export function buildGatewaySnapshot(): Snapshot {
       mainKey,
       mainSessionKey,
       scope,
+      agentIds: listAgentIds(cfg),
     },
     authMode: auth.mode,
     updateAvailable,

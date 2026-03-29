@@ -76,6 +76,20 @@ describe("loadSettings default gateway URL derivation", () => {
     expect(loadSettings().gatewayUrl).toBe(expectedGatewayUrl("/apps/openclaw"));
   });
 
+  it("defaults gateway URL to dev gateway port when Vite client is present", async () => {
+    setTestLocation({
+      protocol: "http:",
+      host: "localhost:5173",
+      pathname: "/ui/overview",
+    });
+    vi.stubGlobal("document", {
+      querySelector: (sel: string) => (sel.includes("@vite/client") ? ({} as Element) : null),
+    } as unknown as Document);
+
+    const { loadSettings } = await import("./storage.ts");
+    expect(loadSettings().gatewayUrl).toBe("ws://localhost:19001");
+  });
+
   it("ignores and scrubs legacy persisted tokens", async () => {
     setTestLocation({
       protocol: "https:",
@@ -101,8 +115,8 @@ describe("loadSettings default gateway URL derivation", () => {
     const scopedKey = "openclaw.control.settings.v1:wss://gateway.example:8443/openclaw";
     expect(JSON.parse(localStorage.getItem(scopedKey) ?? "{}")).toEqual({
       gatewayUrl: "wss://gateway.example:8443/openclaw",
-      theme: "claw",
-      themeMode: "system",
+      theme: "urban",
+      themeMode: "dark",
       chatFocusMode: false,
       chatShowThinking: true,
       chatShowToolCalls: true,

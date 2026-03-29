@@ -1,0 +1,346 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.3.8",
+    "lastTouchedAt": "2026-03-25T19:03:14.058Z"
+  },
+  "wizard": {
+    "lastRunAt": "2026-03-17T03:25:20.616Z",
+    "lastRunVersion": "2026.3.8",
+    "lastRunCommand": "doctor",
+    "lastRunMode": "local"
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "deepseek-chat": {
+        "baseUrl": "https://api.deepseek.com",
+        "apiKey": "sk-41f78549d79948d396971e98590d9af0",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "deepseek-chat",
+            "name": "DeepSeek Chat",
+            "api": "openai-completions",
+            "reasoning": false,
+            "input": ["text"],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 200000,
+            "maxTokens": 8192
+          },
+          {
+            "id": "deepseek-reasoner",
+            "name": "DeepSeek Reasoner",
+            "api": "openai-completions",
+            "reasoning": true,
+            "input": ["text"],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 300000,
+            "maxTokens": 18196
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "deepseek-chat/deepseek-chat"
+      },
+      "models": {
+        "deepseek-chat/deepseek-reasoner": {}
+      },
+      "workspace": "/root/.openclaw/workspace",
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      }
+    },
+    "list": []
+  },
+  "tools": {
+    "profile": "full"
+  },
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "hooks": {
+    "internal": {
+      "enabled": true,
+      "entries": {
+        "test-model-scheduler": {
+          "enabled": false
+        },
+        "model-scheduler": {
+          "enabled": true
+        },
+        "test-all-events": {
+          "enabled": true
+        }
+      },
+      "load": {
+        "extraDirs": ["/root/.openclaw/workspace/hooks/test-all-events"]
+      },
+      "installs": {
+        "test-model-scheduler": {
+          "source": "path",
+          "sourcePath": "/root/.openclaw/workspace/hooks/test-model-scheduler",
+          "installPath": "/root/.openclaw/workspace/hooks/test-model-scheduler",
+          "installedAt": "2026-03-25T13:53:05.958Z",
+          "hooks": ["test-model-scheduler"]
+        },
+        "model-scheduler": {
+          "source": "path",
+          "sourcePath": "/root/.openclaw/workspace/hooks/model-scheduler-hook",
+          "installPath": "/root/.openclaw/workspace/hooks/model-scheduler-hook",
+          "installedAt": "2026-03-25T18:01:14.063Z",
+          "hooks": ["model-scheduler"]
+        }
+      }
+    }
+  },
+  "channels": {
+    "wecom": {
+      "enabled": true,
+      "bot": {
+        "connectionMode": "websocket",
+        "botId": "aib1pjf4PrHFYWBvQPKe98WQYUSx_qN20Da",
+        "secret": "h3V75bTrECfwswaj6KSGhnq2vkJrr31q3WybL76zwWY",
+        "streamPlaceholderContent": "正在思考...",
+        "welcomeText": "你好！我是 AI 助手",
+        "dm": {
+          "policy": "open"
+        }
+      }
+    }
+  },
+  "gateway": {
+    "port": 19824,
+    "mode": "local",
+    "bind": "lan",
+    "controlUi": {
+      "basePath": "/0i3ss3",
+      "allowedOrigins": ["http://159.75.215.141:19824"],
+      "dangerouslyAllowHostHeaderOriginFallback": true,
+      "allowInsecureAuth": true,
+      "dangerouslyDisableDeviceAuth": true
+    },
+    "auth": {
+      "mode": "token",
+      "token": "e32798b77540314eb814341dea4b874739d20ffb5bdb4229"
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    }
+  },
+  "skills": {
+    "allowBundled": [
+      "wealth-engine",
+      "tavily",
+      "summarize",
+      "wecom-contact-lookup",
+      "wecom-doc",
+      "wecom-doc-manager",
+      "wecom-edit-todo",
+      "wecom-get-todo-detail",
+      "wecom-get-todo-list",
+      "wecom-meeting-create",
+      "wecom-meeting-manage",
+      "wecom-meeting-query",
+      "wecom-preflight",
+      "wecom-schedule",
+      "wecom-smartsheet-data",
+      "wecom-smartsheet-schema",
+      "tencentcloud-lighthouse-skill",
+      "tencent-cloud-cos",
+      "config-manager",
+      "stock-data-fetcher",
+      "notification-manager",
+      "stock-monitor"
+    ],
+    "install": {
+      "nodeManager": "npm"
+    },
+    "entries": {
+      "wealth-engine": {
+        "enabled": true
+      },
+      "feishu-doc": {
+        "enabled": false
+      },
+      "feishu-drive": {
+        "enabled": false
+      },
+      "feishu-perm": {
+        "enabled": false
+      },
+      "feishu-wiki": {
+        "enabled": false
+      },
+      "github": {
+        "enabled": false
+      },
+      "obsidian": {
+        "enabled": false
+      },
+      "tmux": {
+        "enabled": false
+      },
+      "video-frames": {
+        "enabled": false
+      },
+      "Agent Browser": {
+        "enabled": false
+      },
+      "weather": {
+        "enabled": false
+      },
+      "tencent-docs": {
+        "enabled": true,
+        "apiKey": "8446af669eb945c3aa300f39c4fe9b80"
+      },
+      "goplaces": {
+        "enabled": false
+      },
+      "wecom-doc": {
+        "enabled": false
+      },
+      "wecom-doc-manager": {
+        "enabled": false
+      },
+      "wecom-edit-todo": {
+        "enabled": false
+      },
+      "wecom-get-todo-detail": {
+        "enabled": false
+      },
+      "wecom-get-todo-list": {
+        "enabled": false
+      },
+      "wecom-meeting-create": {
+        "enabled": false
+      },
+      "wecom-meeting-manage": {
+        "enabled": false
+      },
+      "wecom-meeting-query": {
+        "enabled": false
+      },
+      "wecom-schedule": {
+        "enabled": false
+      },
+      "wecom-smartsheet-data": {
+        "enabled": false
+      },
+      "wecom-smartsheet-schema": {
+        "enabled": false
+      },
+      "wecom-preflight": {
+        "enabled": false
+      },
+      "config-manager": {
+        "enabled": true
+      },
+      "stock-data-fetcher": {
+        "enabled": true
+      },
+      "notification-manager": {
+        "enabled": true
+      },
+      "stock-monitor": {
+        "enabled": true
+      }
+    }
+  },
+  "plugins": {
+    "entries": {
+      "feishu": {
+        "enabled": true
+      },
+      "openclaw-qqbot": {
+        "enabled": true
+      },
+      "ddingtalk": {
+        "enabled": true
+      },
+      "wecom": {
+        "enabled": true
+      },
+      "adp-openclaw": {
+        "enabled": true
+      },
+      "openclaw-plugin-yuanbao": {
+        "enabled": true
+      },
+      "openclaw-weixin": {
+        "enabled": true
+      }
+    },
+    "installs": {
+      "openclaw-qqbot": {
+        "source": "npm",
+        "spec": "@tencent-connect/openclaw-qqbot@1.6.3",
+        "installPath": "/root/.openclaw/extensions/openclaw-qqbot",
+        "version": "1.6.3",
+        "installedAt": "2026-03-22T03:42:54.000Z"
+      },
+      "ddingtalk": {
+        "source": "npm",
+        "spec": "@largezhou/ddingtalk",
+        "installPath": "/root/.openclaw/extensions/ddingtalk",
+        "version": "1.4.2",
+        "installedAt": "2026-03-22T03:43:06.000Z"
+      },
+      "wecom": {
+        "source": "npm",
+        "spec": "@mocrane/wecom",
+        "installPath": "/root/.openclaw/extensions/wecom",
+        "version": "2026.3.20",
+        "installedAt": "2026-03-22T03:43:36.000Z"
+      },
+      "adp-openclaw": {
+        "source": "npm",
+        "spec": "adp-openclaw",
+        "installPath": "/root/.openclaw/extensions/adp-openclaw",
+        "version": "0.0.69",
+        "installedAt": "2026-03-22T03:43:40.000Z"
+      },
+      "openclaw-plugin-yuanbao": {
+        "source": "npm",
+        "spec": "openclaw-plugin-yuanbao@1.0.3",
+        "installPath": "/root/.openclaw/extensions/openclaw-plugin-yuanbao",
+        "version": "1.0.3",
+        "installedAt": "2026-03-22T03:43:46.000Z"
+      },
+      "openclaw-weixin": {
+        "source": "npm",
+        "spec": "@tencent-weixin/openclaw-weixin",
+        "installPath": "/root/.openclaw/extensions/openclaw-weixin",
+        "version": "1.0.2",
+        "installedAt": "2026-03-22T03:43:51.000Z"
+      }
+    }
+  }
+}

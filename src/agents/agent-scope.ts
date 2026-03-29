@@ -116,7 +116,17 @@ export function resolveSessionAgentId(params: {
   sessionKey?: string;
   config?: OpenClawConfig;
 }): string {
-  return resolveSessionAgentIds(params).sessionAgentId;
+  const { defaultAgentId, sessionAgentId } = resolveSessionAgentIds(params);
+  const cfg = params.config;
+  if (!cfg) {
+    return sessionAgentId;
+  }
+  const known = new Set(listAgentIds(cfg).map((id) => normalizeAgentId(id)));
+  if (known.has(normalizeAgentId(sessionAgentId))) {
+    return sessionAgentId;
+  }
+  // Session keys can outlive config (e.g. legacy `agent:dev:*` after templates moved to `main`).
+  return defaultAgentId;
 }
 
 function resolveAgentEntry(cfg: OpenClawConfig, agentId: string): AgentEntry | undefined {

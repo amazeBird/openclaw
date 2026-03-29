@@ -17,6 +17,7 @@ import {
   resolveAgentWorkspaceDir,
   resolveAgentIdByWorkspacePath,
   resolveAgentIdsByWorkspacePath,
+  resolveSessionAgentId,
 } from "./agent-scope.js";
 
 afterEach(() => {
@@ -215,6 +216,26 @@ describe("resolveAgentConfig", () => {
         hasSessionModelOverride: true,
       }),
     ).toEqual([]);
+  });
+
+  it("maps session agent id to default when that agent is not in agents.list", () => {
+    const cfg: OpenClawConfig = {
+      agents: {
+        list: [{ id: "main", default: true }],
+      },
+    };
+    expect(
+      resolveSessionAgentId({
+        config: cfg,
+        sessionKey: "agent:dev:main",
+      }),
+    ).toBe("main");
+    expect(
+      resolveSessionAgentId({
+        config: cfg,
+        sessionKey: "agent:main:main",
+      }),
+    ).toBe("main");
   });
 
   it("resolves fallback agent id from explicit agent id first", () => {

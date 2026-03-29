@@ -245,6 +245,60 @@ function createOverviewProps(overrides: Partial<OverviewProps> = {}): OverviewPr
 }
 
 describe("chat view", () => {
+  it("renders the session token strip above the thread when connected and sessions are loaded", () => {
+    const container = document.createElement("div");
+    render(
+      renderChat(
+        createProps({
+          messages: [
+            {
+              role: "assistant",
+              usage: { input: 100, output: 42 },
+            },
+          ],
+          sessions: {
+            ts: 0,
+            path: "",
+            count: 1,
+            defaults: { modelProvider: "openai", model: "gpt-5", contextTokens: 200_000 },
+            sessions: [
+              {
+                key: "main",
+                kind: "direct",
+                updatedAt: null,
+                inputTokens: 12_400,
+                outputTokens: 3_100,
+                totalTokens: 15_500,
+                totalTokensFresh: true,
+                contextTokens: 200_000,
+              },
+            ],
+          },
+        }),
+      ),
+      container,
+    );
+
+    const strip = container.querySelector(".chat-token-strip");
+    expect(strip).not.toBeNull();
+    expect(strip?.getAttribute("aria-label") ?? "").toContain("15.5k");
+    expect(strip?.textContent ?? "").toContain("15.5k");
+    expect(strip?.textContent ?? "").toMatch(/142|last \+142|Last \+142/i);
+  });
+
+  it("hides the token strip while sessions are still null", () => {
+    const container = document.createElement("div");
+    render(
+      renderChat(
+        createProps({
+          sessions: null,
+        }),
+      ),
+      container,
+    );
+    expect(container.querySelector(".chat-token-strip")).toBeNull();
+  });
+
   it("hides the context notice when only cumulative inputTokens exceed the limit", () => {
     const container = document.createElement("div");
     render(
@@ -401,7 +455,7 @@ describe("chat view", () => {
     );
     expect(welcomeImage).toBeNull();
     expect(logoImage).not.toBeNull();
-    expect(logoImage?.getAttribute("src")).toBe("favicon.svg");
+    expect(logoImage?.getAttribute("src")).toBe("zzz-brand-logo.png");
   });
 
   it("keeps the welcome logo fallback under the mounted base path", () => {
@@ -422,7 +476,7 @@ describe("chat view", () => {
       ".agent-chat__welcome .agent-chat__avatar--logo img",
     );
     expect(logoImage).not.toBeNull();
-    expect(logoImage?.getAttribute("src")).toBe("/openclaw/favicon.svg");
+    expect(logoImage?.getAttribute("src")).toBe("/openclaw/zzz-brand-logo.png");
   });
 
   it("keeps grouped assistant avatar fallbacks under the mounted base path", () => {
@@ -446,11 +500,11 @@ describe("chat view", () => {
       container,
     );
 
-    const groupedLogo = container.querySelector<HTMLImageElement>(
-      ".chat-group.assistant .chat-avatar--logo",
+    const groupedPortrait = container.querySelector<HTMLImageElement>(
+      ".chat-group.assistant img.chat-avatar",
     );
-    expect(groupedLogo).not.toBeNull();
-    expect(groupedLogo?.getAttribute("src")).toBe("/openclaw/favicon.svg");
+    expect(groupedPortrait).not.toBeNull();
+    expect(groupedPortrait?.getAttribute("src")).toBe("/openclaw/fariy-assistant.jpg");
   });
 
   it("keeps the persisted overview locale selected before i18n hydration finishes", async () => {
@@ -660,6 +714,30 @@ describe("chat view", () => {
     newSessionButton?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     expect(onNewSession).toHaveBeenCalledTimes(1);
     expect(container.textContent).not.toContain("Stop");
+  });
+
+  it("uses userSenderLabel when the message has no senderLabel", () => {
+    const container = document.createElement("div");
+    render(
+      renderChat(
+        createProps({
+          userSenderLabel: "绳匠",
+          messages: [
+            {
+              role: "user",
+              content: "hello",
+              timestamp: 1000,
+            },
+          ],
+        }),
+      ),
+      container,
+    );
+    const senderLabels = Array.from(container.querySelectorAll(".chat-sender-name")).map((node) =>
+      node.textContent?.trim(),
+    );
+    expect(senderLabels).toContain("绳匠");
+    expect(senderLabels).not.toContain("You");
   });
 
   it("shows sender labels from sanitized gateway messages instead of generic You", () => {

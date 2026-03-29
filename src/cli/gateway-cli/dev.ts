@@ -6,13 +6,34 @@ import { resolveDefaultAgentWorkspaceDir } from "../../agents/workspace.js";
 import { handleReset } from "../../commands/onboard-helpers.js";
 import { createConfigIO, writeConfigFile } from "../../config/config.js";
 import type { OpenClawConfig } from "../../config/types.js";
+import { resolveRequiredHomeDir } from "../../infra/home-dir.js";
 import { defaultRuntime } from "../../runtime.js";
 import { resolveUserPath, shortenHomePath } from "../../utils.js";
 
-const DEV_IDENTITY_NAME = "C3-PO";
+const DEV_IDENTITY_NAME = "Fairy";
 const DEV_IDENTITY_THEME = "protocol droid";
 const DEV_IDENTITY_EMOJI = "🤖";
 const DEV_AGENT_WORKSPACE_SUFFIX = "dev";
+
+/** Legacy dev defaults before rename; normalize spacing/dashes for comparison. */
+function isLegacyDevAssistantDisplayName(name: string): boolean {
+  const compact = name
+    .trim()
+    .toLowerCase()
+    .replace(/[\s_-]+/g, "");
+  return compact === "c3po";
+}
+
+function shouldMigrateDevAssistantDisplayName(name: string): boolean {
+  const t = name.trim();
+  if (!t) {
+    return false;
+  }
+  if (isLegacyDevAssistantDisplayName(t)) {
+    return true;
+  }
+  return t.toLowerCase() === "fariy";
+}
 
 async function loadDevTemplate(name: string, fallback: string): Promise<string> {
   try {
@@ -32,6 +53,11 @@ async function loadDevTemplate(name: string, fallback: string): Promise<string> 
 }
 
 const resolveDevWorkspaceDir = (env: NodeJS.ProcessEnv = process.env): string => {
+  /** Optional: keep dev workspace on a real project root across `gateway --dev --reset`. */
+  const workspaceOverride = env.OPENCLAW_DEV_WORKSPACE?.trim();
+  if (workspaceOverride) {
+    return resolveUserPath(workspaceOverride, env, () => resolveRequiredHomeDir(env, os.homedir));
+  }
   const baseDir = resolveDefaultAgentWorkspaceDir(env, os.homedir);
   const profile = env.OPENCLAW_PROFILE?.trim().toLowerCase();
   if (profile === "dev") {
@@ -90,6 +116,96 @@ async function ensureDevProfileGatewayAuthNone(
   );
 }
 
+/**
+ * One-time style migration: existing dev profiles still store the old default name in
+ * `openclaw.json` and/or `IDENTITY.md`. Restarting the gateway does not rewrite those files.
+ */
+async function ensureDevProfileLegacyAssistantDisplayName(
+  io: ReturnType<typeof createConfigIO>,
+): Promise<void> {
+  const { snapshot, writeOptions } = await io.readConfigFileSnapshotForWrite();
+  if (!snapshot.valid) {
+    return;
+  }
+  const cfg = snapshot.config;
+  const list = cfg.agents?.list;
+  let nextCfg: OpenClawConfig = cfg;
+  let listChanged = false;
+
+  if (Array.isArray(list)) {
+    const nextList = list.map((entry) => {
+      const raw = entry?.identity?.name?.trim();
+      if (!raw || !shouldMigrateDevAssistantDisplayName(raw)) {
+        return entry;
+      }
+      listChanged = true;
+      return {
+        ...entry,
+        identity: {
+          ...entry.identity,
+          name: DEV_IDENTITY_NAME,
+        },
+      };
+    });
+    if (listChanged) {
+      nextCfg = {
+        ...cfg,
+        agents: {
+          ...cfg.agents,
+          list: nextList,
+        },
+      };
+      await io.writeConfigFile(nextCfg, writeOptions);
+      defaultRuntime.log(
+        `Dev: renamed legacy assistant display name to ${DEV_IDENTITY_NAME} in ${shortenHomePath(io.configPath)}.`,
+      );
+    }
+  }
+
+  await patchDevWorkspaceIdentityMarkdownLegacyName(nextCfg);
+}
+
+async function patchDevWorkspaceIdentityMarkdownLegacyName(cfg: OpenClawConfig): Promise<void> {
+  const dirs = new Set<string>();
+  const def = cfg.agents?.defaults?.workspace;
+  if (typeof def === "string" && def.trim()) {
+    dirs.add(def.trim());
+  }
+  for (const entry of cfg.agents?.list ?? []) {
+    const w = entry?.workspace;
+    if (typeof w === "string" && w.trim()) {
+      dirs.add(w.trim());
+    }
+  }
+
+  for (const raw of dirs) {
+    const dir = resolveUserPath(raw);
+    const identityPath = path.join(dir, "IDENTITY.md");
+    let content: string;
+    try {
+      content = await fs.promises.readFile(identityPath, "utf-8");
+    } catch {
+      continue;
+    }
+    let next = content;
+    next = next.replace(
+      /^(\s*[-*]?\s*Name:\s*)C3[\s_-]*PO\b(.*)$/gim,
+      (_match, prefix: string, rest: string) => `${prefix}${DEV_IDENTITY_NAME}${rest}`,
+    );
+    next = next.replace(
+      /^(\s*[-*]?\s*Name:\s*)Fariy\b(.*)$/gim,
+      (_match, prefix: string, rest: string) => `${prefix}${DEV_IDENTITY_NAME}${rest}`,
+    );
+    if (next === content) {
+      continue;
+    }
+    await fs.promises.writeFile(identityPath, next, "utf-8");
+    defaultRuntime.log(
+      `Dev: renamed legacy assistant display name to ${DEV_IDENTITY_NAME} in ${shortenHomePath(identityPath)}.`,
+    );
+  }
+}
+
 async function ensureDevWorkspace(dir: string) {
   const resolvedDir = resolveUserPath(dir);
   await fs.promises.mkdir(resolvedDir, { recursive: true });
@@ -135,6 +251,7 @@ export async function ensureDevGatewayConfig(opts: { reset?: boolean }) {
   const configExists = fs.existsSync(configPath);
   if (!opts.reset && configExists) {
     await ensureDevProfileGatewayAuthNone(io);
+    await ensureDevProfileLegacyAssistantDisplayName(io);
     return;
   }
 
@@ -152,7 +269,8 @@ export async function ensureDevGatewayConfig(opts: { reset?: boolean }) {
       },
       list: [
         {
-          id: "dev",
+          /** Matches legacy Control UI session key `main` (see `resolveAgentWorkspaceDir`). */
+          id: "main",
           default: true,
           workspace,
           identity: {

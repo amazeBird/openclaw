@@ -67,6 +67,108 @@
   margin-top: 0 !important;
 }
 
+/* Chat card sits under shell header pills — slightly tighter top than generic .card */
+.shell--chat section.card.chat {
+  padding-top: 12px;
+}
+
+/* Session token summary — above composer (context meter next to where you type) */
+.chat-token-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  padding: 6px 8px;
+  margin: 6px 18px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--muted);
+}
+
+.chat-token-strip__label {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.chat-token-strip__nums {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.chat-token-strip__nums strong {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.chat-token-strip__bar {
+  flex: 1 1 48px;
+  min-width: 48px;
+  height: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--border) 55%, transparent);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.chat-token-strip__bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--accent) 45%, transparent),
+    var(--accent)
+  );
+}
+
+.chat-token-strip__bar--placeholder {
+  opacity: 0.35;
+}
+
+.chat-token-strip__meta {
+  flex-shrink: 0;
+  max-width: 42%;
+  font-variant-numeric: tabular-nums;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+}
+
+@media (max-width: 720px) {
+  .chat-token-strip {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+
+  .chat-token-strip__bar,
+  .chat-token-strip__bar--placeholder {
+    order: 10;
+    flex: 1 1 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .chat-token-strip__meta {
+    max-width: 100%;
+    text-align: left;
+  }
+}
+
 /* Focus mode exit button */
 .chat-focus-exit {
   position: absolute;

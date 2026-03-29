@@ -3,7 +3,7 @@ import { coerceIdentityValue } from "../../../src/shared/assistant-identity-valu
 const MAX_ASSISTANT_NAME = 50;
 const MAX_ASSISTANT_AVATAR = 200;
 
-export const DEFAULT_ASSISTANT_NAME = "Assistant";
+export const DEFAULT_ASSISTANT_NAME = "Fairy";
 export const DEFAULT_ASSISTANT_AVATAR = "A";
 
 export type AssistantIdentity = {
