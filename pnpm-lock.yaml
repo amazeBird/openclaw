@@ -37,7 +37,7 @@ packageExtensionsChecksum: 3811f68155837cf0accb2d98d55e636e
 
 patchedDependencies:
   '@mariozechner/pi-ai@0.61.1':
-    hash: lelfyc5fhgmvuct24he6ee2yby
+    hash: s4cp2v5gd26t4qzst36ebep3au
     path: patches/@mariozechner__pi-ai@0.61.1.patch
 
 importers:
@@ -70,7 +70,7 @@ importers:
         version: 0.61.1(@modelcontextprotocol/sdk@1.27.1)(ws@8.20.0)(zod@4.3.6)
       '@mariozechner/pi-ai':
         specifier: 0.61.1
-        version: 0.61.1(patch_hash=lelfyc5fhgmvuct24he6ee2yby)(@modelcontextprotocol/sdk@1.27.1)(ws@8.20.0)(zod@4.3.6)
+        version: 0.61.1(patch_hash=s4cp2v5gd26t4qzst36ebep3au)(@modelcontextprotocol/sdk@1.27.1)(ws@8.20.0)(zod@4.3.6)
       '@mariozechner/pi-coding-agent':
         specifier: 0.61.1
         version: 0.61.1(@modelcontextprotocol/sdk@1.27.1)(ws@8.20.0)(zod@4.3.6)
@@ -2962,7 +2962,6 @@ packages:
   /@lancedb/lancedb@0.27.1(apache-arrow@18.1.0):
     resolution: {integrity: sha512-LqXw19VYXaG1bV/03wN5JrYOSrRv38RPbKHW0hukbyfsNV4+VuZ3VpObk3gDeJGPkkJ56MS3lbbB2pqqg1DiNQ==}
     engines: {node: '>= 18'}
-    cpu: [x64, arm64]
     os: [darwin, linux, win32]
     peerDependencies:
       apache-arrow: '>=15.0.0 <=18.1.0'
@@ -3188,7 +3187,7 @@ packages:
     resolution: {integrity: sha512-ELZsyx6INGBYXPAbYTAiRWtkmnwAlcXOOVPY434BE605TBdpzMrXF5gNckKdEyCCWYJiLzSKpHaAzWwB7Vx2nA==}
     engines: {node: '>=20.0.0'}
     dependencies:
-      '@mariozechner/pi-ai': 0.61.1(patch_hash=lelfyc5fhgmvuct24he6ee2yby)(@modelcontextprotocol/sdk@1.27.1)(ws@8.20.0)(zod@4.3.6)
+      '@mariozechner/pi-ai': 0.61.1(patch_hash=s4cp2v5gd26t4qzst36ebep3au)(@modelcontextprotocol/sdk@1.27.1)(ws@8.20.0)(zod@4.3.6)
     transitivePeerDependencies:
       - '@modelcontextprotocol/sdk'
       - aws-crt
@@ -3199,7 +3198,7 @@ packages:
       - zod
     dev: false
 
-  /@mariozechner/pi-ai@0.61.1(patch_hash=lelfyc5fhgmvuct24he6ee2yby)(@modelcontextprotocol/sdk@1.27.1)(ws@8.20.0)(zod@4.3.6):
+  /@mariozechner/pi-ai@0.61.1(patch_hash=s4cp2v5gd26t4qzst36ebep3au)(@modelcontextprotocol/sdk@1.27.1)(ws@8.20.0)(zod@4.3.6):
     resolution: {integrity: sha512-BOk8xwluIgauX93qgC9qyrWteKKnk6pNDM8szE1m/EJKMhcJ/jIJpgAUQgj4yXiwSMtcZm30h2Po97gqqXTIIg==}
     engines: {node: '>=20.0.0'}
     hasBin: true
@@ -3235,7 +3234,7 @@ packages:
     dependencies:
       '@mariozechner/jiti': 2.6.5
       '@mariozechner/pi-agent-core': 0.61.1(@modelcontextprotocol/sdk@1.27.1)(ws@8.20.0)(zod@4.3.6)
-      '@mariozechner/pi-ai': 0.61.1(patch_hash=lelfyc5fhgmvuct24he6ee2yby)(@modelcontextprotocol/sdk@1.27.1)(ws@8.20.0)(zod@4.3.6)
+      '@mariozechner/pi-ai': 0.61.1(patch_hash=s4cp2v5gd26t4qzst36ebep3au)(@modelcontextprotocol/sdk@1.27.1)(ws@8.20.0)(zod@4.3.6)
       '@mariozechner/pi-tui': 0.61.1
       '@silvia-odwyer/photon-node': 0.3.4
       chalk: 5.6.2
