@@ -1,0 +1,51 @@
+diff --git a/dist/providers/transform-messages.js b/dist/providers/transform-messages.js
+index ca2f0b9ce0f4bf4fbd33b0ab7c688e48eb831025..ad5611f7c5007114efaeb0867fda7e07759cd5ce 100644
+--- a/dist/providers/transform-messages.js
++++ b/dist/providers/transform-messages.js
+@@ -3,6 +3,19 @@
+  * OpenAI Responses API generates IDs that are 450+ chars with special characters like `|`.
+  * Anthropic APIs require IDs matching ^[a-zA-Z0-9_-]+$ (max 64 chars).
+  */
++const DEEPSEEK_OPENAI_REASONING_SIGNATURES = new Set([
++    "reasoning_content",
++    "reasoning",
++    "reasoning_text",
++]);
++function shouldReplayDeepSeekOpenAiReasoning(assistantMsg, model, block) {
++    return (assistantMsg.provider === "deepseek" &&
++        model.provider === "deepseek" &&
++        assistantMsg.api === "openai-completions" &&
++        model.api === "openai-completions" &&
++        typeof block.thinkingSignature === "string" &&
++        DEEPSEEK_OPENAI_REASONING_SIGNATURES.has(block.thinkingSignature));
++}
+ export function transformMessages(messages, model, normalizeToolCallId) {
+     // Build a map of original tool call IDs to normalized IDs
+     const toolCallIdMap = new Map();
+@@ -28,6 +41,7 @@ export function transformMessages(messages, model, normalizeToolCallId) {
+                 assistantMsg.model === model.id;
+             const transformedContent = assistantMsg.content.flatMap((block) => {
+                 if (block.type === "thinking") {
++                    const deepSeekReasoningReplay = shouldReplayDeepSeekOpenAiReasoning(assistantMsg, model, block);
+                     // Redacted thinking is opaque encrypted content, only valid for the same model.
+                     // Drop it for cross-model to avoid API errors.
+                     if (block.redacted) {
+@@ -38,10 +52,16 @@ export function transformMessages(messages, model, normalizeToolCallId) {
+                     if (isSameModel && block.thinkingSignature)
+                         return block;
+                     // Skip empty thinking blocks, convert others to plain text
+-                    if (!block.thinking || block.thinking.trim() === "")
+-                        return [];
++                    if (!block.thinking || block.thinking.trim() === "") {
++                        return deepSeekReasoningReplay && block.thinkingSignature ? block : [];
++                    }
+                     if (isSameModel)
+                         return block;
++                    // DeepSeek V4 thinking mode requires prior reasoning_content in the message
++                    // history; pi-ai maps that to thinking blocks with a reasoning_* signature.
++                    // Do not fold them into plain text when only the model id changed (V3→V4, etc.).
++                    if (deepSeekReasoningReplay)
++                        return block;
+                     return {
+                         type: "text",
+                         text: block.thinking,
