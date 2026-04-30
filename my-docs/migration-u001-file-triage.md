@@ -80,12 +80,24 @@
 
 ---
 
-## 4. 下一步（阶段 C）
+## 4. 阶段 C（进行中）
 
-在 **§1 环境项通过** 后：
+**已落地**（`migrate/u001-from-upstream` 上单独 commit，见 Git 历史）：
 
-1. 在 `migrate/u001-from-upstream` 上从 §3 的 **四个 `theme-urban*.css`** 与 **`theme.ts`** 开始提交第一个 PR/commit。
-2. 每步 **`pnpm --dir ui test`** 必须通过再合并下一阶段。
+- 自 `feat/u001-urban-ui-theme` 拷入 **`ui/src/styles/theme-urban*.css`** 四个文件。
+- **`ui/src/ui/theme.ts`**：在保留上游 **`custom` / `custom-light`** 的前提下增加 **`urban` / `urban-light`**；`VALID_THEME_NAMES` 含 `urban`；`LEGACY_MAP` 含 `urban`。
+- **`ui/src/styles.css`**：增加对上述四个 urban 样式表的 `@import`（位于 `dreams.css` 之后）。
+- **`ui/index.html`**：首屏脚本中 `THEMES` / `LEGACY` / `resolved` 与 `theme.ts` 对齐（含 `custom` 与 `urban`）。
+- **设置 UI**：`config.ts`、`config-quick.ts` 的 built-in 主题列表增加 **Urban**；`theme.test.ts` 增加 urban/custom 断言。
+
+**仍依赖 §1**：本机 Node 未升到 **20.19+ / 22.14+** 时 **`pnpm --dir ui test`** 会因 `rolldown` 原生绑定无法加载而失败；环境就绪后请跑全量 UI 测试。
+
+## 5. 下一步（阶段 D）
+
+在 **§1 通过** 且阶段 C commit 合并无异议后：
+
+1. 对照 `_tmp_ui_diff_name_status.txt` 中的 **`M`** 项，从 **`chat.ts` / `grouped-render.ts`** 等按上游 DOM 移植 Urban 行为。
+2. 每步保持 **`pnpm --dir ui test`** 绿色。
 
 ---
 

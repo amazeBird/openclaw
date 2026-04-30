@@ -11,7 +11,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <script>
       (function () {
-        var THEMES = { claw: 1, knot: 1, dash: 1 };
+        var THEMES = { claw: 1, knot: 1, dash: 1, urban: 1, custom: 1 };
         var MODES = { system: 1, light: 1, dark: 1 };
         var LEGACY = {
           dark: "claw:dark",
@@ -20,6 +20,7 @@
           fieldmanual: "dash:dark",
           clawdash: "dash:light",
           system: "claw:system",
+          urban: "urban:dark",
         };
         try {
           var keys = Object.keys(localStorage);
@@ -51,9 +52,17 @@
                 ? mode === "light"
                   ? "dash-light"
                   : "dash"
-                : mode === "light"
-                  ? "light"
-                  : "dark";
+                : theme === "custom"
+                  ? mode === "light"
+                    ? "custom-light"
+                    : "custom"
+                  : theme === "urban"
+                    ? mode === "light"
+                      ? "urban-light"
+                      : "urban"
+                    : mode === "light"
+                      ? "light"
+                      : "dark";
           document.documentElement.setAttribute("data-theme", resolved);
           document.documentElement.setAttribute(
             "data-theme-mode",
