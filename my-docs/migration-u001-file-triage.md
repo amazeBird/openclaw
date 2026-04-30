@@ -98,6 +98,8 @@
 
 - **`chat-token-strip`**：`ui/src/ui/chat/token-strip.ts` + `chat.ts` 在输入栏上方渲染；**`layout.css`** 提供各主题可用的基础样式（Urban 在 `theme-urban-chat.css` 中加强）。
 - **`en.ts`**：`chat.tokenStrip` 文案块（其它 locale 走英文 fallback）。
+- **`zh-CN.ts`**：`chat.tokenStrip` 简体中文文案。
+- **导出 Markdown**：`export.ts` / `chat.ts` / `app.ts` 使用 **`resolveLocalUserName`** 作为用户消息标题（与 pinned 区一致）；`export.node.test.ts` 覆盖自定义标签。
 
 **待办**：`grouped-render.ts` / 气泡细调等仍可按 `_tmp_ui_diff_name_status.txt` 逐项对照 feat 分支，在 **`pnpm --dir ui test`** 通过前提下增量提交。
 

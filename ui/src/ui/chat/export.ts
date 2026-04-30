@@ -3,8 +3,12 @@ import { extractTextCached } from "./message-extract.ts";
 /**
  * Export chat history as markdown file.
  */
-export function exportChatMarkdown(messages: unknown[], assistantName: string): void {
-  const markdown = buildChatMarkdown(messages, assistantName);
+export function exportChatMarkdown(
+  messages: unknown[],
+  assistantName: string,
+  userSenderLabel = "You",
+): void {
+  const markdown = buildChatMarkdown(messages, assistantName, userSenderLabel);
   if (!markdown) {
     return;
   }
@@ -17,7 +21,11 @@ export function exportChatMarkdown(messages: unknown[], assistantName: string): 
   URL.revokeObjectURL(url);
 }
 
-export function buildChatMarkdown(messages: unknown[], assistantName: string): string | null {
+export function buildChatMarkdown(
+  messages: unknown[],
+  assistantName: string,
+  userSenderLabel = "You",
+): string | null {
   const history = Array.isArray(messages) ? messages : [];
   if (history.length === 0) {
     return null;
@@ -25,7 +33,8 @@ export function buildChatMarkdown(messages: unknown[], assistantName: string): s
   const lines: string[] = [`# Chat with ${assistantName}`, ""];
   for (const msg of history) {
     const m = msg as Record<string, unknown>;
-    const role = m.role === "user" ? "You" : m.role === "assistant" ? assistantName : "Tool";
+    const role =
+      m.role === "user" ? userSenderLabel : m.role === "assistant" ? assistantName : "Tool";
     const content = extractTextCached(msg) ?? "";
     const ts = typeof m.timestamp === "number" ? new Date(m.timestamp).toISOString() : "";
     lines.push(`## ${role}${ts ? ` (${ts})` : ""}`, "", content, "");

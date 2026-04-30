@@ -87,6 +87,7 @@ import type { Tab } from "./navigation.ts";
 import { resolveAgentIdFromSessionKey } from "./session-key.ts";
 import type { SidebarContent } from "./sidebar-content.ts";
 import { loadLocalUserIdentity, loadSettings, type UiSettings } from "./storage.ts";
+import { resolveLocalUserName } from "./user-identity.ts";
 import { VALID_THEME_NAMES, type ResolvedTheme, type ThemeMode, type ThemeName } from "./theme.ts";
 import type {
   AgentsListResult,
@@ -613,7 +614,11 @@ export class OpenClawApp extends LitElement {
           });
           break;
         case "export":
-          exportChatMarkdown(this.chatMessages, this.assistantName);
+          exportChatMarkdown(
+            this.chatMessages,
+            this.assistantName,
+            resolveLocalUserName({ name: this.userName, avatar: this.userAvatar }),
+          );
           break;
         case "refresh-tools-effective": {
           void refreshVisibleToolsEffectiveForCurrentSessionInternal(this);

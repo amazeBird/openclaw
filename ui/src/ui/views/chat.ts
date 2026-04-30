@@ -550,7 +550,11 @@ function tokenEstimate(draft: string): string | null {
  * Export chat markdown - delegates to shared utility.
  */
 function exportMarkdown(props: ChatProps): void {
-  exportChatMarkdown(props.messages, props.assistantName);
+  const userSenderLabel = resolveLocalUserName({
+    name: props.userName ?? null,
+    avatar: props.userAvatar ?? null,
+  });
+  exportChatMarkdown(props.messages, props.assistantName, userSenderLabel);
 }
 
 function renderSearchBar(requestUpdate: () => void): TemplateResult | typeof nothing {
