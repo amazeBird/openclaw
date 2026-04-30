@@ -396,6 +396,12 @@ export const tr: TranslationMap = {
     logs: "Canlı Gateway günlükleri.",
     dreams: "Uyku sırasında bellek birleştirme.",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "Chroma ailesi" },
+    knot: { label: "Knot", desc: "Siyah ve kırmızı" },
+    dash: { label: "Dash", desc: "Çikolata planı" },
+    urban: { label: "Urban", desc: "Yüksek kontrast ve vurgular" },
+  },
   overview: {
     access: {
       title: "Gateway Erişimi",

@@ -398,6 +398,14 @@ export const zh_TW: TranslationMap = {
     dash: { label: "Dash", desc: "巧克力藍圖" },
     urban: { label: "Urban", desc: "高對比介面 + 強調色" },
   },
+  controlUiAppearance: {
+    themeHeading: "主題",
+    themeHint: "選擇一套主題風格。",
+    importButton: "匯入",
+    importHintUnthemed: "從 tweakcn 匯入主題到此瀏覽器本機槽位。",
+    importHintThemed: "已從 tweakcn 匯入：{name}",
+    importedNameFallback: "已匯入主題",
+  },
   overview: {
     access: {
       title: "網關訪問",

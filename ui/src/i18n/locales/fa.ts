@@ -395,6 +395,12 @@ export const fa: TranslationMap = {
     logs: "گزارش‌های زنده Gateway.",
     dreams: "رؤیاپردازی حافظه، یکپارچه‌سازی و بازتاب.",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "خانوادهٔ Chroma" },
+    knot: { label: "Knot", desc: "سیاه و قرمز" },
+    dash: { label: "Dash", desc: "نقشهٔ شکلاتی" },
+    urban: { label: "Urban", desc: "کروم پرکنتراست و هایلایت" },
+  },
   overview: {
     access: {
       title: "دسترسی Gateway",

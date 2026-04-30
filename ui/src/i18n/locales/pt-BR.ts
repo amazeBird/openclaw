@@ -394,6 +394,12 @@ export const pt_BR: TranslationMap = {
     logs: "Logs ao vivo do gateway.",
     dreams: "Consolidação de memória durante o sono.",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "Família Chroma" },
+    knot: { label: "Knot", desc: "Preto e vermelho" },
+    dash: { label: "Dash", desc: "Planta baixa chocolate" },
+    urban: { label: "Urban", desc: "Cromado alto contraste e destaques" },
+  },
   overview: {
     access: {
       title: "Acesso ao Gateway",

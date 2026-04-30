@@ -396,6 +396,12 @@ export const nl: TranslationMap = {
     logs: "Live Gateway-logs.",
     dreams: "Geheugendromen, consolidatie en reflectie.",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "Chroma-familie" },
+    knot: { label: "Knot", desc: "Zwart en rood" },
+    dash: { label: "Dash", desc: "Chocolade-blueprint" },
+    urban: { label: "Urban", desc: "Hoog contrast en accenten" },
+  },
   overview: {
     access: {
       title: "Gateway-toegang",

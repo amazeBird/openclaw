@@ -394,6 +394,12 @@ export const id: TranslationMap = {
     logs: "Log Gateway langsung.",
     dreams: "Konsolidasi memori saat tidur.",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "Keluarga Chroma" },
+    knot: { label: "Knot", desc: "Hitam & merah" },
+    dash: { label: "Dash", desc: "Blueprint cokelat" },
+    urban: { label: "Urban", desc: "Krom kontras tinggi dan aksen" },
+  },
   overview: {
     access: {
       title: "Akses Gateway",

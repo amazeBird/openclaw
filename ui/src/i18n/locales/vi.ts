@@ -394,6 +394,12 @@ export const vi: TranslationMap = {
     logs: "Nhật ký gateway trực tiếp.",
     dreams: "Mơ bộ nhớ, hợp nhất và phản chiếu.",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "Họ Chroma" },
+    knot: { label: "Knot", desc: "Đen và đỏ" },
+    dash: { label: "Dash", desc: "Bản thiết kế chocolate" },
+    urban: { label: "Urban", desc: "Chrome tương phản cao và điểm nhấn" },
+  },
   overview: {
     access: {
       title: "Truy cập Gateway",

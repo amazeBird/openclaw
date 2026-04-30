@@ -392,6 +392,12 @@ export const th: TranslationMap = {
     logs: "บันทึกเกตเวย์แบบสด",
     dreams: "การฝันของหน่วยความจำ การรวมข้อมูล และการสะท้อนคิด",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "ตระกูล Chroma" },
+    knot: { label: "Knot", desc: "ดำและแดง" },
+    dash: { label: "Dash", desc: "แบบช็อกโกแลต" },
+    urban: { label: "Urban", desc: "โครมคอนทราสต์สูงและจุดเน้น" },
+  },
   overview: {
     access: {
       title: "การเข้าถึงเกตเวย์",

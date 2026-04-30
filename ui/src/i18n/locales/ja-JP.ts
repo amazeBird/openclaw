@@ -397,6 +397,12 @@ export const ja_JP: TranslationMap = {
     logs: "ライブ Gateway ログ。",
     dreams: "スリープ中のメモリ統合。",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "クロマ系" },
+    knot: { label: "Knot", desc: "黒×赤" },
+    dash: { label: "Dash", desc: "チョコレート・ブループリント" },
+    urban: { label: "Urban", desc: "高コントラストのクロムとアクセント" },
+  },
   overview: {
     access: {
       title: "Gateway アクセス",

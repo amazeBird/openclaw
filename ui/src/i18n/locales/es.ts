@@ -394,6 +394,12 @@ export const es: TranslationMap = {
     logs: "Seguimiento en vivo de los registros de la puerta de enlace.",
     dreams: "Consolidación de la memoria durante el sueño.",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "Familia Chroma" },
+    knot: { label: "Knot", desc: "Negro y rojo" },
+    dash: { label: "Dash", desc: "Plano estilo chocolate" },
+    urban: { label: "Urban", desc: "Cromado de alto contraste y acentos" },
+  },
   overview: {
     access: {
       title: "Acceso a la puerta de enlace",

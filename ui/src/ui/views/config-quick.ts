@@ -542,8 +542,8 @@ function renderSecurityCard(props: QuickSettingsProps) {
 
 function renderAppearanceCard(props: QuickSettingsProps) {
   const importedThemeName = props.hasCustomTheme
-    ? (props.customThemeLabel ?? "Imported theme")
-    : "Import";
+    ? (props.customThemeLabel ?? t("controlUiAppearance.importedNameFallback"))
+    : t("controlUiAppearance.importButton");
   const themeOptions: ThemeOption[] = [
     ...BUILTIN_THEME_OPTIONS,
     { id: "custom", label: importedThemeName },
@@ -553,7 +553,7 @@ function renderAppearanceCard(props: QuickSettingsProps) {
       ${renderCardHeader(icons.spark, "Appearance")}
       <div class="qs-card__body">
         <div class="qs-row">
-          <span class="qs-row__label">Theme</span>
+          <span class="qs-row__label">${t("controlUiAppearance.themeHeading")}</span>
           <div class="qs-segmented">
             ${themeOptions.map(
               (opt) => html`

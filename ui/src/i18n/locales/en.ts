@@ -398,6 +398,14 @@ export const en: TranslationMap = {
     dash: { label: "Dash", desc: "Chocolate blueprint" },
     urban: { label: "Urban", desc: "High-contrast chrome + acid accents" },
   },
+  controlUiAppearance: {
+    themeHeading: "Theme",
+    themeHint: "Choose a theme family.",
+    importButton: "Import",
+    importHintUnthemed: "Import a tweakcn theme into this browser-local slot",
+    importHintThemed: "Imported from tweakcn: {name}",
+    importedNameFallback: "Imported theme",
+  },
   overview: {
     access: {
       title: "Gateway Access",

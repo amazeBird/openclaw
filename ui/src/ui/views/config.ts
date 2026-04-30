@@ -810,7 +810,10 @@ const BUILTIN_THEME_OPTIONS: ThemeOption[] = [
 ];
 
 function importedThemeName(props: Pick<ConfigProps, "hasCustomTheme" | "customThemeLabel">) {
-  return props.hasCustomTheme && props.customThemeLabel ? props.customThemeLabel : "Imported theme";
+  if (!props.hasCustomTheme) {
+    return "";
+  }
+  return props.customThemeLabel ?? t("controlUiAppearance.importedNameFallback");
 }
 
 function focusCustomThemeImportInput() {
@@ -947,18 +950,18 @@ function renderAppearanceSection(props: ConfigProps) {
     ...BUILTIN_THEME_OPTIONS,
     {
       id: "custom",
-      label: props.hasCustomTheme ? importedName : "Import",
+      label: props.hasCustomTheme ? importedName : t("controlUiAppearance.importButton"),
       description: props.hasCustomTheme
-        ? `Imported from tweakcn: ${importedName}`
-        : "Import a tweakcn theme into this browser-local slot",
+        ? t("controlUiAppearance.importHintThemed", { name: importedName })
+        : t("controlUiAppearance.importHintUnthemed"),
       icon: icons.spark,
     },
   ];
   return html`
     <div class="settings-appearance">
       <div class="settings-appearance__section">
-        <h3 class="settings-appearance__heading">Theme</h3>
-        <p class="settings-appearance__hint">Choose a theme family.</p>
+        <h3 class="settings-appearance__heading">${t("controlUiAppearance.themeHeading")}</h3>
+        <p class="settings-appearance__hint">${t("controlUiAppearance.themeHint")}</p>
         <div class="settings-theme-grid">
           ${themeOptions.map(
             (opt) => html`

@@ -395,6 +395,12 @@ export const pl: TranslationMap = {
     logs: "Logi Gateway na żywo.",
     dreams: "Konsolidacja pamięci podczas snu.",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "Rodzina Chroma" },
+    knot: { label: "Knot", desc: "Czerń i czerwień" },
+    dash: { label: "Dash", desc: "Czekoladowy blueprint" },
+    urban: { label: "Urban", desc: "Wysoki kontrast i akcenty" },
+  },
   overview: {
     access: {
       title: "Dostęp do Gateway",

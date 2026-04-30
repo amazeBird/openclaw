@@ -393,6 +393,12 @@ export const ar: TranslationMap = {
     logs: "سجلات Gateway المباشرة.",
     dreams: "حلم الذاكرة، والدمج، والتأمل.",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "عائلة Chroma" },
+    knot: { label: "Knot", desc: "أسود وأحمر" },
+    dash: { label: "Dash", desc: "مخطط بني" },
+    urban: { label: "Urban", desc: "كروم عالي التباين مع لمسات" },
+  },
   overview: {
     access: {
       title: "الوصول إلى Gateway",

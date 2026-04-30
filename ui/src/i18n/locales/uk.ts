@@ -395,6 +395,12 @@ export const uk: TranslationMap = {
     logs: "Журнали шлюзу в реальному часі.",
     dreams: "Консолідація пам’яті під час сну.",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "Палітра Chroma" },
+    knot: { label: "Knot", desc: "Чорний і червоний" },
+    dash: { label: "Dash", desc: "Шоколадний кресленик" },
+    urban: { label: "Urban", desc: "Високий контраст і акценти" },
+  },
   overview: {
     access: {
       title: "Доступ до шлюзу",

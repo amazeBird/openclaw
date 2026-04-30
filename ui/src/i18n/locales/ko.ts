@@ -393,6 +393,12 @@ export const ko: TranslationMap = {
     logs: "실시간 Gateway 로그.",
     dreams: "수면 중 메모리 통합.",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "크로마 계열" },
+    knot: { label: "Knot", desc: "블랙 & 레드" },
+    dash: { label: "Dash", desc: "초콜릿 블루프린트" },
+    urban: { label: "Urban", desc: "고대비 크롬과 포인트 컬러" },
+  },
   overview: {
     access: {
       title: "Gateway 액세스",

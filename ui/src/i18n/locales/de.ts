@@ -397,6 +397,12 @@ export const de: TranslationMap = {
     logs: "Live-Verfolgung der Gateway-Protokolldateien.",
     dreams: "Speicherkonsolidierung im Schlaf.",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "Chroma-Palette" },
+    knot: { label: "Knot", desc: "Schwarz & Rot" },
+    dash: { label: "Dash", desc: "Schokoladen-Blueprint" },
+    urban: { label: "Urban", desc: "Hoher Kontrast mit Akzenten" },
+  },
   overview: {
     access: {
       title: "Gateway-Zugang",

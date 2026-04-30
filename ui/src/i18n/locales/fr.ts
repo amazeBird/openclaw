@@ -396,6 +396,12 @@ export const fr: TranslationMap = {
     logs: "Journaux Gateway en direct.",
     dreams: "Consolidation de la mémoire pendant le sommeil.",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "Famille Chroma" },
+    knot: { label: "Knot", desc: "Noir et rouge" },
+    dash: { label: "Dash", desc: "Plan chocolat" },
+    urban: { label: "Urban", desc: "Chrome contrasté et accents" },
+  },
   overview: {
     access: {
       title: "Accès Gateway",
