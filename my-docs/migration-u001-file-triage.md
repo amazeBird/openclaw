@@ -92,12 +92,18 @@
 
 **仍依赖 §1**：本机 Node 未升到 **20.19+ / 22.14+** 时 **`pnpm --dir ui test`** 会因 `rolldown` 原生绑定无法加载而失败；环境就绪后请跑全量 UI 测试。
 
-## 5. 下一步（阶段 D）
+## 5. 阶段 D（进行中）
 
-在 **§1 通过** 且阶段 C commit 合并无异议后：
+**已落地**：
 
-1. 对照 `_tmp_ui_diff_name_status.txt` 中的 **`M`** 项，从 **`chat.ts` / `grouped-render.ts`** 等按上游 DOM 移植 Urban 行为。
-2. 每步保持 **`pnpm --dir ui test`** 绿色。
+- **`chat-token-strip`**：`ui/src/ui/chat/token-strip.ts` + `chat.ts` 在输入栏上方渲染；**`layout.css`** 提供各主题可用的基础样式（Urban 在 `theme-urban-chat.css` 中加强）。
+- **`en.ts`**：`chat.tokenStrip` 文案块（其它 locale 走英文 fallback）。
+
+**待办**：`grouped-render.ts` / 气泡细调等仍可按 `_tmp_ui_diff_name_status.txt` 逐项对照 feat 分支，在 **`pnpm --dir ui test`** 通过前提下增量提交。
+
+## 6. 下一步
+
+在 **§1 通过** 后跑全量 **`pnpm --dir ui test`**；再继续阶段 D 剩余项或阶段 E。
 
 ---
 

@@ -18,6 +18,7 @@ import { renderChatQueue } from "../chat/chat-queue.ts";
 import { buildRawSidebarContent } from "../chat/chat-sidebar-raw.ts";
 import { renderWelcomeState, resolveAssistantDisplayAvatar } from "../chat/chat-welcome.ts";
 import { renderContextNotice } from "../chat/context-notice.ts";
+import { renderChatTokenStrip } from "../chat/token-strip.ts";
 import { DeletedMessages } from "../chat/deleted-messages.ts";
 import { exportChatMarkdown } from "../chat/export.ts";
 import {
@@ -1103,6 +1104,14 @@ export function renderChat(props: ChatProps) {
   const activeSlashMenuOptionId = getActiveSlashMenuOptionId();
   const activeSlashMenuOptionLabel = getActiveSlashMenuOptionLabel();
 
+  const tokenStrip = renderChatTokenStrip(
+    activeSession,
+    props.sessions?.defaults?.contextTokens ?? null,
+    props.messages,
+    props.connected,
+    props.sessions !== null,
+  );
+
   return html`
     <section
       class="card chat"
@@ -1185,6 +1194,7 @@ export function renderChat(props: ChatProps) {
             </button>
           `
         : nothing}
+      ${tokenStrip}
 
       <!-- Input bar -->
       <div class="agent-chat__input">
