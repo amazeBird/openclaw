@@ -392,6 +392,12 @@ export const zh_CN: TranslationMap = {
     logs: "实时网关日志。",
     dreams: "睡眠时进行记忆巩固。",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "Chroma 色系" },
+    knot: { label: "Knot", desc: "黑红风格" },
+    dash: { label: "Dash", desc: "巧克力蓝图" },
+    urban: { label: "Urban", desc: "高对比界面 + 强调色" },
+  },
   overview: {
     access: {
       title: "网关访问",

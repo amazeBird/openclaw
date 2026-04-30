@@ -392,6 +392,12 @@ export const en: TranslationMap = {
     logs: "Live gateway logs.",
     dreams: "Memory dreaming, consolidation, and reflection.",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "Chroma family" },
+    knot: { label: "Knot", desc: "Black & red" },
+    dash: { label: "Dash", desc: "Chocolate blueprint" },
+    urban: { label: "Urban", desc: "High-contrast chrome + acid accents" },
+  },
   overview: {
     access: {
       title: "Gateway Access",

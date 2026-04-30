@@ -98,14 +98,16 @@
 
 - **`chat-token-strip`**：`ui/src/ui/chat/token-strip.ts` + `chat.ts` 在输入栏上方渲染；**`layout.css`** 提供各主题可用的基础样式（Urban 在 `theme-urban-chat.css` 中加强）。
 - **`en.ts`**：`chat.tokenStrip` 文案块（其它 locale 走英文 fallback）。
-- **`zh-CN.ts`**：`chat.tokenStrip` 简体中文文案。
+- **`zh-CN.ts` / `zh-TW.ts` 及 de、es、fr、pt-BR、ja-JP、ko、it、nl、pl、tr、uk、vi、th、id、ar、fa**：`chat.tokenStrip` 各语言文案。
 - **导出 Markdown**：`export.ts` / `chat.ts` / `app.ts` 使用 **`resolveLocalUserName`** 作为用户消息标题（与 pinned 区一致）；`export.node.test.ts` 覆盖自定义标签。
 
 **待办**：`grouped-render.ts` / 气泡细调等仍可按 `_tmp_ui_diff_name_status.txt` 逐项对照 feat 分支，在 **`pnpm --dir ui test`** 通过前提下增量提交。
 
+**阶段 E（可开始）**：设置页 Urban 专属文案键、与 `config` 视图 i18n 对齐（当前 Urban 选项仍为英文标签 `"Urban"`）。
+
 ## 6. 下一步
 
-在 **§1 通过** 后跑全量 **`pnpm --dir ui test`**；再继续阶段 D 剩余项或阶段 E。
+在 **§1 通过** 后跑全量 **`pnpm --dir ui test`**；然后做 **阶段 E**（`config` / `config-quick` 的 `t("config.appearance.themeUrban")` 等）或继续阶段 D 的 **`grouped-render` 小步 diff**。
 
 ---
 

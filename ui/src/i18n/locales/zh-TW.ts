@@ -392,6 +392,12 @@ export const zh_TW: TranslationMap = {
     logs: "實時網關日誌。",
     dreams: "睡眠期間的記憶整合。",
   },
+  controlUiThemes: {
+    claw: { label: "Claw", desc: "Chroma 色系" },
+    knot: { label: "Knot", desc: "黑紅風格" },
+    dash: { label: "Dash", desc: "巧克力藍圖" },
+    urban: { label: "Urban", desc: "高對比介面 + 強調色" },
+  },
   overview: {
     access: {
       title: "網關訪問",
@@ -900,6 +906,23 @@ export const zh_TW: TranslationMap = {
     updating: "正在更新…",
     updateNow: "立即更新",
     dismissUpdateBanner: "關閉更新橫幅",
+    tokenStrip: {
+      label: "Token",
+      in: "入",
+      out: "出",
+      total: "合計",
+      stale: "更新中…",
+      metaSep: "·",
+      contextShort: "上下文約 {pct}%",
+      lastShort: "上輪 +{tokens}",
+      titleIn: "輸入",
+      titleOut: "輸出",
+      titleTotal: "合計",
+      titleLimit: "上下文上限 {limit}（約 {pct}%）",
+      titleLast: "上輪 +{tokens}",
+      aria: "工作階段 Token：合計 {total}，入 {input}，出 {output}。{detail}",
+      ariaNoDetail: "尚無上下文上限或上輪用量紀錄。",
+    },
   },
   languages: {
     en: "英文",

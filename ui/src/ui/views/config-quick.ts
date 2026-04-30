@@ -6,6 +6,7 @@
  */
 
 import { html, nothing, type TemplateResult } from "lit";
+import { t } from "../../i18n/index.ts";
 import { icons } from "../icons.ts";
 import type { BorderRadiusStop } from "../storage.ts";
 import { normalizeOptionalString } from "../string-coerce.ts";
@@ -122,10 +123,10 @@ export type QuickSettingsProps = {
 
 type ThemeOption = { id: ThemeName; label: string };
 const BUILTIN_THEME_OPTIONS: ThemeOption[] = [
-  { id: "claw", label: "Claw" },
-  { id: "knot", label: "Knot" },
-  { id: "dash", label: "Dash" },
-  { id: "urban", label: "Urban" },
+  { id: "claw", label: t("controlUiThemes.claw.label") },
+  { id: "knot", label: t("controlUiThemes.knot.label") },
+  { id: "dash", label: t("controlUiThemes.dash.label") },
+  { id: "urban", label: t("controlUiThemes.urban.label") },
 ];
 
 const BORDER_RADIUS_STOPS: Array<{ value: BorderRadiusStop; label: string }> = [
