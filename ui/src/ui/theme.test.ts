@@ -5,10 +5,6 @@ describe("resolveTheme", () => {
   it("resolves named theme families when mode is provided", () => {
     expect(resolveTheme("knot", "dark")).toBe("openknot");
     expect(resolveTheme("dash", "light")).toBe("dash-light");
-    expect(resolveTheme("urban", "dark")).toBe("urban");
-    expect(resolveTheme("urban", "light")).toBe("urban-light");
-    expect(resolveTheme("custom", "dark")).toBe("custom");
-    expect(resolveTheme("custom", "light")).toBe("custom-light");
   });
 
   it("uses system preference when mode is system", () => {
@@ -36,6 +32,5 @@ describe("parseThemeSelection", () => {
       theme: "dash",
       mode: "dark",
     });
-    expect(parseThemeSelection("urban", "dark")).toEqual({ theme: "urban", mode: "dark" });
   });
 });

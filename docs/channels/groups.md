@@ -35,21 +35,49 @@ Quick flow (what happens to a group message):
 groupPolicy? disabled -> drop
 groupPolicy? allowlist -> group allowed? no -> drop
 requireMention? yes -> mentioned? no -> store for context only
-otherwise -> reply
+mention/reply/command/DM -> user request
+always-on group chatter -> user request, or room event when configured
 ```
 
 ## Visible replies
 
 For group/channel rooms, OpenClaw defaults to `messages.groupChat.visibleReplies: "message_tool"`.
+`openclaw doctor --fix` writes this default into configured-channel configs that omit it.
 That means the agent still processes the turn and can update memory/session state, but its normal final answer is not automatically posted back into the room. To speak visibly, the agent uses `message(action=send)`.
 
-For direct chats and any other source turn, use `messages.visibleReplies: "message_tool"` to apply the same tool-only visible-reply behavior globally. `messages.groupChat.visibleReplies` remains the more specific override for group/channel rooms.
+This default depends on a model/runtime that reliably calls tools. If logs show
+assistant text but `didSendViaMessagingTool: false`, the model answered
+privately instead of calling the message tool. That is not a
+Discord/Slack/Telegram send failure. Use a tool-call-reliable model for
+group/channel sessions, or set
+`messages.groupChat.visibleReplies: "automatic"` to restore legacy visible
+final replies for group requests.
+
+If the message tool is unavailable under the active tool policy, OpenClaw falls
+back to automatic visible replies instead of silently suppressing the response.
+`openclaw doctor` warns about this mismatch.
+
+For direct chats and any other source turn, use `messages.visibleReplies: "message_tool"` to apply the same tool-only visible-reply behavior globally. Harnesses can also choose this as their unset default; the Codex harness does this for Codex-mode direct chats. `messages.groupChat.visibleReplies` remains the more specific override for group/channel rooms.
 
 This replaces the old pattern of forcing the model to answer `NO_REPLY` for most lurk-mode turns. In tool-only mode, doing nothing visible simply means not calling the message tool.
 
-Typing indicators are still sent while the agent works in tool-only mode. The default group typing mode is upgraded from "message" to "instant" for these turns because there may never be normal assistant message text before the agent decides whether to call the message tool. Explicit typing-mode config still wins.
+Typing indicators are still sent for direct group requests. Ambient always-on room events, when enabled, stay quiet unless the agent calls the message tool.
 
-To restore legacy automatic final replies for group/channel rooms:
+To submit always-on ambient group chatter as quiet room context instead of legacy user requests:
+
+```json5
+{
+  messages: {
+    groupChat: {
+      ambientTurns: "room_event",
+    },
+  },
+}
+```
+
+The default is `ambientTurns: "user_request"` for compatibility.
+
+To restore legacy automatic final replies for group/channel requests:
 
 ```json5
 {
@@ -111,6 +139,9 @@ If you want...
 | Disable all group replies                    | `groupPolicy: "disabled"`                                  |
 | Only specific groups                         | `groups: { "<group-id>": { ... } }` (no `"*"` key)         |
 | Only you can trigger in groups               | `groupPolicy: "allowlist"`, `groupAllowFrom: ["+1555..."]` |
+| Reuse one trusted sender set across channels | `groupAllowFrom: ["accessGroup:operators"]`                |
+
+For reusable sender allowlists, see [Access groups](/channels/access-groups).
 
 ## Session keys
 
@@ -257,6 +288,7 @@ Control how group/room messages are handled per channel:
   <Accordion title="Per-channel notes">
     - `groupPolicy` is separate from mention-gating (which requires @mentions).
     - WhatsApp/Telegram/Signal/iMessage/Microsoft Teams/Zalo: use `groupAllowFrom` (fallback: explicit `allowFrom`).
+    - Signal: `groupAllowFrom` can match either the inbound Signal group id or the sender phone/UUID.
     - DM pairing approvals (`*-allowFrom` store entries) apply to DM access only; group sender authorization stays explicit to group allowlists.
     - Discord: allowlist uses `channels.discord.guilds.<id>.channels`.
     - Slack: allowlist uses `channels.slack.channels`.
@@ -331,10 +363,13 @@ Replying to a bot message counts as an implicit mention when the channel support
     - Surfaces that provide explicit mentions still pass; patterns are a fallback.
     - Per-agent override: `agents.list[].groupChat.mentionPatterns` (useful when multiple agents share a group).
     - Mention gating is only enforced when mention detection is possible (native mentions or `mentionPatterns` are configured).
-    - Group chat prompt context carries the resolved silent-reply instruction every turn; workspace files should not duplicate `NO_REPLY` mechanics.
-    - Groups where silent replies are allowed treat clean empty or reasoning-only model turns as silent, equivalent to `NO_REPLY`. Direct chats do the same only when direct silent replies are explicitly allowed; otherwise empty replies remain failed agent turns.
+    - Allowlisting a group or sender does not disable mention gating; set that group's `requireMention` to `false` when all messages should trigger.
+    - Automatic group chat prompt context carries the resolved silent-reply instruction every turn; workspace files should not duplicate `NO_REPLY` mechanics.
+    - Groups where automatic silent replies are allowed treat clean empty or reasoning-only model turns as silent, equivalent to `NO_REPLY`. Direct chats never receive `NO_REPLY` guidance, and message-tool-only group replies stay quiet by not calling `message(action=send)`.
+    - Ambient always-on group chatter uses legacy user-request semantics by default. Set `messages.groupChat.ambientTurns: "room_event"` to submit it as quiet context instead.
+    - Room events are not stored as fake user requests, and private assistant text from no-message-tool room events is not replayed as chat history.
     - Discord defaults live in `channels.discord.guilds."*"` (overridable per guild/channel).
-    - Group history context is wrapped uniformly across channels and is **pending-only** (messages skipped due to mention gating); use `messages.groupChat.historyLimit` for the global default and `channels.<channel>.historyLimit` (or `channels.<channel>.accounts.*.historyLimit`) for overrides. Set `0` to disable.
+    - Group history context is wrapped uniformly across channels. Mention-gated groups keep pending skipped messages; always-on groups may also retain recent processed room messages when the channel supports it. Use `messages.groupChat.historyLimit` for the global default and `channels.<channel>.historyLimit` (or `channels.<channel>.accounts.*.historyLimit`) for overrides. Set `0` to disable.
 
   </Accordion>
 </AccordionGroup>
@@ -344,7 +379,7 @@ Replying to a bot message counts as an implicit mention when the channel support
 Some channel configs support restricting which tools are available **inside a specific group/room/channel**.
 
 - `tools`: allow/deny tools for the whole group.
-- `toolsBySender`: per-sender overrides within the group. Use explicit key prefixes: `id:<senderId>`, `e164:<phone>`, `username:<handle>`, `name:<displayName>`, and `"*"` wildcard. Legacy unprefixed keys are still accepted and matched as `id:` only.
+- `toolsBySender`: per-sender overrides within the group. Use explicit key prefixes: `channel:<channelId>:<senderId>`, `id:<senderId>`, `e164:<phone>`, `username:<handle>`, `name:<displayName>`, and `"*"` wildcard. Channel ids use canonical OpenClaw channel ids; aliases such as `teams` normalize to `msteams`. Legacy unprefixed keys are still accepted and matched as `id:` only.
 
 Resolution order (most specific wins):
 
@@ -463,10 +498,6 @@ Group inbound payloads set:
 - `GroupMembers` (if known)
 - `WasMentioned` (mention gating result)
 - Telegram forum topics also include `MessageThreadId` and `IsForum`.
-
-Channel-specific notes:
-
-- BlueBubbles can optionally enrich unnamed macOS group participants from the local Contacts database before populating `GroupMembers`. This is off by default and only runs after normal group gating passes.
 
 The agent system prompt includes a group intro on the first turn of a new group session. It reminds the model to respond like a human, avoid Markdown tables, minimize empty lines and follow normal chat spacing, and avoid typing literal `\n` sequences. Channel-sourced group names and participant labels are rendered as fenced untrusted metadata, not inline system instructions.
 

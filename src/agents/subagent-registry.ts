@@ -11,14 +11,13 @@ import type { ResolveContextEngineOptions } from "../context-engine/registry.js"
 import type { ContextEngine, SubagentEndReason } from "../context-engine/types.js";
 import { callGateway } from "../gateway/call.js";
 import { getAgentRunContext, onAgentEvent } from "../infra/agent-events.js";
-import { registerPendingSpawnedChildrenQuery } from "../infra/outbound/pending-spawn-query.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
+import { createLazyImportLoader, createLazyPromiseLoader } from "../shared/lazy-promise.js";
 import { importRuntimeModule } from "../shared/runtime-import.js";
 import { normalizeDeliveryContext } from "../utils/delivery-context.shared.js";
 import type { DeliveryContext } from "../utils/delivery-context.types.js";
 import type { ensureRuntimePluginsLoaded as ensureRuntimePluginsLoadedFn } from "./runtime-plugins.js";
 import type { SubagentRunOutcome } from "./subagent-announce-output.js";
-import { resetAnnounceQueuesForTests } from "./subagent-announce-queue.js";
 import {
   SUBAGENT_ENDED_REASON_COMPLETE,
   SUBAGENT_ENDED_REASON_ERROR,
@@ -36,7 +35,6 @@ import {
   reconcileOrphanedRun,
   resolveAnnounceRetryDelayMs,
   resolveSubagentRunOrphanReason,
-  resolveSubagentSessionStatus,
   safeRemoveAttachmentsDir,
 } from "./subagent-registry-helpers.js";
 import { createSubagentRegistryLifecycleController } from "./subagent-registry-lifecycle.js";
@@ -104,19 +102,21 @@ type SubagentRegistryDeps = {
   ) => Promise<ContextEngine>;
 };
 
-let subagentAnnouncePromise: Promise<SubagentAnnounceModule> | null = null;
-let browserCleanupPromise: Promise<BrowserCleanupModule> | null = null;
+const subagentAnnounceLoader = createLazyImportLoader<SubagentAnnounceModule>(
+  () => import("./subagent-announce.js"),
+);
+const browserCleanupLoader = createLazyImportLoader<BrowserCleanupModule>(
+  () => import("../browser-lifecycle-cleanup.js"),
+);
 
 async function loadSubagentAnnounceModule(): Promise<SubagentAnnounceModule> {
-  subagentAnnouncePromise ??= import("./subagent-announce.js");
-  return await subagentAnnouncePromise;
+  return await subagentAnnounceLoader.load();
 }
 
 async function loadCleanupBrowserSessionsForLifecycleEnd(): Promise<
   BrowserCleanupModule["cleanupBrowserSessionsForLifecycleEnd"]
 > {
-  browserCleanupPromise ??= import("../browser-lifecycle-cleanup.js");
-  return (await browserCleanupPromise).cleanupBrowserSessionsForLifecycleEnd;
+  return (await browserCleanupLoader.load()).cleanupBrowserSessionsForLifecycleEnd;
 }
 
 const defaultSubagentRegistryDeps: SubagentRegistryDeps = {
@@ -160,9 +160,15 @@ type RuntimePluginsModule = Pick<
 
 const SUBAGENT_REGISTRY_RUNTIME_SPEC = ["./subagent-registry.runtime", ".js"] as const;
 
-let contextEngineInitPromise: Promise<ContextEngineInitModule> | null = null;
-let contextEngineRegistryPromise: Promise<ContextEngineRegistryModule> | null = null;
-let runtimePluginsPromise: Promise<RuntimePluginsModule> | null = null;
+const contextEngineInitLoader = createLazyPromiseLoader(() =>
+  importRuntimeModule<ContextEngineInitModule>(import.meta.url, SUBAGENT_REGISTRY_RUNTIME_SPEC),
+);
+const contextEngineRegistryLoader = createLazyPromiseLoader(() =>
+  importRuntimeModule<ContextEngineRegistryModule>(import.meta.url, SUBAGENT_REGISTRY_RUNTIME_SPEC),
+);
+const runtimePluginsLoader = createLazyPromiseLoader(() =>
+  importRuntimeModule<RuntimePluginsModule>(import.meta.url, SUBAGENT_REGISTRY_RUNTIME_SPEC),
+);
 
 let sweeper: NodeJS.Timeout | null = null;
 const resumeRetryTimers = new Set<ReturnType<typeof setTimeout>>();
@@ -279,27 +285,15 @@ function resolveCompletionFromSessionEntry(
 }
 
 function loadContextEngineInitModule(): Promise<ContextEngineInitModule> {
-  contextEngineInitPromise ??= importRuntimeModule<ContextEngineInitModule>(
-    import.meta.url,
-    SUBAGENT_REGISTRY_RUNTIME_SPEC,
-  );
-  return contextEngineInitPromise;
+  return contextEngineInitLoader.load();
 }
 
 function loadContextEngineRegistryModule(): Promise<ContextEngineRegistryModule> {
-  contextEngineRegistryPromise ??= importRuntimeModule<ContextEngineRegistryModule>(
-    import.meta.url,
-    SUBAGENT_REGISTRY_RUNTIME_SPEC,
-  );
-  return contextEngineRegistryPromise;
+  return contextEngineRegistryLoader.load();
 }
 
 function loadRuntimePluginsModule(): Promise<RuntimePluginsModule> {
-  runtimePluginsPromise ??= importRuntimeModule<RuntimePluginsModule>(
-    import.meta.url,
-    SUBAGENT_REGISTRY_RUNTIME_SPEC,
-  );
-  return runtimePluginsPromise;
+  return runtimePluginsLoader.load();
 }
 
 async function ensureSubagentRegistryPluginRuntimeLoaded(params: {
@@ -565,6 +559,7 @@ const subagentLifecycleController = createSubagentRegistryLifecycleController({
   emitSubagentEndedHookForRun,
   notifyContextEngineSubagentEnded,
   resumeSubagentRun,
+  callGateway: (request) => subagentRegistryDeps.callGateway(request),
   captureSubagentCompletionReply: (sessionKey, options) =>
     subagentRegistryDeps.captureSubagentCompletionReply(sessionKey, options),
   cleanupBrowserSessionsForLifecycleEnd: (args) =>
@@ -1034,12 +1029,11 @@ export function resetSubagentRegistryForTests(opts?: { persist?: boolean }) {
   endedHookInFlightRunIds.clear();
   clearAllPendingLifecycleErrors();
   clearAllPendingLifecycleTimeouts();
-  contextEngineInitPromise = null;
-  contextEngineRegistryPromise = null;
-  runtimePluginsPromise = null;
-  subagentAnnouncePromise = null;
-  browserCleanupPromise = null;
-  resetAnnounceQueuesForTests();
+  contextEngineInitLoader.clear();
+  contextEngineRegistryLoader.clear();
+  runtimePluginsLoader.clear();
+  subagentAnnounceLoader.clear();
+  browserCleanupLoader.clear();
   stopSweeper();
   sweepInProgress = false;
   restoreAttempted = false;
@@ -1246,19 +1240,6 @@ export function initSubagentRegistry() {
   restoreSubagentRunsOnce();
 }
 
-// Let the shared outbound plan treat bare silent replies as dropped (instead
-// of rewriting them to visible fallback text) when the parent session has at
-// least one pending spawned child whose completion will deliver the real
-// reply. Uses the pending-descendant count so runs that have ended but whose
-// announce/cleanup is still in flight continue to suppress rewriting; without
-// this the window between `completeSubagentRun` setting `endedAt` and
-// `startSubagentAnnounceCleanupFlow` finishing could briefly re-enable
-// fallback chatter. Runtime-enforced, so it does not rely on agent prompt
-// compliance.
-registerPendingSpawnedChildrenQuery((sessionKey) => {
-  const key = sessionKey?.trim();
-  if (!key) {
-    return false;
-  }
-  return countPendingDescendantRuns(key) > 0;
-});
+// Importing this module also registers the subagent maintenance preserve-key
+// provider as a side effect (see subagent-registry-maintenance.ts).
+export { listSessionMaintenanceProtectedSubagentSessionKeys } from "./subagent-registry-maintenance.js";

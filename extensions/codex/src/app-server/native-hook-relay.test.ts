@@ -13,7 +13,7 @@ describe("Codex native hook relay config", () => {
     });
 
     expect(config).toEqual({
-      "features.codex_hooks": true,
+      "features.hooks": true,
       "hooks.PreToolUse": [
         {
           matcher: null,
@@ -87,7 +87,7 @@ describe("Codex native hook relay config", () => {
         events: ["permission_request"],
       }),
     ).toEqual({
-      "features.codex_hooks": true,
+      "features.hooks": true,
       "hooks.PermissionRequest": [
         {
           matcher: null,
@@ -112,13 +112,13 @@ describe("Codex native hook relay config", () => {
       events: ["pre_tool_use", "post_tool_use"],
     });
 
-    expect(config["hooks.PreToolUse"]).toEqual([expect.objectContaining({ matcher: null })]);
-    expect(config["hooks.PostToolUse"]).toEqual([expect.objectContaining({ matcher: null })]);
+    expect((config["hooks.PreToolUse"] as Array<{ matcher: unknown }>)[0]?.matcher).toBeNull();
+    expect((config["hooks.PostToolUse"] as Array<{ matcher: unknown }>)[0]?.matcher).toBeNull();
   });
 
   it("builds deterministic clearing config when the relay is disabled", () => {
     expect(buildCodexNativeHookRelayDisabledConfig()).toEqual({
-      "features.codex_hooks": false,
+      "features.hooks": false,
       "hooks.PreToolUse": [],
       "hooks.PostToolUse": [],
       "hooks.PermissionRequest": [],

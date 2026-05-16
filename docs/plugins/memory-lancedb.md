@@ -196,10 +196,11 @@ in. For example, ZhiPu `embedding-3` uses `2048` dimensions:
 
 `memory-lancedb` has two separate text limits:
 
-| Setting           | Default | Range     | Applies to                                    |
-| ----------------- | ------- | --------- | --------------------------------------------- |
-| `recallMaxChars`  | `1000`  | 100-10000 | text sent to the embedding API for recall     |
-| `captureMaxChars` | `500`   | 100-10000 | assistant message length eligible for capture |
+| Setting           | Default | Range     | Applies to                                                |
+| ----------------- | ------- | --------- | --------------------------------------------------------- |
+| `recallMaxChars`  | `1000`  | 100-10000 | text sent to the embedding API for recall                 |
+| `captureMaxChars` | `500`   | 100-10000 | message length eligible for auto-capture                  |
+| `customTriggers`  | `[]`    | 0-50      | literal phrases that make auto-capture consider a message |
 
 `recallMaxChars` controls auto-recall, the `memory_recall` tool, the
 `memory_forget` query path, and `openclaw ltm search`. Auto-recall prefers the
@@ -209,6 +210,10 @@ out of the embedding request.
 
 `captureMaxChars` controls whether a response is short enough to be considered
 for automatic capture. It does not cap recall query embeddings.
+
+`customTriggers` lets you add literal auto-capture phrases without writing
+regular expressions. The built-in triggers include common English, Czech,
+Chinese, Japanese, and Korean memory phrases.
 
 ## Commands
 
@@ -294,9 +299,9 @@ supports `${ENV_VAR}` expansion:
 ## Runtime dependencies
 
 `memory-lancedb` depends on the native `@lancedb/lancedb` package. Packaged
-OpenClaw installs first try the bundled runtime dependency and can repair the
-plugin runtime dependency under OpenClaw state when the bundled import is not
-available.
+OpenClaw treats that package as part of the plugin package. Gateway startup
+does not repair plugin dependencies; if the dependency is missing, reinstall or
+update the plugin package and restart the Gateway.
 
 If an older install logs a missing `dist/package.json` or missing
 `@lancedb/lancedb` error during plugin load, upgrade OpenClaw and restart the
