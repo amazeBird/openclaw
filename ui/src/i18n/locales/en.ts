@@ -1,4 +1,5 @@
 import type { TranslationMap } from "../lib/types.ts";
+import { loginFailureStrings } from "./snippets/login-failure-en.ts";
 
 export const en: TranslationMap = {
   common: {
@@ -900,6 +901,7 @@ export const en: TranslationMap = {
     showPassword: "Show password",
     hidePassword: "Hide password",
     togglePasswordVisibility: "Toggle password visibility",
+    failure: loginFailureStrings,
   },
   chat: {
     disconnected: "Disconnected from gateway.",

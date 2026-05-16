@@ -196,8 +196,8 @@ describe("loadSettings default gateway URL derivation", () => {
     const scopedKey = "openclaw.control.settings.v1:wss://gateway.example:8443/openclaw";
     expect(JSON.parse(localStorage.getItem(scopedKey) ?? "{}")).toEqual({
       gatewayUrl: "wss://gateway.example:8443/openclaw",
-      theme: "claw",
-      themeMode: "system",
+      theme: "urban",
+      themeMode: "dark",
       chatFocusMode: false,
       chatShowThinking: true,
       chatShowToolCalls: true,
@@ -552,7 +552,7 @@ describe("loadSettings default gateway URL derivation", () => {
     );
 
     const settings = loadSettings();
-    expect(settings.theme).toBe("claw");
+    expect(settings.theme).toBe("urban");
     expect(settings.themeMode).toBe("dark");
   });
 

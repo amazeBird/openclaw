@@ -13,7 +13,7 @@ export const KILOCODE_DEFAULT_MODEL_ID = "kilo/auto";
 export const KILOCODE_DEFAULT_MODEL_REF = `kilocode/${KILOCODE_DEFAULT_MODEL_ID}`;
 export const KILOCODE_DEFAULT_MODEL_NAME = "Kilo Auto";
 
-type KilocodeModelCatalogEntry = {
+export type KilocodeModelCatalogEntry = {
   id: string;
   name: string;
   reasoning: boolean;

@@ -38,8 +38,8 @@
           if (typeof t !== "string") t = "";
           if (typeof m !== "string") m = "";
           var legacy = LEGACY[t];
-          var theme = THEMES[t] ? t : legacy ? legacy.split(":")[0] : "claw";
-          var mode = MODES[m] ? m : legacy ? legacy.split(":")[1] : "system";
+          var theme = THEMES[t] ? t : legacy ? legacy.split(":")[0] : "urban";
+          var mode = MODES[m] ? m : legacy ? legacy.split(":")[1] : "dark";
           if (mode === "system") {
             mode = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
           }

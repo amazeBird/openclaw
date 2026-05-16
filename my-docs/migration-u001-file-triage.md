@@ -105,7 +105,24 @@
 
 **阶段 E（可开始）**：设置页 Urban 专属文案键、与 `config` 视图 i18n 对齐（当前 Urban 选项仍为英文标签 `"Urban"`）。
 
-## 6. 下一步
+## 6. 设计稿（已恢复进仓库）
+
+对照旧版视觉请直接打开（浏览器）：
+
+| 文件 | 用途 |
+|------|------|
+| `my-docs/U001_URBAN_THEME_TOKENS.md` | Token 与组件映射清单 |
+| `my-docs/U001_REFERENCE_MOCK.html` | 壳层 / 侧栏 / 粗描边参考 |
+| `my-docs/U001_EXAMPLE_MAIN_UI.html` | 聊天主界面（蓝气泡、斜纹底、token 条） |
+| `my-docs/U001_EXAMPLE_CONFIG_UI.html` | 配置页外观参考 |
+| `my-docs/U001_OPENCLAW_LAYOUT_MOCK.html` | 与 OpenClaw shell 网格对齐 |
+| `my-docs/U001_URBAN_BLOCKS_REFERENCE.html` | 字体层级样例 |
+
+**默认主题**（与旧 `feat/u001-urban-ui-theme` 一致）：`ui/src/ui/storage.ts` → `theme: "urban"`、`themeMode: "dark"`；首屏 `ui/index.html` 无缓存时同样回落到 urban/dark。
+
+若浏览器里仍是 Claw 浅色：在 **外观与设置** 选 **Urban** + 顶栏 **深色**，或删除 `localStorage` 里 `openclaw.control.settings.v1*` 后刷新。
+
+## 7. 下一步
 
 在 **§1 通过** 后跑全量 **`pnpm --dir ui test`**；然后做 **阶段 E**（`config` / `config-quick` 的 `t("config.appearance.themeUrban")` 等）或继续阶段 D 的 **`grouped-render` 小步 diff**。
 

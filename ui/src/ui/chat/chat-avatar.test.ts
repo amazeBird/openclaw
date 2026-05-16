@@ -7,7 +7,10 @@ import { renderChatAvatar } from "./chat-avatar.ts";
 vi.mock("../views/agents-utils.ts", () => ({
   isRenderableControlUiAvatarUrl: (value: string) =>
     /^data:image\//i.test(value) || (value.startsWith("/") && !value.startsWith("//")),
-  assistantAvatarFallbackUrl: () => "apple-touch-icon.png",
+  assistantAvatarFallbackUrl: () => "fariy-assistant.jpg",
+  defaultUserPortraitUrl: () => "zzz-proxy-avatar.png",
+  defaultToolPortraitUrl: () => "ze-assistant.jpg",
+  isBundledGatewayAgentAvatarUrl: (url: string) => url.startsWith("/avatar/"),
   resolveAssistantTextAvatar: (value: string | null | undefined) => {
     if (!value) {
       return null;
@@ -41,13 +44,13 @@ function renderAvatar(params: Parameters<typeof renderChatAvatar>) {
 describe("renderChatAvatar", () => {
   it("renders assistant fallback, blob image, and text avatars", () => {
     const defaultAvatar = renderAvatar(["assistant"]);
-    expect(defaultAvatar?.getAttribute("src")).toBe("apple-touch-icon.png");
+    expect(defaultAvatar?.getAttribute("src")).toBe("fariy-assistant.jpg");
 
     const remoteAvatar = renderAvatar([
       "assistant",
       { avatar: "https://example.com/avatar.png", name: "Val" },
     ]);
-    expect(remoteAvatar?.getAttribute("src")).toBe("apple-touch-icon.png");
+    expect(remoteAvatar?.getAttribute("src")).toBe("fariy-assistant.jpg");
 
     const blobAvatar = renderAvatar(["assistant", { avatar: "blob:managed-image", name: "Val" }]);
     expect(blobAvatar?.tagName).toBe("IMG");
@@ -68,7 +71,12 @@ describe("renderChatAvatar", () => {
       "session-token",
     ]);
 
-    expect(avatar?.getAttribute("src")).toBe("apple-touch-icon.png");
+    expect(avatar?.getAttribute("src")).toBe("fariy-assistant.jpg");
+  });
+
+  it("renders the default user portrait when no local avatar is set", () => {
+    const avatar = renderAvatar(["user"]);
+    expect(avatar?.getAttribute("src")).toBe("zzz-proxy-avatar.png");
   });
 
   it("renders local user image and text avatars", () => {

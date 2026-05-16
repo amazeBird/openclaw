@@ -107,19 +107,19 @@ describe("sortLocaleStrings", () => {
 
 describe("agentLogoUrl", () => {
   it("keeps base-mounted control UI logo paths absolute to the mount", () => {
-    expect(agentLogoUrl("/ui")).toBe("/ui/favicon.svg");
-    expect(agentLogoUrl("/apps/openclaw/")).toBe("/apps/openclaw/favicon.svg");
+    expect(agentLogoUrl("/ui")).toBe("/ui/zzz-brand-logo.png");
+    expect(agentLogoUrl("/apps/openclaw/")).toBe("/apps/openclaw/zzz-brand-logo.png");
   });
 
   it("uses a route-relative fallback before basePath bootstrap finishes", () => {
-    expect(agentLogoUrl("")).toBe("favicon.svg");
+    expect(agentLogoUrl("")).toBe("zzz-brand-logo.png");
   });
 });
 
 describe("assistantAvatarFallbackUrl", () => {
-  it("uses the bundled Molty png for assistant profile fallbacks", () => {
-    expect(assistantAvatarFallbackUrl("/ui")).toBe("/ui/apple-touch-icon.png");
-    expect(assistantAvatarFallbackUrl("")).toBe("apple-touch-icon.png");
+  it("uses the U001 assistant portrait for chat fallbacks", () => {
+    expect(assistantAvatarFallbackUrl("/ui")).toBe("/ui/fariy-assistant.jpg");
+    expect(assistantAvatarFallbackUrl("")).toBe("fariy-assistant.jpg");
   });
 });
 

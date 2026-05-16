@@ -113,6 +113,9 @@ function formatHostWithPort(hostname: string, port: string): string {
   return `${normalizedHost}:${port}`;
 }
 
+/** Matches `applyCliProfileEnv` dev default in `src/cli/profile.ts` (`pnpm gateway:dev` / `--dev gateway`). */
+const VITE_DEV_GATEWAY_PORT = "19001";
+
 function deriveDefaultGatewayUrl(): { pageUrl: string; effectiveUrl: string } {
   const proto = location.protocol === "https:" ? "wss" : "ws";
   const configured =
@@ -125,7 +128,7 @@ function deriveDefaultGatewayUrl(): { pageUrl: string; effectiveUrl: string } {
   if (!isViteDevPage()) {
     return { pageUrl, effectiveUrl: pageUrl };
   }
-  const effectiveUrl = `${proto}://${formatHostWithPort(location.hostname, "18789")}`;
+  const effectiveUrl = `${proto}://${formatHostWithPort(location.hostname, VITE_DEV_GATEWAY_PORT)}`;
   return { pageUrl, effectiveUrl };
 }
 
@@ -226,8 +229,8 @@ export function loadSettings(): UiSettings {
     token: loadSessionToken(defaultUrl),
     sessionKey: "main",
     lastActiveSessionKey: "main",
-    theme: "claw",
-    themeMode: "system",
+    theme: "urban",
+    themeMode: "dark",
     chatFocusMode: false,
     chatShowThinking: true,
     chatShowToolCalls: true,
@@ -256,8 +259,8 @@ export function loadSettings(): UiSettings {
     const scopedSessionSelection = resolveScopedSessionSelection(gatewayUrl, parsed, defaults);
     const customTheme = parseImportedCustomTheme((parsed as { customTheme?: unknown }).customTheme);
     const { theme, mode } = parseThemeSelection(
-      (parsed as { theme?: unknown }).theme,
-      (parsed as { themeMode?: unknown }).themeMode,
+      (parsed as { theme?: unknown }).theme ?? defaults.theme,
+      (parsed as { themeMode?: unknown }).themeMode ?? defaults.themeMode,
     );
     const settings = {
       gatewayUrl,
@@ -265,7 +268,7 @@ export function loadSettings(): UiSettings {
       token: loadSessionToken(gatewayUrl),
       sessionKey: scopedSessionSelection.sessionKey,
       lastActiveSessionKey: scopedSessionSelection.lastActiveSessionKey,
-      theme: theme === "custom" && !customTheme ? "claw" : theme,
+      theme: theme === "custom" && !customTheme ? "urban" : theme,
       themeMode: mode,
       chatFocusMode:
         typeof parsed.chatFocusMode === "boolean" ? parsed.chatFocusMode : defaults.chatFocusMode,

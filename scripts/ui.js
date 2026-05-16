@@ -61,6 +61,10 @@ export function shouldUseCmdExeForCommand(cmd, platform = process.platform) {
   return WINDOWS_CMD_EXE_EXTENSIONS.has(extension);
 }
 
+function isPnpmCmdLauncher(cmd) {
+  return /^pnpm(?:-cli)?\.cmd$/i.test(path.basename(cmd));
+}
+
 export function resolveSpawnCall(cmd, args, envOverride, params = {}) {
   const platform = params.platform ?? process.platform;
   const comSpec = params.comSpec ?? process.env.ComSpec ?? "cmd.exe";
@@ -72,6 +76,18 @@ export function resolveSpawnCall(cmd, args, envOverride, params = {}) {
   };
 
   if (shouldUseCmdExeForCommand(cmd, platform)) {
+    // cmd.exe /s /c breaks on quoted absolute paths like C:\Program Files\...\pnpm.cmd.
+    // Launch PATH-resolved pnpm.cmd instead of the discovered absolute path.
+    if (isPnpmCmdLauncher(cmd)) {
+      return {
+        command: comSpec,
+        args: ["/d", "/s", "/c", buildCmdExeCommandLine("pnpm.cmd", args)],
+        options: {
+          ...options,
+          windowsVerbatimArguments: true,
+        },
+      };
+    }
     return {
       command: comSpec,
       args: ["/d", "/s", "/c", buildCmdExeCommandLine(cmd, args)],

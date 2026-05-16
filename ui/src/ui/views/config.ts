@@ -781,9 +781,30 @@ type ThemeOption = {
   icon: TemplateResult;
 };
 const BUILTIN_THEME_OPTIONS: ThemeOption[] = [
-  { id: "claw", label: "Claw", description: "Chroma family", icon: icons.zap },
-  { id: "knot", label: "Knot", description: "Black & red", icon: icons.link },
-  { id: "dash", label: "Dash", description: "Chocolate blueprint", icon: icons.barChart },
+  {
+    id: "claw",
+    label: t("controlUiThemes.claw.label"),
+    description: t("controlUiThemes.claw.desc"),
+    icon: icons.zap,
+  },
+  {
+    id: "knot",
+    label: t("controlUiThemes.knot.label"),
+    description: t("controlUiThemes.knot.desc"),
+    icon: icons.link,
+  },
+  {
+    id: "dash",
+    label: t("controlUiThemes.dash.label"),
+    description: t("controlUiThemes.dash.desc"),
+    icon: icons.barChart,
+  },
+  {
+    id: "urban",
+    label: t("controlUiThemes.urban.label"),
+    description: t("controlUiThemes.urban.desc"),
+    icon: icons.monitor,
+  },
 ];
 
 function importedThemeName(props: Pick<ConfigProps, "hasCustomTheme" | "customThemeLabel">) {

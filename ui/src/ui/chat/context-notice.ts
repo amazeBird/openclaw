@@ -176,7 +176,7 @@ export function renderContextNotice(
 }
 
 /** Format token count compactly (e.g. 128000 -> "128k"). */
-function formatTokensCompact(n: number): string {
+export function formatTokensCompact(n: number): string {
   if (n >= 1_000_000) {
     return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`;
   }

@@ -7,6 +7,9 @@ import {
 } from "../user-identity.ts";
 import {
   assistantAvatarFallbackUrl,
+  defaultToolPortraitUrl,
+  defaultUserPortraitUrl,
+  isBundledGatewayAgentAvatarUrl,
   isRenderableControlUiAvatarUrl,
   resolveAssistantTextAvatar,
 } from "../views/agents-utils.ts";
@@ -23,7 +26,10 @@ export function renderChatAvatar(
   const assistantName = assistant?.name?.trim() || "Assistant";
   const assistantAvatar = assistant?.avatar?.trim() || "";
   const assistantAvatarText = resolveAssistantTextAvatar(assistantAvatar);
-  const assistantFallbackAvatar = assistantAvatarFallbackUrl(basePath ?? "");
+  const base = basePath ?? "";
+  const assistantFallbackAvatar = assistantAvatarFallbackUrl(base);
+  const defaultUserPortrait = defaultUserPortraitUrl(base);
+  const defaultToolPortrait = defaultToolPortraitUrl(base);
   const userName = resolveLocalUserName(user);
   const userAvatarUrl = resolveLocalUserAvatarUrl(user);
   const userAvatarText = resolveLocalUserAvatarText(user);
@@ -83,18 +89,31 @@ export function renderChatAvatar(
     </div>`;
   }
 
+  if (normalized === "user") {
+    return html`<img
+      class="chat-avatar ${className}"
+      src="${defaultUserPortrait}"
+      alt="${userName}"
+    />`;
+  }
+
+  if (normalized === "tool") {
+    return html`<img
+      class="chat-avatar ${className} chat-avatar--logo"
+      src="${defaultToolPortrait}"
+      alt="Tool"
+    />`;
+  }
+
   if (assistantAvatar && normalized === "assistant") {
     if (isAvatarUrl(assistantAvatar)) {
-      if (authToken?.trim() && assistantAvatar.startsWith("/")) {
-        return html`<img
-          class="chat-avatar ${className} chat-avatar--logo"
-          src="${assistantFallbackAvatar}"
-          alt="${assistantName}"
-        />`;
-      }
+      const usePortraitFallback =
+        isBundledGatewayAgentAvatarUrl(assistantAvatar, base) ||
+        (authToken?.trim() && assistantAvatar.startsWith("/"));
+      const portraitSrc = usePortraitFallback ? assistantFallbackAvatar : assistantAvatar;
       return html`<img
-        class="chat-avatar ${className}"
-        src="${assistantAvatar}"
+        class="chat-avatar ${className}${usePortraitFallback ? " chat-avatar--logo" : ""}"
+        src="${portraitSrc}"
         alt="${assistantName}"
       />`;
     }
