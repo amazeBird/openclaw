@@ -4,11 +4,11 @@ packages:
   - packages/*
   - extensions/*
 
-minimumReleaseAge: 2880
+minimumReleaseAge: 0
 
 minimumReleaseAgeExclude:
   - "@openclaw/fs-safe@0.2.4"
-  - "@openclaw/proxyline@0.3.0"
+  - "@openclaw/proxyline"
   - "acpx"
   - "tokenjuice"
   - "@agentclientprotocol/sdk"
@@ -32,13 +32,20 @@ minimumReleaseAgeExclude:
   - "@oxlint/*"
   - "@oxfmt/*"
   - "oxfmt"
+  - "oxlint"
   - "axios@1.15.0"
   - "discord-api-types"
   - "rolldown"
   - "sqlite-vec"
   - "sqlite-vec-*"
+  - "@lit-labs/signals"
+  - "lit"
+  - "jscpd"
+  - "@grammyjs/*"
+  - "tsx"
 
 nodeLinker: hoisted
+symlink: false
 blockExoticSubdeps: true
 
 overrides:

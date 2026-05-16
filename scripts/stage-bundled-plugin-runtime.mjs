@@ -13,6 +13,7 @@ function shouldFallbackToCopy(error) {
     process.platform === "win32" &&
     (error?.code === "EACCES" ||
       error?.code === "EINVAL" ||
+      error?.code === "EISDIR" ||
       error?.code === "ENOSYS" ||
       error?.code === "EPERM" ||
       error?.code === "UNKNOWN")
