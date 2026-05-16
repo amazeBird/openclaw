@@ -1,5 +1,8 @@
-node_modules
+node_modules/
 **/node_modules/
+node_modules.exfat-orphan/
+**/node_modules.exfat-orphan/
+.trash-node_modules.exfat-orphan/
 .env
 docker-compose.override.yml
 docker-compose.extra.yml
