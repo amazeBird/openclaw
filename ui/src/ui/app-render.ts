@@ -16,7 +16,6 @@ import {
   renderChatSessionSelect,
   renderTab,
   resolveAssistantAttachmentAuthToken,
-  resolveDashboardHeaderContext,
   renderSidebarConnectionStatus,
   renderTopbarThemeModeToggle,
   createChatSession,
@@ -707,7 +706,6 @@ export function renderApp(state: AppViewState) {
   const chatFocus = isChat && (state.settings.chatFocusMode || state.onboarding);
   const navDrawerOpen = state.navDrawerOpen && !chatFocus && !state.onboarding;
   const navCollapsed = state.settings.navCollapsed && !navDrawerOpen;
-  const dashboardHeaderContext = resolveDashboardHeaderContext(state);
   const showThinking = state.onboarding ? false : state.settings.chatShowThinking;
   const showToolCalls = state.onboarding ? true : state.settings.chatShowToolCalls;
   const localAssistantAvatarOverride =
@@ -1450,7 +1448,6 @@ export function renderApp(state: AppViewState) {
             <dashboard-header
               .tab=${state.tab}
               .basePath=${state.basePath}
-              .agentLabel=${dashboardHeaderContext.agentLabel}
               @navigate=${(event: CustomEvent<Tab>) => {
                 state.setTab(event.detail);
               }}
@@ -1483,14 +1480,16 @@ export function renderApp(state: AppViewState) {
                 ${navCollapsed
                   ? nothing
                   : html`
-                      <img
-                        class="sidebar-brand__logo"
-                        src="${agentLogoUrl(basePath)}"
-                        alt="OpenClaw"
-                      />
+                      <span class="sidebar-brand__logo-frame">
+                        <img
+                          class="sidebar-brand__logo"
+                          src="${agentLogoUrl(basePath)}"
+                          alt="${t("nav.brandTitle")}"
+                        />
+                      </span>
                       <span class="sidebar-brand__copy">
                         <span class="sidebar-brand__eyebrow">${t("nav.control")}</span>
-                        <span class="sidebar-brand__title">OpenClaw</span>
+                        <span class="sidebar-brand__title">${t("nav.brandTitle")}</span>
                       </span>
                     `}
               </div>

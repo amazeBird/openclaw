@@ -10,13 +10,6 @@
     },
     {
       "count": 1,
-      "kind": "html-text",
-      "name": "text",
-      "path": "ui/src/ui/app-render.ts",
-      "text": "OpenClaw"
-    },
-    {
-      "count": 1,
       "kind": "object-property",
       "name": "label",
       "path": "ui/src/ui/app-render.ts",
@@ -336,13 +329,6 @@
       "name": "label",
       "path": "ui/src/ui/chat/tool-cards.ts",
       "text": "Tool output"
-    },
-    {
-      "count": 1,
-      "kind": "html-text",
-      "name": "text",
-      "path": "ui/src/ui/components/dashboard-header.ts",
-      "text": "OpenClaw"
     },
     {
       "count": 1,
@@ -2533,20 +2519,6 @@
       "kind": "html-text",
       "name": "text",
       "path": "ui/src/ui/views/config-quick.ts",
-      "text": "Text size"
-    },
-    {
-      "count": 1,
-      "kind": "html-text",
-      "name": "text",
-      "path": "ui/src/ui/views/config-quick.ts",
-      "text": "Theme"
-    },
-    {
-      "count": 1,
-      "kind": "html-text",
-      "name": "text",
-      "path": "ui/src/ui/views/config-quick.ts",
       "text": "Thinking"
     },
     {
@@ -2575,20 +2547,6 @@
       "kind": "object-property",
       "name": "label",
       "path": "ui/src/ui/views/config-quick.ts",
-      "text": "Claw"
-    },
-    {
-      "count": 1,
-      "kind": "object-property",
-      "name": "label",
-      "path": "ui/src/ui/views/config-quick.ts",
-      "text": "Dash"
-    },
-    {
-      "count": 1,
-      "kind": "object-property",
-      "name": "label",
-      "path": "ui/src/ui/views/config-quick.ts",
       "text": "Default"
     },
     {
@@ -2610,27 +2568,6 @@
       "kind": "object-property",
       "name": "label",
       "path": "ui/src/ui/views/config-quick.ts",
-      "text": "Knot"
-    },
-    {
-      "count": 1,
-      "kind": "object-property",
-      "name": "label",
-      "path": "ui/src/ui/views/config-quick.ts",
-      "text": "L"
-    },
-    {
-      "count": 1,
-      "kind": "object-property",
-      "name": "label",
-      "path": "ui/src/ui/views/config-quick.ts",
-      "text": "M"
-    },
-    {
-      "count": 1,
-      "kind": "object-property",
-      "name": "label",
-      "path": "ui/src/ui/views/config-quick.ts",
       "text": "None"
     },
     {
@@ -2645,28 +2582,7 @@
       "kind": "object-property",
       "name": "label",
       "path": "ui/src/ui/views/config-quick.ts",
-      "text": "S"
-    },
-    {
-      "count": 1,
-      "kind": "object-property",
-      "name": "label",
-      "path": "ui/src/ui/views/config-quick.ts",
       "text": "Slight"
-    },
-    {
-      "count": 1,
-      "kind": "object-property",
-      "name": "label",
-      "path": "ui/src/ui/views/config-quick.ts",
-      "text": "XL"
-    },
-    {
-      "count": 1,
-      "kind": "object-property",
-      "name": "label",
-      "path": "ui/src/ui/views/config-quick.ts",
-      "text": "XXL"
     },
     {
       "count": 1,
@@ -2972,27 +2888,6 @@
     {
       "count": 1,
       "kind": "object-property",
-      "name": "description",
-      "path": "ui/src/ui/views/config.ts",
-      "text": "Black & red"
-    },
-    {
-      "count": 1,
-      "kind": "object-property",
-      "name": "description",
-      "path": "ui/src/ui/views/config.ts",
-      "text": "Chocolate blueprint"
-    },
-    {
-      "count": 1,
-      "kind": "object-property",
-      "name": "description",
-      "path": "ui/src/ui/views/config.ts",
-      "text": "Chroma family"
-    },
-    {
-      "count": 1,
-      "kind": "object-property",
       "name": "label",
       "path": "ui/src/ui/views/config.ts",
       "text": "Acp"
@@ -3079,13 +2974,6 @@
       "kind": "object-property",
       "name": "label",
       "path": "ui/src/ui/views/config.ts",
-      "text": "Claw"
-    },
-    {
-      "count": 1,
-      "kind": "object-property",
-      "name": "label",
-      "path": "ui/src/ui/views/config.ts",
       "text": "Cli"
     },
     {
@@ -3115,13 +3003,6 @@
       "name": "label",
       "path": "ui/src/ui/views/config.ts",
       "text": "Cron"
-    },
-    {
-      "count": 1,
-      "kind": "object-property",
-      "name": "label",
-      "path": "ui/src/ui/views/config.ts",
-      "text": "Dash"
     },
     {
       "count": 1,
@@ -3164,13 +3045,6 @@
       "name": "label",
       "path": "ui/src/ui/views/config.ts",
       "text": "Infrastructure"
-    },
-    {
-      "count": 1,
-      "kind": "object-property",
-      "name": "label",
-      "path": "ui/src/ui/views/config.ts",
-      "text": "Knot"
     },
     {
       "count": 1,

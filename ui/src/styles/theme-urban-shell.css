@@ -132,7 +132,7 @@
 }
 
 /* Brand mark: gold tile behind logo (reference title-bar icon) */
-:root[data-theme="urban"] .sidebar-brand__logo {
+:root[data-theme="urban"] .sidebar-brand__logo-frame {
   width: 46px;
   height: 46px;
   border-radius: 12px;
@@ -141,7 +141,7 @@
     0 0 0 6px #eab308;
 }
 
-:root[data-theme="urban-light"] .sidebar-brand__logo {
+:root[data-theme="urban-light"] .sidebar-brand__logo-frame {
   width: 46px;
   height: 46px;
   border-radius: 12px;

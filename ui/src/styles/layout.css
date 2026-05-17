@@ -193,7 +193,7 @@
 
 .topnav-shell .dashboard-header__breadcrumb-link,
 .topnav-shell .dashboard-header__breadcrumb-sep {
-  color: var(--muted);
+  color: color-mix(in srgb, var(--text) 58%, var(--muted) 42%);
 }
 
 .topnav-shell .dashboard-header__breadcrumb-segment {
@@ -209,19 +209,20 @@
   margin: -2px -4px;
   padding: 2px 4px;
   border-radius: var(--radius-sm);
+  font-weight: 500;
   text-decoration: none;
   white-space: nowrap;
 }
 
 .topnav-shell .dashboard-header__breadcrumb-link:hover,
 .topnav-shell .dashboard-header__breadcrumb-link:focus-visible {
-  color: var(--text);
+  color: var(--text-strong);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .topnav-shell .dashboard-header__breadcrumb-current {
-  color: var(--accent);
+  color: var(--text-strong);
   font-weight: 650;
   white-space: nowrap;
   overflow: hidden;
@@ -456,16 +457,29 @@
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
 }
 
-.sidebar-brand__logo {
-  width: 32px;
-  height: 32px;
+.sidebar-brand__logo-frame {
+  display: block;
+  width: 42px;
+  height: 42px;
   flex-shrink: 0;
+  overflow: hidden;
   border-radius: var(--radius-md);
   box-shadow: 0 8px 18px color-mix(in srgb, black 12%, transparent);
+}
+
+.sidebar-brand__logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+  object-position: center top;
+  transform: scale(1.1);
+  transform-origin: center top;
 }
 
 .sidebar-brand__copy {
@@ -476,23 +490,26 @@
 }
 
 .sidebar-brand__eyebrow {
-  font-size: 10px;
-  line-height: 1.1;
+  font-size: 12px;
+  line-height: 1.15;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: var(--muted);
+  color: color-mix(in srgb, var(--text) 58%, var(--muted) 42%);
   text-transform: uppercase;
 }
 
 .sidebar-brand__title {
-  font-size: 15px;
-  line-height: 1.1;
+  width: 200px;
+  font-size: 13px;
+  line-height: 1.15;
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   color: var(--text-strong);
-  white-space: nowrap;
+  white-space: normal;
   overflow: hidden;
-  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .sidebar-nav {
@@ -784,7 +801,7 @@
     0 8px 18px color-mix(in srgb, black 16%, transparent);
 }
 
-.sidebar--collapsed .sidebar-brand__logo {
+.sidebar--collapsed .sidebar-brand__logo-frame {
   width: 34px;
   height: 34px;
   border-radius: var(--radius-md);

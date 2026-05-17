@@ -381,8 +381,9 @@ export const zh_TW: TranslationMap = {
     builtIn: "內建",
   },
   nav: {
+    brandTitle: "Zenless Zone Zero",
     chat: "聊天",
-    control: "控制",
+    control: "絕區零",
     agent: "代理",
     settings: "設置",
     expand: "展開側邊欄",

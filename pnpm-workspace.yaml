@@ -8,7 +8,7 @@ minimumReleaseAge: 0
 
 minimumReleaseAgeExclude:
   - "@openclaw/fs-safe@0.2.4"
-  - "@openclaw/proxyline"
+  - "@openclaw/proxyline@0.3.0"
   - "acpx"
   - "tokenjuice"
   - "@agentclientprotocol/sdk"
@@ -45,7 +45,6 @@ minimumReleaseAgeExclude:
   - "tsx"
 
 nodeLinker: hoisted
-symlink: false
 blockExoticSubdeps: true
 
 overrides:
